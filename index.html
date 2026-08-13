@@ -260,6 +260,24 @@
   .plan-game-chip.on{background:rgba(230,196,84,.2);border-color:var(--gold);color:var(--gold);font-weight:600;}
   .plan-actions{display:flex;gap:8px;flex-wrap:wrap;}
   .plan-actions .btn{padding:7px 14px;font-size:12px;width:auto;}
+  .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;}
+  .plan-field{display:flex;flex-direction:column;gap:3px;font-weight:400;}
+  .plan-field input{margin:0;padding:8px 10px;font-size:13px;}
+  .plan-calc{font-size:12px;font-weight:600;padding:7px 10px;background:var(--surface-2);border-radius:7px;margin-bottom:10px;}
+  .plan-game-chip.locked{opacity:.35;cursor:not-allowed;}
+  .admin-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 20px;border-bottom:1px solid var(--surface-2);padding-bottom:10px;}
+  .admin-tab{background:var(--surface);border:1px solid var(--surface-2);color:var(--muted);
+             padding:9px 14px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .admin-tab:hover{background:var(--surface-hover);color:var(--text);}
+  .admin-tab.active{background:var(--surface-hover);border-color:var(--amber);color:var(--amber);}
+  .admin-panel{display:none;}
+  .admin-panel.active{display:block;}
+  .pager{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+  .pager button{background:var(--surface);border:1px solid var(--surface-2);color:var(--text);
+                padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;}
+  .pager button:disabled{opacity:.4;cursor:not-allowed;}
+  .pager .pager-info{font-size:12px;color:var(--muted);padding:0 8px;}
+  @media (max-width:520px){ .plan-grid{grid-template-columns:1fr 1fr;} }
   table.leaderboard{width:100%;border-collapse:collapse;font-size:14px;}
   table.leaderboard th{text-align:left;color:var(--muted);font-weight:600;padding:8px;font-size:11px;text-transform:uppercase;}
   table.leaderboard td{padding:9px 8px;border-top:1px solid var(--surface-2);}
@@ -692,13 +710,13 @@
   <p class="hint">Bei kostenpflichtigen Rushtables handelt es sich um einen <b>Geschicklichkeitswettbewerb</b>, kein Glücksspiel. Das Ergebnis jeder Runde wird ausschließlich durch Geschicklichkeit, Wissen, Gedächtnis oder Reaktionsvermögen der Teilnehmenden bestimmt. Zufallselemente haben auf die Platzierung oder Gewinnermittlung keinerlei Einfluss. Innerhalb der Minispiele zufällig gewählte Elemente (z. B. welches Wort oder welche Farbe gesucht wird) betreffen nur die Aufgabenstellung, nicht die Bewertung der Leistung.</p>
 
   <h3>4. Teilnahmegebühr & Zahlungsabwicklung</h3>
-  <p class="hint">Die Teilnahme an einem regulären Rushtable ist derzeit kostenlos. An VIP-Räumen kostet die Teilnahme 5,00 €, am täglichen Mega-Rushtable (nur über den VIP-Bereich erreichbar) 10,00 €, jeweils fällig bei Beitritt zum Tisch. Der Mega-Rushtable kommt nur zustande, wenn innerhalb der jeweils angegebenen Anmeldefrist sämtliche Plätze belegt sind; wird diese Zahl nicht erreicht, entfällt die Runde und die Teilnahmegebühr wird vollständig erstattet. Bei den übrigen Tischen ist eine Rückerstattung nach Rundenbeginn ausgeschlossen, außer der Tisch kommt aus vom Veranstalter zu vertretenden Gründen nicht zustande. Die Zahlungsabwicklung erfolgt über einen externen Zahlungsdienstleister (z. B. Stripe oder PayPal); dessen eigene Nutzungsbedingungen gelten für den Zahlungsvorgang zusätzlich.</p>
+  <p class="hint">Die Teilnahme an einem regulären Rushtable ist derzeit kostenlos. An VIP-Räumen kostet die Teilnahme 5,00 €, am täglichen Mega-Rushtable (nur über den VIP-Bereich erreichbar) 10,00 €, jeweils fällig bei Beitritt zum Tisch. Die Teilnahmegebühr und die Platzzahl des Mega-Rushtables werden für jeden Termin vorab in der App bekannt gegeben und können je Termin abweichen. Der Mega-Rushtable kommt nur zustande, wenn innerhalb der angegebenen Anmeldefrist sämtliche Plätze belegt sind; sobald der letzte Platz vergeben ist, startet die Runde und eine weitere Anmeldung ist nicht mehr möglich. Wird die Platzzahl bis zum Fristende nicht erreicht, entfällt die Runde und die Teilnahmegebühr wird vollständig erstattet. Bei den übrigen Tischen ist eine Rückerstattung nach Rundenbeginn ausgeschlossen, außer der Tisch kommt aus vom Veranstalter zu vertretenden Gründen nicht zustande. Die Zahlungsabwicklung erfolgt über einen externen Zahlungsdienstleister (z. B. Stripe oder PayPal); dessen eigene Nutzungsbedingungen gelten für den Zahlungsvorgang zusätzlich.</p>
 
   <h3>5. Ablauf & Gewinnermittlung</h3>
   <p class="hint">Jede Runde besteht aus 6 Minispielen. Die Platzierung ergibt sich aus der gemessenen Leistung (Zeit, Genauigkeit, Punktzahl) aller Teilnehmenden des jeweiligen Tisches. Bei rechnerischem Gleichstand (z. B. exakt gleiche gemessene Zeit) wird zwischen den betroffenen Teilnehmenden ein zusätzliches Geschicklichkeitsspiel gespielt, bis eine eindeutige Platzierung feststeht — niemals ein Zufallsverfahren.</p>
 
   <h3>6. Gewinn</h3>
-  <p class="hint">Der ausgelobte Gewinn wird in der jeweiligen Tischbeschreibung konkret benannt. Am täglichen Mega-Rushtable wechselt der Hauptpreis von Tag zu Tag (z. B. Fahrzeug, Motorrad, Luxusuhr, Reise oder ein vergleichbarer Sachpreis) und wird jeweils vorab in der App angekündigt; bei anderen Tischen kann der Gewinn abweichen (z. B. Sachpreis oder Gegenwert). Der Gewinn ist nicht auf Dritte übertragbar und wird nicht bar ausgezahlt, sofern nichts anderes angegeben ist. Der Gewinnanspruch verjährt, wenn er nicht innerhalb von 30 Tagen nach Bekanntgabe geltend gemacht wird. Die Auszahlung/Aushändigung erfolgt erst nach erfolgreicher Altersverifikation gemäß Punkt 2.</p>
+  <p class="hint">Der ausgelobte Gewinn wird in der jeweiligen Tischbeschreibung konkret benannt. Am täglichen Mega-Rushtable wechselt der Hauptpreis von Termin zu Termin (z. B. Fahrzeug, Motorrad, Luxusuhr, Reise oder ein vergleichbarer Sachpreis) und wird jeweils vorab in der App angekündigt; bei anderen Tischen kann der Gewinn abweichen (z. B. Sachpreis oder Gegenwert). Der Gewinn ist nicht auf Dritte übertragbar und wird nicht bar ausgezahlt, sofern nichts anderes angegeben ist. Der Gewinnanspruch verjährt, wenn er nicht innerhalb von 30 Tagen nach Bekanntgabe geltend gemacht wird. Die Auszahlung/Aushändigung erfolgt erst nach erfolgreicher Altersverifikation gemäß Punkt 2.</p>
 
   <h3>7. Steuern</h3>
   <p class="hint">Für die steuerliche Behandlung des Gewinns ist die gewinnende Person selbst verantwortlich. Der Veranstalter gibt hierzu keine Steuerberatung und empfiehlt, im Gewinnfall eine Steuerberatung hinzuzuziehen.</p>
@@ -797,63 +815,95 @@
 
 <!-- ADMIN -->
 <div class="screen" id="screen-admin">
-  <h1>Admin-Übersicht</h1>
-  <p class="hint">Vereinfachte Vorschau ohne echtes Backend — "Personen online" und "Tische" stammen aus der Simulation in diesem Browser. Der Umsatz ist eine Modellrechnung: 0,4% Kaufquote pro abgeschlossener Runde × 5,50 € Ø-Warenkorb, hochgerechnet auf die tatsächliche Tisch-Auslastung (nicht nur ein Zufallswert) — plus alle echten Käufe von heute obendrauf. Aktualisiert sich automatisch alle paar Sekunden.</p>
+  <h1>Admin-Bereich</h1>
 
-  <div class="shop-card premium" style="max-width:420px;margin:16px 0 24px;text-align:left;padding:20px;">
-    <div style="font-weight:700;font-size:15px;">👑 Ersteller-Modus</div>
-    <p class="hint" style="margin:6px 0 12px;">Schaltet dir als Erfinder dieser App sofort alle Skins und Abzeichen frei (auch Premium) — kostenlos, ohne Münzen oder Zahlung.</p>
-    <button class="btn full" id="grantAllShopBtn">Alle Shop-Produkte freischalten</button>
-    <p class="hint" id="grantAllStatus" style="margin-top:8px;"></p>
+  <div class="admin-tabs" id="adminTabs">
+    <button class="admin-tab active" data-tab="overview">📊 Übersicht</button>
+    <button class="admin-tab" data-tab="mega">🌟 Mega-Planung</button>
+    <button class="admin-tab" data-tab="revenue">💶 Umsatz</button>
+    <button class="admin-tab" data-tab="purchases">🧾 Käufe</button>
+    <button class="admin-tab" data-tab="settings">⚙️ Werkzeuge</button>
   </div>
 
-  <div class="shop-card" style="max-width:520px;margin:0 0 24px;text-align:left;padding:20px;border-color:var(--danger);">
-    <div style="font-weight:700;font-size:15px;color:var(--danger);">🚧 Launch-Checkliste (braucht echten Server)</div>
-    <p class="hint" style="margin:6px 0 12px;">Diese Punkte sind in dieser Browser-Vorschau NICHT umsetzbar, da kein echtes Backend existiert. Vor dem echten Launch zwingend nachzuholen:</p>
-    <ul class="hint" style="margin:0;padding-left:18px;line-height:1.7;">
-      <li>Serverseitige Validierung aller Spielergebnisse (aktuell nur im Browser, manipulierbar)</li>
-      <li>Rate-Limiting für Login/Registrierung</li>
-      <li>Schutz vor Mehrfachkonten (z. B. Geräte-/Zahlungsabgleich)</li>
-      <li>Echte Passwort-Verschlüsselung (bcrypt/argon2 statt Demo-Hash)</li>
-      <li>Lasttest vor Launch, besonders für große/VIP-Tische</li>
-      <li>Monitoring & Fehler-Tracking (z. B. Sentry)</li>
-      <li>Regelmäßige Datenbank-Backups</li>
-      <li>Echter Support-Kontakt (E-Mail/Formular)</li>
-      <li>Chargeback-/Rückerstattungsprozess mit dem Zahlungsanbieter</li>
-    </ul>
+  <!-- ÜBERSICHT / ONLINE-SPIELER -->
+  <div class="admin-panel active" id="adminPanel-overview">
+    <div class="stat-grid stat-grid-4">
+      <div class="stat-box"><div class="big" id="adminOnlineNow">0</div><div class="lbl">Personen online</div></div>
+      <div class="stat-box"><div class="big" id="adminInRound">0</div><div class="lbl">Tische aktuell im Spiel</div></div>
+      <div class="stat-box"><div class="big" id="adminAboutToStart">0</div><div class="lbl">Tische kurz vor Start (≤5 Plätze frei)</div></div>
+      <div class="stat-box"><div class="big" id="adminTableCount">0</div><div class="lbl">Tische gesamt</div></div>
+    </div>
+    <p class="hint">"Personen online" und "Tische" stammen aus der Simulation in diesem Browser. Aktualisiert sich automatisch alle paar Sekunden.</p>
+
+    <h3>Tische im Detail</h3>
+    <div class="table-scroll">
+      <table class="leaderboard" id="adminTablesTable">
+        <thead><tr><th>Rushtable</th><th>Belegt</th><th>Programm</th></tr></thead>
+        <tbody id="adminTablesBody"></tbody>
+      </table>
+    </div>
   </div>
 
-  <div class="shop-card" style="max-width:100%;margin:0 0 24px;text-align:left;padding:20px;border-color:var(--gold);">
-    <div style="font-weight:700;font-size:15px;color:var(--gold);">🌟 Mega-Rushtable — Wochenplanung</div>
-    <p class="hint" style="margin:6px 0 14px;">Lege für jeden Tag fest, was es zu gewinnen gibt und welche Spiele gespielt werden. Nicht geplante Tage nutzen automatisch einen Standardpreis und eine zufällige Spielauswahl. Änderungen sind sofort für alle sichtbar.</p>
-    <div id="megaPlannerList"></div>
-    <p class="hint" id="megaPlannerStatus" style="margin-top:10px;"></p>
+  <!-- MEGA-PLANUNG -->
+  <div class="admin-panel" id="adminPanel-mega">
+    <div class="shop-card" style="max-width:100%;margin:0 0 24px;text-align:left;padding:20px;border-color:var(--gold);">
+      <div style="font-weight:700;font-size:15px;color:var(--gold);">🌟 Mega-Rushtable — Wochenplanung</div>
+      <p class="hint" style="margin:6px 0 14px;">Lege für jeden Tag fest, was es zu gewinnen gibt, wie viele Plätze es gibt, was die Teilnahme kostet und welche Spiele gespielt werden. Nicht geplante Tage nutzen Standardwerte. Änderungen sind sofort für alle sichtbar.</p>
+      <div id="megaPlannerList"></div>
+      <p class="hint" id="megaPlannerStatus" style="margin-top:10px;"></p>
+    </div>
   </div>
 
-  <div class="stat-grid stat-grid-4">
-    <div class="stat-box"><div class="big" id="adminOnlineNow">0</div><div class="lbl">Personen online</div></div>
-    <div class="stat-box"><div class="big" id="adminInRound">0</div><div class="lbl">Tische aktuell im Spiel</div></div>
-    <div class="stat-box"><div class="big" id="adminAboutToStart">0</div><div class="lbl">Tische kurz vor Start (≤5 Plätze frei)</div></div>
-    <div class="stat-box"><div class="big" id="adminRevenue">0,00 €</div><div class="lbl">Umsatz heute (Modell + echte Käufe)</div></div>
+  <!-- UMSATZ -->
+  <div class="admin-panel" id="adminPanel-revenue">
+    <div class="stat-grid stat-grid-4">
+      <div class="stat-box"><div class="big" id="adminRevenue">0,00 €</div><div class="lbl">Umsatz heute (Modell + echte Käufe)</div></div>
+      <div class="stat-box"><div class="big" id="adminRevenueReal">0,00 €</div><div class="lbl">davon echte Käufe heute</div></div>
+      <div class="stat-box"><div class="big" id="adminRevenueModel">0,00 €</div><div class="lbl">davon Modellrechnung</div></div>
+      <div class="stat-box"><div class="big" id="adminPurchaseCount">0</div><div class="lbl">Kaufvorgänge gesamt</div></div>
+    </div>
+    <p class="hint">Der Umsatz ist eine Modellrechnung: 0,4% Kaufquote pro abgeschlossener Runde × 5,50 € Ø-Warenkorb, hochgerechnet auf die tatsächliche Tisch-Auslastung — plus alle echten Käufe von heute obendrauf.</p>
   </div>
 
-  <h3>Tische im Detail</h3>
-  <div class="table-scroll">
-    <table class="leaderboard" id="adminTablesTable">
-      <thead><tr><th>Rushtable</th><th>Belegt</th><th>Programm</th></tr></thead>
-      <tbody id="adminTablesBody"></tbody>
-    </table>
+  <!-- KÄUFE -->
+  <div class="admin-panel" id="adminPanel-purchases">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <h3 style="margin:0;">Kaufprotokoll</h3>
+      <button class="btn secondary" id="seedPurchasesBtn" style="width:auto;padding:8px 14px;font-size:12px;">Beispiel-Käufe generieren</button>
+    </div>
+    <div class="table-scroll">
+      <table class="leaderboard" id="adminPurchaseTable">
+        <thead><tr><th>Zeit</th><th>Spieler</th><th>Artikel</th><th>Bezahlt mit</th></tr></thead>
+        <tbody id="adminPurchaseBody"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="purchasePager"></div>
   </div>
 
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:24px;flex-wrap:wrap;gap:8px;">
-    <h3 style="margin:0;">Letzte Käufe (simuliert)</h3>
-    <button class="btn secondary" id="seedPurchasesBtn">Beispiel-Käufe generieren</button>
-  </div>
-  <div class="table-scroll">
-    <table class="leaderboard" id="adminPurchaseTable">
-      <thead><tr><th>Zeit</th><th>Spieler</th><th>Artikel</th><th>Bezahlt mit</th></tr></thead>
-      <tbody id="adminPurchaseBody"></tbody>
-    </table>
+  <!-- WERKZEUGE -->
+  <div class="admin-panel" id="adminPanel-settings">
+    <div class="shop-card premium" style="max-width:420px;margin:0 0 24px;text-align:left;padding:20px;">
+      <div style="font-weight:700;font-size:15px;">👑 Ersteller-Modus</div>
+      <p class="hint" style="margin:6px 0 12px;">Schaltet dir als Erfinder dieser App sofort alle Skins und Abzeichen frei (auch Premium) — kostenlos, ohne Münzen oder Zahlung.</p>
+      <button class="btn full" id="grantAllShopBtn">Alle Shop-Produkte freischalten</button>
+      <p class="hint" id="grantAllStatus" style="margin-top:8px;"></p>
+    </div>
+
+    <div class="shop-card" style="max-width:520px;margin:0 0 24px;text-align:left;padding:20px;border-color:var(--danger);">
+      <div style="font-weight:700;font-size:15px;color:var(--danger);">🚧 Launch-Checkliste (braucht echten Server)</div>
+      <p class="hint" style="margin:6px 0 12px;">Diese Punkte sind in dieser Vorschau NICHT umsetzbar. Vor dem echten Launch zwingend nachzuholen:</p>
+      <ul class="hint" style="margin:0;padding-left:18px;line-height:1.7;">
+        <li>Serverseitige Validierung aller Spielergebnisse (aktuell nur im Browser, manipulierbar)</li>
+        <li>Rate-Limiting für Login/Registrierung</li>
+        <li>Schutz vor Mehrfachkonten (z. B. Geräte-/Zahlungsabgleich)</li>
+        <li>Lasttest vor Launch, besonders für große/VIP-Tische</li>
+        <li>Monitoring &amp; Fehler-Tracking (z. B. Sentry)</li>
+        <li>Regelmäßige Datenbank-Backups</li>
+        <li>Echter Support-Kontakt (E-Mail/Formular)</li>
+        <li>Chargeback-/Rückerstattungsprozess mit dem Zahlungsanbieter</li>
+        <li>Rechtliche Prüfung: Abgrenzung Geschicklichkeit vs. Glücksspiel</li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -1081,6 +1131,18 @@ function getMegaPrizeForDate(timestampMs){
   return MEGA_PRIZE_CATALOG[idx];
 }
 
+function getMegaCapacityForDate(timestampMs){
+  const planned = megaPlanCache[dateKeyFor(timestampMs)];
+  const n = planned && parseInt(planned.capacity, 10);
+  return (n && n > 0) ? n : MEGA_CAPACITY;
+}
+
+function getMegaFeeForDate(timestampMs){
+  const planned = megaPlanCache[dateKeyFor(timestampMs)];
+  const f = planned && parseFloat(planned.fee);
+  return (f && f > 0) ? f : MEGA_ENTRY_FEE;
+}
+
 function getMegaGamesForDate(timestampMs){
   const planned = megaPlanCache[dateKeyFor(timestampMs)];
   if (planned && Array.isArray(planned.games) && planned.games.length) return planned.games.slice();
@@ -1127,7 +1189,7 @@ async function deleteMegaPlanDay(dateKey){
 function pickSequence(){
   const pool = [...CATS];
   const seq = [];
-  const roundLength = Math.min(6, pool.length);
+  const roundLength = Math.min(GAMES_PER_ROUND, pool.length);
   for (let i=0;i<roundLength;i++){
     const idx = Math.floor(Math.random()*pool.length);
     seq.push(pool.splice(idx,1)[0]);
@@ -1935,7 +1997,8 @@ document.getElementById('seedPurchasesBtn').addEventListener('click', async ()=>
   const btn = document.getElementById('seedPurchasesBtn');
   btn.disabled = true; btn.textContent = 'Generiere…';
   seedDemoPurchases(40);
-  await renderAdmin();
+  purchasePage = 0;
+  await loadPurchasesTab();
   btn.disabled = false; btn.textContent = 'Beispiel-Käufe generieren';
 });
 
@@ -1962,7 +2025,11 @@ function renderAdminTopStats(){
   document.getElementById('adminOnlineNow').textContent = onlineNow.toLocaleString('de-DE');
   document.getElementById('adminInRound').textContent = inRound;
   document.getElementById('adminAboutToStart').textContent = aboutToStart;
+  const tc = document.getElementById('adminTableCount');
+  if (tc) tc.textContent = tables.length.toLocaleString('de-DE');
 }
+
+const euro = n => n.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
 
 async function refreshAdminRevenue(){
   const organicEstimate = computeOrganicEstimateToday();
@@ -1972,9 +2039,11 @@ async function refreshAdminRevenue(){
   for (const entry of entries){
     if (entry.ts >= startToday && typeof entry.eurValue === 'number') realToday += entry.eurValue;
   }
-  const total = organicEstimate + realToday;
-  document.getElementById('adminRevenue').textContent =
-    total.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+  const setText = (id, val)=>{ const el = document.getElementById(id); if (el) el.textContent = val; };
+  setText('adminRevenue', euro(organicEstimate + realToday));
+  setText('adminRevenueReal', euro(realToday));
+  setText('adminRevenueModel', euro(organicEstimate));
+  setText('adminPurchaseCount', entries.length.toLocaleString('de-DE'));
 }
 
 function startAdminLivePolling(){
@@ -1993,6 +2062,8 @@ function stopAdminLivePolling(){
 /* ---------- ADMIN: MEGA-WOCHENPLANER ---------- */
 const MEGA_PLAN_DAYS = 14; // zwei Wochen im Voraus planbar
 
+const MEGA_MAX_GAMES = 10; // Höchstzahl auswählbarer Spiele für den Mega-Tisch
+
 function renderMegaPlanner(){
   const wrap = document.getElementById('megaPlannerList');
   if (!wrap) return;
@@ -2004,6 +2075,9 @@ function renderMegaPlanner(){
     const planned = megaPlanCache[key];
     const fallback = getMegaPrizeForDate(dayTs);
     const games = (planned && planned.games) || [];
+    const capacity = (planned && planned.capacity) || MEGA_CAPACITY;
+    const fee = (planned && planned.fee) || MEGA_ENTRY_FEE;
+    const prizeValue = (planned && planned.prizeValue) || '';
 
     const dateLabel = new Date(dayTs).toLocaleDateString('de-DE',
       {weekday:'long', day:'2-digit', month:'2-digit', year:'numeric'});
@@ -2015,38 +2089,111 @@ function renderMegaPlanner(){
         <span class="plan-day-date">${dateLabel} · ${MEGA_OPEN_HOUR}:00 Uhr</span>
         <span class="hint">${planned ? '✅ Geplant' : 'Standard (nicht geplant)'}</span>
       </div>
+
+      <div class="hint" style="margin-bottom:4px;">Gewinn (freier Text):</div>
       <div class="plan-row">
         <input type="text" class="icon-input" data-field="icon" value="${planned ? (planned.icon||'') : fallback.icon}" maxlength="4" placeholder="🎁">
-        <input type="text" data-field="label" value="${planned ? (planned.label||'') : fallback.label}" placeholder="z. B. ein Auto">
+        <input type="text" data-field="label" value="${planned ? (planned.label||'') : fallback.label}" placeholder="z. B. eine Luxusuhr von Rolex">
       </div>
-      <div class="hint" style="margin-bottom:4px;">Spiele auswählen (leer = Zufallsauswahl):</div>
+
+      <div class="plan-grid">
+        <label class="plan-field">
+          <span class="hint">Plätze</span>
+          <input type="number" data-field="capacity" value="${capacity}" min="2" step="1">
+        </label>
+        <label class="plan-field">
+          <span class="hint">Gebühr (€)</span>
+          <input type="number" data-field="fee" value="${fee}" min="0" step="0.5">
+        </label>
+        <label class="plan-field">
+          <span class="hint">Preiswert (€)</span>
+          <input type="number" data-field="prizeValue" value="${prizeValue}" min="0" step="100" placeholder="optional">
+        </label>
+      </div>
+      <div class="plan-calc" data-calc>—</div>
+
+      <div class="hint" style="margin-bottom:4px;">
+        Spiele auswählen (max. ${MEGA_MAX_GAMES}, leer = Zufallsauswahl):
+        <b data-counter>${games.length}/${MEGA_MAX_GAMES}</b>
+      </div>
       <div class="plan-games">
         ${CATS.map(c=>`<span class="plan-game-chip${games.includes(c)?' on':''}" data-cat="${c}">${CAT_LABEL[c]}</span>`).join('')}
       </div>
+
       <div class="plan-actions">
         <button class="btn" data-action="save">Speichern</button>
         ${planned ? '<button class="btn secondary" data-action="reset">Auf Standard zurücksetzen</button>' : ''}
       </div>
     `;
 
+    const counterEl = box.querySelector('[data-counter]');
+    const calcEl = box.querySelector('[data-calc]');
+
+    // Zeigt live, ob sich der geplante Tag rechnet.
+    function updateCalc(){
+      const cap = parseInt(box.querySelector('[data-field="capacity"]').value, 10) || 0;
+      const f = parseFloat(box.querySelector('[data-field="fee"]').value) || 0;
+      const pv = parseFloat(box.querySelector('[data-field="prizeValue"]').value) || 0;
+      const income = cap * f;
+      const fmt = n => n.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+      if (!pv){
+        calcEl.textContent = 'Einnahmen bei voller Belegung: ' + fmt(income);
+        calcEl.style.color = 'var(--muted)';
+        return;
+      }
+      const margin = income - pv;
+      calcEl.textContent = 'Einnahmen ' + fmt(income) + ' − Preiswert ' + fmt(pv) + ' = ' +
+        (margin >= 0 ? 'Überschuss ' : 'Verlust ') + fmt(Math.abs(margin));
+      calcEl.style.color = margin >= 0 ? 'var(--success)' : 'var(--danger)';
+    }
+    box.querySelectorAll('[data-field="capacity"],[data-field="fee"],[data-field="prizeValue"]')
+       .forEach(el=>el.addEventListener('input', updateCalc));
+    updateCalc();
+
+    function selectedCats(){
+      return Array.from(box.querySelectorAll('.plan-game-chip.on')).map(el=>el.dataset.cat);
+    }
+    function refreshChips(){
+      const n = selectedCats().length;
+      counterEl.textContent = n + '/' + MEGA_MAX_GAMES;
+      counterEl.style.color = n >= MEGA_MAX_GAMES ? 'var(--gold)' : '';
+      // Bei erreichtem Maximum die übrigen Auswahlfelder sperren.
+      box.querySelectorAll('.plan-game-chip').forEach(chip=>{
+        const locked = n >= MEGA_MAX_GAMES && !chip.classList.contains('on');
+        chip.classList.toggle('locked', locked);
+      });
+    }
     box.querySelectorAll('.plan-game-chip').forEach(chip=>{
-      chip.addEventListener('click', ()=>chip.classList.toggle('on'));
+      chip.addEventListener('click', ()=>{
+        if (chip.classList.contains('locked')) return;
+        chip.classList.toggle('on');
+        refreshChips();
+      });
     });
+    refreshChips();
 
     box.querySelector('[data-action="save"]').addEventListener('click', async ()=>{
       const label = box.querySelector('[data-field="label"]').value.trim();
       const icon = box.querySelector('[data-field="icon"]').value.trim() || '🎁';
-      const chosen = Array.from(box.querySelectorAll('.plan-game-chip.on')).map(c=>c.dataset.cat);
-      if (!label){
-        setPlannerStatus('Bitte einen Gewinn eintragen.', true);
-        return;
-      }
+      const cap = parseInt(box.querySelector('[data-field="capacity"]').value, 10);
+      const f = parseFloat(box.querySelector('[data-field="fee"]').value);
+      const pv = parseFloat(box.querySelector('[data-field="prizeValue"]').value);
+      const chosen = selectedCats();
+
+      if (!label){ setPlannerStatus('Bitte einen Gewinn eintragen.', true); return; }
+      if (!cap || cap < 2){ setPlannerStatus('Bitte eine gültige Platzzahl eintragen (mindestens 2).', true); return; }
+      if (isNaN(f) || f < 0){ setPlannerStatus('Bitte eine gültige Teilnahmegebühr eintragen.', true); return; }
+
       setPlannerStatus('Wird gespeichert…');
       try{
-        await saveMegaPlanDay(key, { label, icon, games: chosen });
+        await saveMegaPlanDay(key, {
+          label, icon, games: chosen, capacity: cap, fee: f,
+          prizeValue: isNaN(pv) ? null : pv
+        });
         applyPlanToLiveTable();
         renderMegaPlanner();
-        setPlannerStatus('Gespeichert: ' + dateLabel + ' → ' + icon + ' ' + label);
+        setPlannerStatus('Gespeichert: ' + dateLabel + ' → ' + icon + ' ' + label +
+                         ' (' + cap.toLocaleString('de-DE') + ' Plätze)');
       }catch(e){
         setPlannerStatus('Speichern fehlgeschlagen: ' + (e.message || e), true);
       }
@@ -2085,50 +2232,120 @@ function applyPlanToLiveTable(){
   if (!t) return;
   const planned = getMegaGamesForDate(t.opensAt);
   if (planned) t.sequence = planned;
+  t.capacity = getMegaCapacityForDate(t.opensAt);
   if (document.getElementById('screen-lobby').classList.contains('active')) renderLobby();
+}
+
+/* ---------- ADMIN: REITER ---------- */
+let activeAdminTab = 'overview';
+
+function setAdminTab(tab){
+  activeAdminTab = tab;
+  document.querySelectorAll('.admin-tab').forEach(b=>{
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.querySelectorAll('.admin-panel').forEach(p=>{
+    p.classList.toggle('active', p.id === 'adminPanel-' + tab);
+  });
+  // Inhalte erst laden, wenn der jeweilige Reiter wirklich geöffnet wird.
+  if (tab === 'mega' && !megaPlannerLoaded) loadPlannerTab();
+  if (tab === 'purchases' && !purchasesLoaded) loadPurchasesTab();
+}
+
+document.getElementById('adminTabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.admin-tab');
+  if (btn) setAdminTab(btn.dataset.tab);
+});
+
+/* ---------- ADMIN: KAUFPROTOKOLL MIT SEITEN ---------- */
+const PURCHASES_PER_PAGE = 25;
+let purchaseEntries = [];
+let purchasePage = 0;
+let purchasesLoaded = false;
+let megaPlannerLoaded = false;
+
+function renderPurchasePage(){
+  const pBody = document.getElementById('adminPurchaseBody');
+  const pager = document.getElementById('purchasePager');
+  if (!pBody || !pager) return;
+
+  const totalPages = Math.max(1, Math.ceil(purchaseEntries.length / PURCHASES_PER_PAGE));
+  purchasePage = Math.min(Math.max(0, purchasePage), totalPages - 1);
+
+  pBody.innerHTML = '';
+  if (purchaseEntries.length === 0){
+    pBody.innerHTML = '<tr><td colspan="4" class="hint">Noch keine Käufe.</td></tr>';
+    pager.innerHTML = '';
+    return;
+  }
+
+  const from = purchasePage * PURCHASES_PER_PAGE;
+  purchaseEntries.slice(from, from + PURCHASES_PER_PAGE).forEach(e=>{
+    const tr = document.createElement('tr');
+    const time = new Date(e.ts).toLocaleString('de-DE');
+    const userCell = e.isDemo
+      ? `${e.user} <span class="hint" style="font-size:10px;">(simuliert)</span>`
+      : e.user;
+    tr.innerHTML = `<td class="mono">${time}</td><td>${userCell}</td><td>${e.item}</td><td>${e.paidWith}</td>`;
+    pBody.appendChild(tr);
+  });
+
+  pager.innerHTML = `
+    <button data-page="first" ${purchasePage===0?'disabled':''}>« Erste</button>
+    <button data-page="prev" ${purchasePage===0?'disabled':''}>‹ Zurück</button>
+    <span class="pager-info">Seite ${purchasePage+1} von ${totalPages} · ${purchaseEntries.length} Einträge</span>
+    <button data-page="next" ${purchasePage>=totalPages-1?'disabled':''}>Weiter ›</button>
+    <button data-page="last" ${purchasePage>=totalPages-1?'disabled':''}>Letzte »</button>
+  `;
+  pager.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const a = b.dataset.page;
+      if (a === 'first') purchasePage = 0;
+      else if (a === 'prev') purchasePage--;
+      else if (a === 'next') purchasePage++;
+      else if (a === 'last') purchasePage = totalPages - 1;
+      renderPurchasePage();
+    });
+  });
+}
+
+async function loadPurchasesTab(){
+  const pBody = document.getElementById('adminPurchaseBody');
+  pBody.innerHTML = '<tr><td colspan="4" class="hint">Lade Käufe…</td></tr>';
+  try{
+    if (demoPurchases.length === 0) seedDemoPurchases();
+    purchaseEntries = await loadAllPurchaseEntries();
+    purchaseEntries.sort((a,b)=> b.ts - a.ts);
+    purchasesLoaded = true;
+    renderPurchasePage();
+  }catch(e){
+    pBody.innerHTML = '<tr><td colspan="4" class="hint">Kaufprotokoll momentan nicht verfügbar.</td></tr>';
+  }
+}
+
+async function loadPlannerTab(){
+  document.getElementById('megaPlannerList').innerHTML = '<p class="hint">Plan wird geladen…</p>';
+  await loadMegaPlan();
+  megaPlannerLoaded = true;
+  renderMegaPlanner();
 }
 
 async function renderAdmin(){
   renderAdminTopStats();
-
-  document.getElementById('megaPlannerList').innerHTML = '<p class="hint">Plan wird geladen…</p>';
-  await loadMegaPlan();
-  renderMegaPlanner();
+  setAdminTab(activeAdminTab);
 
   const tBody = document.getElementById('adminTablesBody');
   tBody.innerHTML = '';
   tables.forEach(t=>{
     const tr = document.createElement('tr');
     const programText = t.sequence.map(c=>CAT_LABEL[c]).join(', ');
-    const status = t.isMega && Date.now() < t.opensAt ? 'Geschlossen (Countdown)' : t.filled + '/' + t.capacity;
+    let status;
+    if (t.isMega && Date.now() < t.opensAt) status = 'Geschlossen (Countdown)';
+    else if (t.isMega) status = t.filled + '/' + t.capacity + ' · Anmeldung offen';
+    else status = t.filled + '/' + t.capacity;
     tr.innerHTML = `<td>${t.name}</td><td class="mono">${status}</td><td>${programText}</td>`;
     tBody.appendChild(tr);
   });
-
-  // Kaufprotokoll: echte Einträge aus der Datenbank plus lokal simulierte Beispieldaten.
-  const pBody = document.getElementById('adminPurchaseBody');
-  pBody.innerHTML = '<tr><td colspan="4" class="hint">Lade Käufe…</td></tr>';
-  try{
-    if (demoPurchases.length === 0) seedDemoPurchases();
-    const entries = await loadAllPurchaseEntries();
-    entries.sort((a,b)=> b.ts - a.ts);
-    pBody.innerHTML = '';
-    if (entries.length === 0){
-      pBody.innerHTML = '<tr><td colspan="4" class="hint">Noch keine Käufe.</td></tr>';
-    } else {
-      entries.slice(0, 40).forEach(e=>{
-        const tr = document.createElement('tr');
-        const time = new Date(e.ts).toLocaleString('de-DE');
-        const userCell = e.isDemo
-          ? `${e.user} <span class="hint" style="font-size:10px;">(simuliert)</span>`
-          : e.user;
-        tr.innerHTML = `<td class="mono">${time}</td><td>${userCell}</td><td>${e.item}</td><td>${e.paidWith}</td>`;
-        pBody.appendChild(tr);
-      });
-    }
-  }catch(e){
-    pBody.innerHTML = '<tr><td colspan="4" class="hint">Kaufprotokoll momentan nicht verfügbar.</td></tr>';
-  }
 
   startAdminLivePolling();
 }
@@ -2172,7 +2389,7 @@ function makeTables(){
     id: 'mega',
     name: 'Mega-Rushtable',
     sequence: getMegaGamesForDate(megaOpensAt) || pickSequence(),
-    capacity: MEGA_CAPACITY,
+    capacity: getMegaCapacityForDate(megaOpensAt),
     filled: 0,
     finishing:false,
     isMega:true,
@@ -2363,12 +2580,17 @@ function startSimulation(){
       // ob die Runde stattfindet oder abgesagt wird.
       if (t.isMega){
         if (Date.now() < t.opensAt) return;          // Countdown läuft noch
-        if (Date.now() < megaClosesAt(t)) return;    // Anmeldung noch offen
-        t.finishing = true;
+        // Sobald der letzte Platz belegt ist, startet die Runde sofort —
+        // unabhängig davon, wie viel Zeit im Anmeldefenster noch übrig wäre.
         if (t.filled >= t.capacity){
+          t.finishing = true;
           if (t.id === joinedTableId) beginRound(t);
           else resetMegaTable(t);
-        } else {
+          return;
+        }
+        // Anmeldefrist abgelaufen, aber nicht voll → Runde entfällt.
+        if (Date.now() >= megaClosesAt(t)){
+          t.finishing = true;
           cancelMegaRound(t);
         }
         return;
@@ -2405,6 +2627,7 @@ function resetMegaTable(t){
   t.filled = 0;
   t.opensAt = getNextMegaOpenTime(new Date(Date.now()+1000));
   t.sequence = getMegaGamesForDate(t.opensAt) || pickSequence();
+  t.capacity = getMegaCapacityForDate(t.opensAt);
   t.finishing = false;
 }
 
@@ -2437,7 +2660,7 @@ const TABLE_ENTRY_FEE = 0;   // Normale Rushtables sind aktuell kostenlos
 const VIP_ENTRY_FEE = 5;     // 5,00 € Teilnahme gilt vorerst nur für VIP-Räume
 const MEGA_ENTRY_FEE = 10;   // Mega-Rushtable (nur über den VIP-Bereich erreichbar)
 function entryFeeFor(t){
-  if (t.isMega) return MEGA_ENTRY_FEE;
+  if (t.isMega) return getMegaFeeForDate(t.opensAt);
   if (t.isVip) return VIP_ENTRY_FEE;
   return TABLE_ENTRY_FEE;
 }
@@ -2614,24 +2837,46 @@ function timerBarHtml(){
    playRound(roundIndex, totalRounds, done) must render its round and call
    done(correct, timeMs) exactly once. Final metric rewards correctness first,
    then total time as a tiebreaker (lower is still better everywhere). */
+/* ---------- MEHRRUNDEN-LOGIK ----------
+   Jedes Minispiel besteht aus mehreren Teilrunden mit jeweils neuen Inhalten
+   (andere Wörter, Farben, Aufgaben). Die Kennzahl kombiniert Fehler und Zeit:
+   Jede falsche Teilrunde zählt schwerer als jede denkbare Zeitdifferenz. */
+const ROUNDS_PER_GAME = 5;   // Teilrunden je Minispiel
+const GAMES_PER_ROUND = 3;   // Minispiele je Rushtable-Runde
+const FAIL_METRIC = 999999;
+const WRONG_PENALTY = 100000; // muss größer sein als jede realistische Gesamtzeit
+
 function runMultiRound(cat, totalRounds, playRound){
   let roundIndex = 0;
   let correctCount = 0;
   let totalTime = 0;
   function next(){
     if (roundIndex >= totalRounds){
-      const metric = Math.round((totalRounds - correctCount) * 10000 + totalTime);
-      completeCurrentGame(cat, metric);
+      const metric = Math.round((totalRounds - correctCount) * WRONG_PENALTY + totalTime);
+      completeCurrentGame(cat, metric, {correct: correctCount, total: totalRounds});
       return;
     }
     playRound(roundIndex, totalRounds, (correct, timeMs)=>{
       if (correct) correctCount++;
-      totalTime += timeMs;
+      totalTime += Math.min(timeMs, 30000); // Ausreißer begrenzen
       roundIndex++;
-      setTimeout(next, 500);
+      setTimeout(next, 450);
     });
   }
   next();
+}
+
+// Zieht ohne Wiederholung aus einem Pool — verhindert, dass in einem Spiel
+// dieselbe Frage/dasselbe Wort mehrfach vorkommt.
+function drawUnique(pool, count){
+  const copy = [...pool];
+  const out = [];
+  for (let i=0; i<count && copy.length; i++){
+    out.push(copy.splice(Math.floor(Math.random()*copy.length), 1)[0]);
+  }
+  // Falls der Pool kleiner als count ist, wieder auffüllen (sollte nicht vorkommen).
+  while (out.length < count) out.push(pool[Math.floor(Math.random()*pool.length)]);
+  return out;
 }
 
 function dispatchGame(cat){
@@ -2657,37 +2902,47 @@ function dispatchGame(cat){
 const gameBox = document.getElementById('gameBox');
 
 function renderReaction(){
-  const delay = 1500 + Math.random()*4500; // always a different random moment, 1.5s–6s
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Reaktionstest</h2>
-    <p class="hint">Klicke, sobald das Feld grün wird.</p>
-    ${timerBarHtml()}
-    <div class="reaction-pad" id="pad">Warte...</div>
-  `;
-  startGameTimer(delay + 4000, ()=>completeCurrentGame('reaction', 999999));
-  const pad = document.getElementById('pad');
-  let goTime = null; let phase = 'waiting';
-  const timeout = setTimeout(()=>{
-    phase='go'; pad.classList.add('go'); pad.textContent='JETZT!'; goTime = performance.now();
-  }, delay);
-  pad.addEventListener('click', ()=>{
-    if (phase==='waiting'){
-      clearTimeout(timeout);
-      pad.classList.add('early'); pad.textContent='Zu früh! Nochmal...'; phase='early';
-      setTimeout(renderReaction, 900);
-      return;
-    }
-    if (phase==='go'){
-      const reactionMs = Math.round(performance.now() - goTime);
-      completeCurrentGame('reaction', reactionMs);
-    }
+  runMultiRound('reaction', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const delay = 1200 + Math.random()*3300; // jede Runde ein anderer Zeitpunkt
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Reaktionstest (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Klicke, sobald das Feld grün wird. Zu früh geklickt zählt als Fehler.</p>
+      ${timerBarHtml()}
+      <div class="reaction-pad" id="pad">Warte...</div>
+    `;
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearTimeout(timeout); clearGameTimer(); done(correct, ms); };
+    startGameTimer(delay + 3500, ()=>{
+      const pad = document.getElementById('pad');
+      if (pad){ pad.classList.add('early'); pad.textContent = 'Zu langsam!'; }
+      finish(false, 3500);
+    });
+    const pad = document.getElementById('pad');
+    let goTime = null, phase = 'waiting';
+    const timeout = setTimeout(()=>{
+      phase = 'go';
+      if (pad){ pad.classList.add('go'); pad.textContent = 'JETZT!'; }
+      goTime = performance.now();
+    }, delay);
+    pad.addEventListener('click', ()=>{
+      if (answered) return;
+      if (phase === 'waiting'){
+        pad.classList.add('early'); pad.textContent = 'Zu früh!';
+        finish(false, 3000); // Fehlstart wird als Fehlrunde gewertet
+        return;
+      }
+      if (phase === 'go'){
+        finish(true, Math.round(performance.now() - goTime));
+      }
+    });
   });
 }
 
-const WORD_LIST = ['ROT','GRÜN','GELB','LILA','ORANGE','ROSA','BRAUN','GRAU','SCHWARZ','WEISS','TÜRKIS','BEIGE','BLAU','PINK','SILBER','GOLD','MINT','KORALL'];
+const WORD_LIST = ['ROT','GRÜN','GELB','LILA','ORANGE','ROSA','BRAUN','GRAU','SCHWARZ','WEISS','TÜRKIS','BEIGE','BLAU','PINK','SILBER','GOLD','MINT','KORALL','AZUR','OLIVE','BORDEAUX','SENF','LACHS','FLIEDER','ZIMT','SMARAGD','RUBIN','SAPHIR','BERNSTEIN','KUPFER','BRONZE','PERLMUTT'];
 function renderWordfind(){
-  runMultiRound('wordfind', 3, (roundIndex, totalRounds, done)=>{
-    const target = WORD_LIST[Math.floor(Math.random()*WORD_LIST.length)];
+  const targets = drawUnique(WORD_LIST, ROUNDS_PER_GAME);
+  runMultiRound('wordfind', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const target = targets[roundIndex];
     const distractorPool = WORD_LIST.filter(w=>w!==target);
     gameBox.innerHTML = `
       <h2>${roundState.table.name} · Wortsuche (${roundIndex+1}/${totalRounds})</h2>
@@ -2695,7 +2950,9 @@ function renderWordfind(){
       ${timerBarHtml()}
       <div class="word-grid" id="grid" style="grid-template-columns:repeat(6,1fr);"></div>
     `;
-    startGameTimer(12000, ()=>done(false, 12000));
+    let finished = false;
+    const finish = (correct, ms)=>{ if (finished) return; finished = true; done(correct, ms); };
+    startGameTimer(12000, ()=>finish(false, 12000));
     const grid = document.getElementById('grid');
     const total = 42;
     const targetIndex = Math.floor(Math.random()*total);
@@ -2704,11 +2961,13 @@ function renderWordfind(){
     for (let i=0;i<total;i++){
       const cell = document.createElement('div');
       cell.className = 'word-cell';
-      cell.textContent = (i===targetIndex) ? target : distractorPool[Math.floor(Math.random()*distractorPool.length)];
+      // Ablenker werden ohne Wiederholung gezogen, damit das Zielwort wirklich nur
+      // ein einziges Mal im Raster steht (vorher konnte es doppelt erscheinen).
+      cell.textContent = (i===targetIndex) ? target : distractorPool[i % distractorPool.length];
       cell.addEventListener('click', ()=>{
+        if (finished) return;
         if (i===targetIndex){
-          const totalMs = Math.round(performance.now() - start + penalty);
-          done(true, totalMs);
+          finish(true, Math.round(performance.now() - start + penalty));
         } else {
           penalty += 300;
           cell.style.opacity = '0.4';
@@ -2740,32 +2999,69 @@ const QUIZ_POOL = [
   {q:'Wie viele Spieler stehen bei Fußball pro Team auf dem Feld?', options:['9','10','11','12'], correct:2},
   {q:'Was ist die Hauptstadt von Australien?', options:['Sydney','Melbourne','Canberra','Perth'], correct:2},
   {q:'Wie viele Knochen hat ein erwachsener Mensch etwa?', options:['186','206','226','246'], correct:1},
+  {q:'Welches Land hat die meisten Einwohner?', options:['China','Indien','USA','Indonesien'], correct:1},
+  {q:'Wie viele Sekunden hat eine Minute?', options:['30','60','90','100'], correct:1},
+  {q:'Welcher Fluss fließt durch Paris?', options:['Rhein','Seine','Loire','Donau'], correct:1},
+  {q:'Was ist der höchste Berg der Welt?', options:['K2','Mount Everest','Mont Blanc','Kilimandscharo'], correct:1},
+  {q:'Wie viele Buchstaben hat das deutsche Alphabet?', options:['24','26','28','30'], correct:1},
+  {q:'Welche Farbe entsteht aus Blau und Gelb?', options:['Orange','Grün','Lila','Braun'], correct:1},
+  {q:'In welchem Erdteil liegt Ägypten?', options:['Asien','Afrika','Europa','Ozeanien'], correct:1},
+  {q:'Wie viele Herzen hat ein Oktopus?', options:['1','2','3','4'], correct:2},
+  {q:'Was misst ein Thermometer?', options:['Druck','Temperatur','Gewicht','Zeit'], correct:1},
+  {q:'Welches Tier ist das schnellste an Land?', options:['Löwe','Gepard','Pferd','Antilope'], correct:1},
+  {q:'Wie viele Ecken hat ein Würfel?', options:['6','8','12','4'], correct:1},
+  {q:'Welches Metall ist bei Zimmertemperatur flüssig?', options:['Blei','Quecksilber','Zinn','Zink'], correct:1},
+  {q:'Was ist die Hauptstadt von Japan?', options:['Osaka','Kyoto','Tokio','Nagoya'], correct:2},
+  {q:'Wie viele Streifen hat die Flagge der USA?', options:['11','13','15','50'], correct:1},
+  {q:'Welches Organ pumpt das Blut?', options:['Lunge','Herz','Leber','Niere'], correct:1},
+  {q:'Wie viele Grad hat ein rechter Winkel?', options:['45','60','90','180'], correct:2},
+  {q:'Welcher Monat hat 28 oder 29 Tage?', options:['Januar','Februar','März','April'], correct:1},
+  {q:'Was ist H2O?', options:['Salz','Wasser','Zucker','Sauerstoff'], correct:1},
+  {q:'Wie viele Planeten hat unser Sonnensystem?', options:['7','8','9','10'], correct:1},
+  {q:'Welches Land ist flächenmäßig das größte?', options:['China','Kanada','Russland','USA'], correct:2},
+  {q:'Was ist die Hauptstadt von Spanien?', options:['Barcelona','Madrid','Sevilla','Valencia'], correct:1},
+  {q:'Wie viele Zähne hat ein erwachsener Mensch normalerweise?', options:['28','30','32','34'], correct:2},
+  {q:'Welches Instrument hat 88 Tasten?', options:['Orgel','Klavier','Akkordeon','Cembalo'], correct:1},
+  {q:'In welchem Jahr fiel die Berliner Mauer?', options:['1987','1989','1991','1993'], correct:1},
+  {q:'Welches Gas atmen Menschen zum Leben ein?', options:['Stickstoff','Sauerstoff','Kohlendioxid','Helium'], correct:1},
+  {q:'Wie viele Seiten hat ein Achteck?', options:['6','7','8','9'], correct:2},
+  {q:'Welcher Kontinent ist der kleinste?', options:['Europa','Australien','Antarktis','Südamerika'], correct:1},
+  {q:'Was ist die Hauptstadt von Italien?', options:['Mailand','Neapel','Rom','Turin'], correct:2},
+  {q:'Wie viele Millimeter hat ein Meter?', options:['100','1000','10000','10'], correct:1},
 ];
 function renderQuiz(){
-  runMultiRound('quiz', 3, (roundIndex, totalRounds, done)=>{
-    const item = QUIZ_POOL[Math.floor(Math.random()*QUIZ_POOL.length)];
+  const items = drawUnique(QUIZ_POOL, ROUNDS_PER_GAME);
+  runMultiRound('quiz', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const item = items[roundIndex];
+    // Antwortreihenfolge mischen, damit die richtige Lösung nicht immer an
+    // derselben Stelle steht und nicht auswendig gelernt werden kann.
+    const shuffled = item.options
+      .map((text, i)=>({text, isCorrect: i === item.correct}))
+      .sort(()=>Math.random()-0.5);
     gameBox.innerHTML = `
       <h2>${roundState.table.name} · Quiz (${roundIndex+1}/${totalRounds})</h2>
       <p class="hint">${item.q}</p>
       ${timerBarHtml()}
       <div class="quiz-options" id="opts"></div>
     `;
-    startGameTimer(9000, ()=>done(false, 9000));
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; done(correct, ms); };
+    startGameTimer(9000, ()=>finish(false, 9000));
     const opts = document.getElementById('opts');
     const start = performance.now();
-    item.options.forEach((opt,i)=>{
+    shuffled.forEach(opt=>{
       const b = document.createElement('div');
       b.className = 'quiz-opt';
-      b.textContent = opt;
+      b.textContent = opt.text;
       b.addEventListener('click', ()=>{
+        if (answered) return;
         const timeMs = Math.round(performance.now()-start);
-        document.querySelectorAll('.quiz-opt').forEach((el,j)=>{
-          if (j===item.correct) el.classList.add('correct');
-          else if (j===i) el.classList.add('wrong');
+        clearGameTimer();
+        opts.querySelectorAll('.quiz-opt').forEach((el, j)=>{
+          if (shuffled[j].isCorrect) el.classList.add('correct');
+          else if (el===b) el.classList.add('wrong');
         });
-        setTimeout(()=>{
-          done(i===item.correct, timeMs);
-        }, 700);
+        setTimeout(()=>finish(opt.isCorrect, timeMs), 700);
       });
       opts.appendChild(b);
     });
@@ -2773,371 +3069,461 @@ function renderQuiz(){
 }
 
 function renderMemory(){
-  const seqLen = 5;
-  const sequence = Array.from({length:seqLen}, ()=>Math.floor(Math.random()*10));
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Zahlenfolge merken</h2>
-    <p class="hint">Merke dir die Zahlenfolge.</p>
-    ${timerBarHtml()}
-    <div class="seq-display" id="seqDisplay">•</div>
-  `;
-  startGameTimer(16000, ()=>completeCurrentGame('memory', 999999));
-  const disp = document.getElementById('seqDisplay');
-  let i = 0;
-  const showNext = ()=>{
-    if (i < sequence.length){
-      disp.textContent = sequence[i];
-      i++;
-      setTimeout(()=>{ disp.textContent='—'; setTimeout(showNext, 300); }, 700);
-    } else {
-      showInput();
-    }
-  };
-  setTimeout(showNext, 500);
-
-  function showInput(){
+  runMultiRound('memory', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    // Folge wird pro Runde länger: 4, 5, 6, 7, 8 Ziffern
+    const seqLen = 4 + roundIndex;
+    const sequence = Array.from({length:seqLen}, ()=>Math.floor(Math.random()*10));
     gameBox.innerHTML = `
-      <h2>${roundState.table.name} · Zahlenfolge merken</h2>
-      <p class="hint">Gib die Zahlenfolge in der richtigen Reihenfolge ein.</p>
+      <h2>${roundState.table.name} · Zahlenfolge merken (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Merke dir die Zahlenfolge (${seqLen} Ziffern).</p>
       ${timerBarHtml()}
-      <div class="answer-display" id="answerDisplay"></div>
-      <div class="keypad" id="keypad"></div>
-      <button class="btn full" id="confirmSeqBtn">Bestätigen</button>
+      <div class="seq-display" id="seqDisplay">•</div>
     `;
-    const answer = [];
-    const kp = document.getElementById('keypad');
-    for (let d=0; d<10; d++){
-      const btn = document.createElement('button');
-      btn.textContent = d;
-      btn.addEventListener('click', ()=>{
-        if (answer.length < sequence.length){
-          answer.push(d);
-          document.getElementById('answerDisplay').textContent = answer.join(' ');
-        }
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(4000 + seqLen*1000 + 14000, ()=>finish(false, 18000));
+
+    const disp = document.getElementById('seqDisplay');
+    let i = 0;
+    const showNext = ()=>{
+      if (answered) return;
+      const el = document.getElementById('seqDisplay');
+      if (!el) return;
+      if (i < sequence.length){
+        el.textContent = sequence[i];
+        i++;
+        setTimeout(()=>{
+          const e2 = document.getElementById('seqDisplay');
+          if (e2) e2.textContent = '—';
+          setTimeout(showNext, 260);
+        }, 680);
+      } else {
+        showInput();
+      }
+    };
+    setTimeout(showNext, 500);
+
+    function showInput(){
+      if (answered) return;
+      gameBox.innerHTML = `
+        <h2>${roundState.table.name} · Zahlenfolge merken (${roundIndex+1}/${totalRounds})</h2>
+        <p class="hint">Gib die Zahlenfolge in der richtigen Reihenfolge ein.</p>
+        ${timerBarHtml()}
+        <div class="answer-display" id="answerDisplay"></div>
+        <div class="keypad" id="keypad"></div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn secondary" id="undoSeqBtn" style="flex:1;">Löschen</button>
+          <button class="btn" id="confirmSeqBtn" style="flex:2;">Bestätigen</button>
+        </div>
+      `;
+      const answer = [];
+      const updateDisplay = ()=>{
+        const el = document.getElementById('answerDisplay');
+        if (el) el.textContent = answer.join(' ') + (answer.length < seqLen ? ' _'.repeat(seqLen-answer.length) : '');
+      };
+      const kp = document.getElementById('keypad');
+      for (let d=0; d<10; d++){
+        const btn = document.createElement('button');
+        btn.textContent = d;
+        btn.addEventListener('click', ()=>{
+          if (answer.length < sequence.length){ answer.push(d); updateDisplay(); }
+        });
+        kp.appendChild(btn);
+      }
+      updateDisplay();
+      document.getElementById('undoSeqBtn').addEventListener('click', ()=>{
+        answer.pop(); updateDisplay();
       });
-      kp.appendChild(btn);
+      const start = performance.now();
+      document.getElementById('confirmSeqBtn').addEventListener('click', ()=>{
+        if (answered) return;
+        const correct = answer.length===sequence.length && answer.every((v,idx)=>v===sequence[idx]);
+        finish(correct, Math.round(performance.now()-start));
+      });
     }
-    const start = performance.now();
-    document.getElementById('confirmSeqBtn').addEventListener('click', ()=>{
-      const timeMs = Math.round(performance.now()-start);
-      const correct = answer.length===sequence.length && answer.every((v,idx)=>v===sequence[idx]);
-      completeCurrentGame('memory', correct ? timeMs : 999999);
-    });
-  }
+  });
 }
 
 const TYPING_SENTENCES = [
   'Der schnelle Fuchs springt über den faulen Hund.',
   'Heute ist ein guter Tag, um etwas Neues zu lernen.',
   'Programmieren macht Spaß, wenn man geduldig bleibt.',
-  'Die Sonne scheint über den grünen Wiesen im Sommer.'
+  'Die Sonne scheint über den grünen Wiesen im Sommer.',
+  'Am Morgen duftet der frische Kaffee in der Küche.',
+  'Ein kleiner Vogel sitzt still auf dem alten Zaun.',
+  'Der Zug fährt pünktlich durch das lange Tal.',
+  'Sie liest jeden Abend ein Kapitel in ihrem Buch.',
+  'Das Meer war heute ruhig und angenehm warm.',
+  'Wir treffen uns morgen früh am großen Brunnen.',
+  'Der Regen trommelt leise gegen das offene Fenster.',
+  'Auf dem Markt gibt es frisches Obst und Gemüse.',
+  'Nach dem Sturm lag ein Regenbogen über der Stadt.',
+  'Die Katze schläft zufrieden auf dem warmen Sofa.',
+  'Ein guter Plan ist der halbe Weg zum Ziel.',
+  'Im Herbst färben sich die Blätter rot und golden.',
+  'Der Bäcker öffnet sein Geschäft jeden Tag um sechs.',
+  'Musik kann Erinnerungen an alte Zeiten wecken.',
+  'Die Brücke verbindet beide Ufer des breiten Flusses.',
+  'Geduld und Übung führen langsam zum Erfolg.'
 ];
 function renderTyping(){
-  const sentence = TYPING_SENTENCES[Math.floor(Math.random()*TYPING_SENTENCES.length)];
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Tippgeschwindigkeit</h2>
-    <p class="hint">Tippe den folgenden Satz so schnell und genau wie möglich ab.</p>
-    ${timerBarHtml()}
-    <div class="type-sentence">${sentence}</div>
-    <textarea class="type-input" id="typeInput" rows="3" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
-    <button class="btn full" id="submitTypeBtn">Fertig</button>
-  `;
-  startGameTimer(25000, ()=>completeCurrentGame('typing', 999999));
-  const input = document.getElementById('typeInput');
-  const start = performance.now();
-  input.focus();
-  document.getElementById('submitTypeBtn').addEventListener('click', ()=>{
-    const timeMs = Math.round(performance.now()-start);
-    const correct = input.value.trim() === sentence;
-    completeCurrentGame('typing', correct ? timeMs : 999999);
+  const sentences = drawUnique(TYPING_SENTENCES, ROUNDS_PER_GAME);
+  runMultiRound('typing', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const sentence = sentences[roundIndex];
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Tippgeschwindigkeit (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Tippe den folgenden Satz so schnell und genau wie möglich ab.</p>
+      ${timerBarHtml()}
+      <div class="type-sentence">${sentence}</div>
+      <textarea class="type-input" id="typeInput" rows="3" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+      <button class="btn full" id="submitTypeBtn">Fertig</button>
+    `;
+    let answered = false;
+    const start = performance.now();
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(22000, ()=>finish(false, 22000));
+    const input = document.getElementById('typeInput');
+    input.focus();
+    document.getElementById('submitTypeBtn').addEventListener('click', ()=>{
+      // Mehrfache Leerzeichen werden verziehen, Rechtschreibung nicht.
+      const typed = input.value.trim().replace(/\s+/g, ' ');
+      finish(typed === sentence, Math.round(performance.now()-start));
+    });
   });
 }
 
 function renderSchulte(){
-  const descending = Math.random() < 0.5;
-  const ordered = Array.from({length:20}, (_,i)=>i+1);
-  const targetOrder = descending ? [...ordered].reverse() : ordered;
-  const numbers = [...ordered].sort(()=>Math.random()-0.5);
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Zahlen-Reihenfolge</h2>
-    <p class="hint">Klicke die Zahlen von ${descending?'20 bis 1 (absteigend)':'1 bis 20 (aufsteigend)'} an. Falsche Klicks kosten 0,25s.</p>
-    ${timerBarHtml()}
-    <div class="schulte-grid" id="schulteGrid"></div>
-  `;
-  startGameTimer(20000, ()=>completeCurrentGame('sequence', 999999));
-  const grid = document.getElementById('schulteGrid');
-  let nextIdx = 0;
-  let penalty = 0;
-  const start = performance.now();
-  numbers.forEach(n=>{
-    const cell = document.createElement('div');
-    cell.className = 'schulte-cell';
-    cell.textContent = n;
-    cell.addEventListener('click', ()=>{
-      if (cell.classList.contains('done')) return;
-      if (n === targetOrder[nextIdx]){
-        cell.classList.add('done');
-        nextIdx++;
-        if (nextIdx >= targetOrder.length){
-          const timeMs = Math.round(performance.now()-start+penalty);
-          completeCurrentGame('sequence', timeMs);
+  runMultiRound('sequence', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const descending = Math.random() < 0.5;
+    const count = 12; // kürzer als vorher, dafür fünf Durchgänge
+    const ordered = Array.from({length:count}, (_,i)=>i+1);
+    const targetOrder = descending ? [...ordered].reverse() : ordered;
+    const numbers = [...ordered].sort(()=>Math.random()-0.5);
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Zahlen-Reihenfolge (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Klicke die Zahlen ${descending?'von '+count+' bis 1 (absteigend)':'von 1 bis '+count+' (aufsteigend)'}. Falsche Klicks kosten 0,25s.</p>
+      ${timerBarHtml()}
+      <div class="schulte-grid" id="schulteGrid" style="grid-template-columns:repeat(4,1fr);max-width:300px;"></div>
+    `;
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(15000, ()=>finish(false, 15000));
+    const grid = document.getElementById('schulteGrid');
+    let nextIdx = 0, penalty = 0;
+    const start = performance.now();
+    numbers.forEach(n=>{
+      const cell = document.createElement('div');
+      cell.className = 'schulte-cell';
+      cell.textContent = n;
+      cell.addEventListener('click', ()=>{
+        if (answered || cell.classList.contains('done')) return;
+        if (n === targetOrder[nextIdx]){
+          cell.classList.add('done');
+          nextIdx++;
+          if (nextIdx >= targetOrder.length){
+            finish(true, Math.round(performance.now()-start+penalty));
+          }
+        } else {
+          penalty += 250;
+          cell.style.outline = '2px solid var(--danger)';
+          setTimeout(()=>{ cell.style.outline = ''; }, 200);
         }
-      } else {
-        penalty += 250;
-        cell.style.outline = '2px solid var(--danger)';
-        setTimeout(()=>{ cell.style.outline = ''; }, 200);
-      }
+      });
+      grid.appendChild(cell);
     });
-    grid.appendChild(cell);
   });
 }
 
 function renderPattern(){
-  const gridSize = 16;
-  const patternSize = 7;
-  const highlighted = new Set();
-  while (highlighted.size < patternSize){ highlighted.add(Math.floor(Math.random()*gridSize)); }
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Muster merken</h2>
-    <p class="hint">Merke dir die markierten Felder.</p>
-    ${timerBarHtml()}
-    <div class="schulte-grid" id="patternGrid" style="grid-template-columns:repeat(4,1fr);max-width:280px;"></div>
-  `;
-  startGameTimer(18000, ()=>completeCurrentGame('pattern', 999999));
-  const grid = document.getElementById('patternGrid');
-  const cells = [];
-  for (let i=0;i<gridSize;i++){
-    const cell = document.createElement('div');
-    cell.className = 'schulte-cell';
-    cell.textContent = '';
-    cells.push(cell);
-    grid.appendChild(cell);
-  }
-  highlighted.forEach(idx=>{ cells[idx].style.background = 'var(--pink)'; });
-  setTimeout(()=>{
-    cells.forEach(c=>{ c.style.background = ''; });
-    const selected = new Set();
-    const start = performance.now();
-    cells.forEach((cell, idx)=>{
-      cell.addEventListener('click', ()=>{
-        if (cell.classList.contains('done')) return;
-        cell.classList.add('done');
-        cell.style.background = 'var(--surface-hover)';
-        selected.add(idx);
-        if (selected.size === patternSize){
-          const timeMs = Math.round(performance.now()-start);
-          const correct = [...highlighted].every(i=>selected.has(i));
-          completeCurrentGame('pattern', correct ? timeMs : 999999);
-        }
-      });
-    });
-  }, 2000);
-}
+  runMultiRound('pattern', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const gridSize = 16;
+    const patternSize = 4 + roundIndex; // 4 bis 8 Felder
+    const highlighted = new Set();
+    while (highlighted.size < patternSize){ highlighted.add(Math.floor(Math.random()*gridSize)); }
 
-function renderMath(){
-  const a = Math.floor(Math.random()*20)+1;
-  const b = Math.floor(Math.random()*20)+1;
-  const ops = ['+','-','×'];
-  const op = ops[Math.floor(Math.random()*ops.length)];
-  let correctVal;
-  if (op==='+') correctVal = a+b;
-  else if (op==='-') correctVal = a-b;
-  else correctVal = a*b;
-  const options = new Set([correctVal]);
-  while (options.size < 4){
-    const delta = Math.floor(Math.random()*10)-5;
-    options.add(correctVal + (delta===0 ? 1 : delta));
-  }
-  const optsArr = [...options].sort(()=>Math.random()-0.5);
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Kopfrechnen</h2>
-    <p class="hint">Löse die Aufgabe so schnell wie möglich.</p>
-    ${timerBarHtml()}
-    <h1 style="font-size:36px;margin:20px 0;">${a} ${op} ${b} = ?</h1>
-    <div class="quiz-options" id="mathOpts"></div>
-  `;
-  startGameTimer(9000, ()=>completeCurrentGame('math', 999999));
-  const opts = document.getElementById('mathOpts');
-  const start = performance.now();
-  optsArr.forEach(val=>{
-    const b2 = document.createElement('div');
-    b2.className = 'quiz-opt';
-    b2.textContent = val;
-    b2.addEventListener('click', ()=>{
-      const timeMs = Math.round(performance.now()-start);
-      document.querySelectorAll('#mathOpts .quiz-opt').forEach(el=>{
-        if (parseInt(el.textContent) === correctVal) el.classList.add('correct');
-        else if (el === b2) el.classList.add('wrong');
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Muster merken (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Merke dir die ${patternSize} markierten Felder.</p>
+      ${timerBarHtml()}
+      <div class="schulte-grid" id="patternGrid" style="grid-template-columns:repeat(4,1fr);max-width:280px;"></div>
+    `;
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(2200 + patternSize*400 + 13000, ()=>finish(false, 15000));
+
+    const grid = document.getElementById('patternGrid');
+    const cells = [];
+    for (let i=0;i<gridSize;i++){
+      const cell = document.createElement('div');
+      cell.className = 'schulte-cell';
+      cells.push(cell);
+      grid.appendChild(cell);
+    }
+    highlighted.forEach(idx=>{ cells[idx].style.background = 'var(--pink)'; });
+
+    setTimeout(()=>{
+      if (answered) return;
+      cells.forEach(c=>{ c.style.background = ''; });
+      const hintEl = gameBox.querySelector('.hint');
+      if (hintEl) hintEl.textContent = 'Klicke die ' + patternSize + ' Felder an, die markiert waren.';
+      const selected = new Set();
+      const start = performance.now();
+      cells.forEach((cell, idx)=>{
+        cell.addEventListener('click', ()=>{
+          if (answered || cell.classList.contains('done')) return;
+          cell.classList.add('done');
+          // Sofortiges Feedback: richtig grün, falsch rot.
+          const isRight = highlighted.has(idx);
+          cell.style.background = isRight ? 'var(--success)' : 'var(--danger)';
+          selected.add(idx);
+          if (selected.size === patternSize){
+            const correct = [...highlighted].every(i=>selected.has(i));
+            setTimeout(()=>finish(correct, Math.round(performance.now()-start)), 400);
+          }
+        });
       });
-      setTimeout(()=>{
-        completeCurrentGame('math', val === correctVal ? timeMs : 999999);
-      }, 600);
-    });
-    opts.appendChild(b2);
+    }, 1800 + patternSize*300);
   });
 }
 
-const ANAGRAM_WORDS = ['HAUS','GARTEN','FENSTER','COMPUTER','FREUND','MUSIK','SCHULE','WOLKE','APFEL','STRASSE','BLUME','KATZE','TISCH','SONNE','BERG','WASSER','BROT','ZUG','BUCH','STERN','WALD','FEUER','BRIEF','SPIEGEL'];
+function renderMath(){
+  runMultiRound('math', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    // Schwierigkeit steigt über die Runden hinweg an.
+    const range = 10 + roundIndex*6;
+    const a = Math.floor(Math.random()*range)+2;
+    const b = Math.floor(Math.random()*range)+2;
+    const ops = roundIndex < 2 ? ['+','-'] : ['+','-','×'];
+    const op = ops[Math.floor(Math.random()*ops.length)];
+    let correctVal;
+    if (op==='+') correctVal = a+b;
+    else if (op==='-') correctVal = a-b;
+    else correctVal = a*b;
+
+    const options = new Set([correctVal]);
+    let guard = 0;
+    while (options.size < 4 && guard++ < 100){
+      const delta = Math.floor(Math.random()*11)-5;
+      options.add(correctVal + (delta===0 ? 1 : delta));
+    }
+    const optsArr = [...options].sort(()=>Math.random()-0.5);
+
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Kopfrechnen (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Löse die Aufgabe so schnell wie möglich.</p>
+      ${timerBarHtml()}
+      <h1 style="font-size:36px;margin:20px 0;">${a} ${op} ${b} = ?</h1>
+      <div class="quiz-options" id="mathOpts"></div>
+    `;
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(9000, ()=>finish(false, 9000));
+    const opts = document.getElementById('mathOpts');
+    const start = performance.now();
+    optsArr.forEach(val=>{
+      const b2 = document.createElement('div');
+      b2.className = 'quiz-opt';
+      b2.textContent = val;
+      b2.addEventListener('click', ()=>{
+        if (answered) return;
+        const timeMs = Math.round(performance.now()-start);
+        opts.querySelectorAll('.quiz-opt').forEach(el=>{
+          if (parseInt(el.textContent, 10) === correctVal) el.classList.add('correct');
+          else if (el === b2) el.classList.add('wrong');
+        });
+        setTimeout(()=>finish(val === correctVal, timeMs), 600);
+      });
+      opts.appendChild(b2);
+    });
+  });
+}
+
+const ANAGRAM_WORDS = ['HAUS','GARTEN','FENSTER','COMPUTER','FREUND','MUSIK','SCHULE','WOLKE','APFEL','STRASSE','BLUME','KATZE','TISCH','SONNE','BERG','WASSER','BROT','BUCH','STERN','WALD','FEUER','BRIEF','SPIEGEL','LAMPE','SESSEL','KISSEN','TELLER','GABEL','MESSER','FLASCHE','TASCHE','SCHUHE','JACKE','MANTEL','HANDSCHUH','BRILLE','UHRZEIT','KALENDER','BLEISTIFT','PAPIER','SCHERE','KLEBER','FARBE','PINSEL','LEITER','HAMMER','SCHRAUBE','GARAGE','KELLER','BALKON','TREPPE','TUERKLINKE','VORHANG','TEPPICH','REGAL','SCHRANK'];
 function renderAnagram(){
-  const word = ANAGRAM_WORDS[Math.floor(Math.random()*ANAGRAM_WORDS.length)];
-  let scrambled;
-  do{ scrambled = word.split('').sort(()=>Math.random()-0.5).join(''); } while (scrambled === word);
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Anagramm</h2>
-    <p class="hint">Finde das Wort aus diesen Buchstaben:</p>
-    ${timerBarHtml()}
-    <div class="seq-display" style="font-size:32px;">${scrambled}</div>
-    <input type="text" id="anagramInput" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--surface-2);background:var(--surface-2);color:var(--text);font-family:'JetBrains Mono';font-size:16px;text-align:center;text-transform:uppercase;" autocomplete="off">
-    <button class="btn full" id="anagramBtn" style="margin-top:14px;">Bestätigen</button>
-  `;
-  startGameTimer(16000, ()=>completeCurrentGame('anagram', 999999));
-  const start = performance.now();
-  document.getElementById('anagramInput').focus();
-  document.getElementById('anagramBtn').addEventListener('click', ()=>{
-    const timeMs = Math.round(performance.now()-start);
-    const val = document.getElementById('anagramInput').value.trim().toUpperCase();
-    completeCurrentGame('anagram', val === word ? timeMs : 999999);
+  const words = drawUnique(ANAGRAM_WORDS, ROUNDS_PER_GAME);
+  runMultiRound('anagram', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const word = words[roundIndex];
+    let scrambled;
+    do{ scrambled = word.split('').sort(()=>Math.random()-0.5).join(''); } while (scrambled === word);
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Anagramm (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Finde das Wort aus diesen Buchstaben:</p>
+      ${timerBarHtml()}
+      <div class="seq-display" style="font-size:32px;letter-spacing:3px;">${scrambled}</div>
+      <input type="text" id="anagramInput" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--surface-2);background:var(--surface-2);color:var(--text);font-family:'JetBrains Mono';font-size:16px;text-align:center;text-transform:uppercase;" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <button class="btn full" id="anagramBtn" style="margin-top:14px;">Bestätigen</button>
+    `;
+    let answered = false;
+    const start = performance.now();
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(16000, ()=>finish(false, 16000));
+    const input = document.getElementById('anagramInput');
+    input.focus();
+    const submit = ()=>{
+      const val = input.value.trim().toUpperCase();
+      finish(val === word, Math.round(performance.now()-start));
+    };
+    document.getElementById('anagramBtn').addEventListener('click', submit);
+    input.addEventListener('keydown', e=>{ if (e.key === 'Enter') submit(); });
   });
 }
 
 function renderTarget(){
-  const totalHits = 8;
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Ziel-Klicker</h2>
-    <p class="hint">Klicke die roten Ziele ${totalHits}-mal so schnell wie möglich.</p>
-    ${timerBarHtml()}
-    <p class="hint" id="targetProgress">Treffer: 0 / ${totalHits}</p>
-    <div id="targetArea" style="position:relative;height:260px;background:var(--surface-2);border-radius:12px;overflow:hidden;"></div>
-  `;
-  startGameTimer(12000, ()=>completeCurrentGame('target', 999999));
-  const area = document.getElementById('targetArea');
-  const progressEl = document.getElementById('targetProgress');
-  let hits = 0;
-  const start = performance.now();
-  function spawnTarget(){
-    const dot = document.createElement('div');
-    const size = 34 + Math.floor(Math.random()*16);
-    dot.className = 'target-dot';
-    dot.style.width = size+'px';
-    dot.style.height = size+'px';
-    const maxX = Math.max(0, area.clientWidth - size);
-    const maxY = Math.max(0, area.clientHeight - size);
-    dot.style.left = Math.floor(Math.random()*maxX)+'px';
-    dot.style.top = Math.floor(Math.random()*maxY)+'px';
-    dot.addEventListener('click', ()=>{
-      hits++;
-      progressEl.textContent = 'Treffer: ' + hits + ' / ' + totalHits;
-      dot.style.transform = 'scale(1.4)';
-      dot.style.opacity = '0';
-      setTimeout(()=>dot.remove(), 120);
-      if (hits >= totalHits){
-        const timeMs = Math.round(performance.now()-start);
-        completeCurrentGame('target', timeMs);
-      } else {
-        spawnTarget();
-      }
-    });
-    area.appendChild(dot);
-  }
-  spawnTarget();
+  runMultiRound('target', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const totalHits = 4;
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Ziel-Klicker (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Triff die roten Ziele ${totalHits}-mal so schnell wie möglich.</p>
+      ${timerBarHtml()}
+      <p class="hint" id="targetProgress">Treffer: 0 / ${totalHits}</p>
+      <div id="targetArea" style="position:relative;height:240px;background:var(--surface-2);border-radius:12px;overflow:hidden;"></div>
+    `;
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(9000, ()=>finish(false, 9000));
+    const area = document.getElementById('targetArea');
+    const progressEl = document.getElementById('targetProgress');
+    let hits = 0;
+    const start = performance.now();
+    // Ziele werden pro Runde kleiner — die Anforderung steigt.
+    const baseSize = 44 - roundIndex*4;
+    function spawnTarget(){
+      if (answered) return;
+      const dot = document.createElement('div');
+      const size = Math.max(24, baseSize + Math.floor(Math.random()*10));
+      dot.className = 'target-dot';
+      dot.style.width = size+'px';
+      dot.style.height = size+'px';
+      dot.style.left = Math.floor(Math.random()*Math.max(0, area.clientWidth - size))+'px';
+      dot.style.top = Math.floor(Math.random()*Math.max(0, area.clientHeight - size))+'px';
+      let used = false;
+      dot.addEventListener('click', ()=>{
+        if (answered || used) return;
+        used = true;
+        hits++;
+        progressEl.textContent = 'Treffer: ' + hits + ' / ' + totalHits;
+        dot.style.transform = 'scale(1.4)';
+        dot.style.opacity = '0';
+        setTimeout(()=>dot.remove(), 120);
+        if (hits >= totalHits) finish(true, Math.round(performance.now()-start));
+        else spawnTarget();
+      });
+      area.appendChild(dot);
+    }
+    spawnTarget();
+  });
 }
 
-const CARD_MEMORY_SYMBOLS = ['🍎','🍋','🍇','🍒','🍉','🥝','🍓','⭐'];
+const CARD_MEMORY_SYMBOLS = ['🍎','🍋','🍇','🍒','🍉','🥝','🍓','⭐','🌙','⚡','🔔','🎈','🌸','🍀','🔥','💎','🎵','🦋','🌊','🎯'];
 function renderCardMemory(){
-  const pairCount = 6;
-  const symbols = CARD_MEMORY_SYMBOLS.slice(0, pairCount);
-  const deck = [...symbols, ...symbols].sort(()=>Math.random()-0.5);
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Karten-Memory</h2>
-    <p class="hint">Finde alle ${pairCount} Kartenpaare so schnell wie möglich.</p>
-    ${timerBarHtml()}
-    <div class="card-memory-grid" id="cardGrid"></div>
-  `;
-  startGameTimer(30000, ()=>completeCurrentGame('cardmemory', 999999));
-  const grid = document.getElementById('cardGrid');
-  const start = performance.now();
-  let penalty = 0;
-  let matchedPairs = 0;
-  let lockBoard = false;
-  let firstCard = null;
+  runMultiRound('cardmemory', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    // Weniger Paare pro Durchgang, dafür fünf Durchgänge — wird schrittweise schwerer.
+    const pairCount = 3 + Math.floor(roundIndex/2); // 3,3,4,4,5
+    const symbols = drawUnique(CARD_MEMORY_SYMBOLS, pairCount);
+    const deck = [...symbols, ...symbols].sort(()=>Math.random()-0.5);
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Karten-Memory (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Finde alle ${pairCount} Kartenpaare so schnell wie möglich.</p>
+      ${timerBarHtml()}
+      <div class="card-memory-grid" id="cardGrid"></div>
+    `;
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(12000 + pairCount*3000, ()=>finish(false, 12000 + pairCount*3000));
 
-  deck.forEach((symbol, idx)=>{
-    const card = document.createElement('div');
-    card.className = 'memory-card';
-    card.dataset.symbol = symbol;
-    card.dataset.idx = idx;
-    card.innerHTML = '<span class="card-face card-back">?</span><span class="card-face card-front">' + symbol + '</span>';
-    card.addEventListener('click', ()=>{
-      if (lockBoard || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-      card.classList.add('flipped');
-      if (!firstCard){
-        firstCard = card;
-        return;
-      }
-      lockBoard = true;
-      if (firstCard.dataset.symbol === card.dataset.symbol){
-        firstCard.classList.add('matched');
-        card.classList.add('matched');
-        matchedPairs++;
-        firstCard = null;
-        lockBoard = false;
-        if (matchedPairs === pairCount){
-          const timeMs = Math.round(performance.now()-start+penalty);
-          completeCurrentGame('cardmemory', timeMs);
-        }
-      } else {
-        penalty += 1000;
-        setTimeout(()=>{
-          firstCard.classList.remove('flipped');
-          card.classList.remove('flipped');
+    const grid = document.getElementById('cardGrid');
+    const start = performance.now();
+    let penalty = 0, matchedPairs = 0, lockBoard = false, firstCard = null;
+
+    deck.forEach((symbol, idx)=>{
+      const card = document.createElement('div');
+      card.className = 'memory-card';
+      card.dataset.symbol = symbol;
+      card.dataset.idx = idx;
+      card.innerHTML = '<span class="card-face card-back">?</span><span class="card-face card-front">' + symbol + '</span>';
+      card.addEventListener('click', ()=>{
+        if (answered || lockBoard || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+        card.classList.add('flipped');
+        if (!firstCard){ firstCard = card; return; }
+        lockBoard = true;
+        if (firstCard.dataset.symbol === card.dataset.symbol){
+          firstCard.classList.add('matched');
+          card.classList.add('matched');
+          matchedPairs++;
           firstCard = null;
           lockBoard = false;
-        }, 700);
-      }
+          if (matchedPairs === pairCount){
+            finish(true, Math.round(performance.now()-start+penalty));
+          }
+        } else {
+          penalty += 800;
+          const a = firstCard, b = card;
+          firstCard = null;
+          setTimeout(()=>{
+            a.classList.remove('flipped');
+            b.classList.remove('flipped');
+            lockBoard = false;
+          }, 700);
+        }
+      });
+      grid.appendChild(card);
     });
-    grid.appendChild(card);
   });
 }
 
 function renderStack(){
-  const totalRounds = 6;
+  // Jede Teilrunde ist eine Block-Platzierung. Der Turm bleibt über die Runden
+  // hinweg bestehen und wird mit jedem Block schmaler — also schwieriger.
   const containerWidth = Math.min(260, Math.max(200, window.innerWidth - 96));
   const blockHeight = 26;
   const gap = 6;
-  let round = 0;
   let current = { left: 0, width: containerWidth };
-  const start = performance.now();
+  let towerDead = false;
 
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Stapeln</h2>
-    <p class="hint" id="stackHint"></p>
-    ${timerBarHtml()}
-    <div class="stack-tower" id="stackTower" style="position:relative;height:120px;background:var(--surface-2);border-radius:8px;margin:16px 0;overflow:hidden;width:${containerWidth}px;max-width:100%;"></div>
-    <button class="btn full" id="placeBtn">Platzieren</button>
-  `;
-  startGameTimer(24000, ()=>completeCurrentGame('stack', 999999));
-  const tower = document.getElementById('stackTower');
-  const placeBtn = document.getElementById('placeBtn');
-  const hintEl = document.getElementById('stackHint');
+  runMultiRound('stack', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    let answered = false;
+    let raf = null;
+    const finish = (correct, ms)=>{
+      if (answered) return;
+      answered = true;
+      if (raf) cancelAnimationFrame(raf);
+      clearGameTimer();
+      done(correct, ms);
+    };
 
-  function renderBase(){
+    // Ist der Turm bereits eingestürzt, gelten die Restrunden als verfehlt.
+    if (towerDead){
+      gameBox.innerHTML = `
+        <h2>${roundState.table.name} · Stapeln (${roundIndex+1}/${totalRounds})</h2>
+        <p class="hint">Der Turm ist eingestürzt — diese Runde zählt als Fehler.</p>
+      `;
+      setTimeout(()=>finish(false, 2000), 800);
+      return;
+    }
+
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Stapeln (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint" id="stackHint">Tippe „Platzieren", wenn der Block über dem Turm ausgerichtet ist. Breite: ${Math.round(current.width)}px</p>
+      ${timerBarHtml()}
+      <div class="stack-tower" id="stackTower" style="position:relative;height:120px;background:var(--surface-2);border-radius:8px;margin:16px 0;overflow:hidden;width:${containerWidth}px;max-width:100%;"></div>
+      <button class="btn full" id="placeBtn">Platzieren</button>
+    `;
+    startGameTimer(8000, ()=>finish(false, 8000));
+
+    const tower = document.getElementById('stackTower');
     tower.innerHTML = `
       <div id="prevBlock" style="position:absolute;bottom:${gap}px;height:${blockHeight}px;left:${current.left}px;width:${current.width}px;background:var(--rust);border-radius:4px;"></div>
       <div id="movingBlock" style="position:absolute;bottom:${gap*2+blockHeight}px;height:${blockHeight}px;background:var(--rust);opacity:.85;border-radius:4px;"></div>
     `;
-  }
-
-  function playRound(){
-    hintEl.textContent = 'Klicke "Platzieren", wenn der Block gut ausgerichtet ist. Turm ' + (round+1) + '/' + totalRounds + ' · Breite: ' + Math.round(current.width) + 'px';
-    renderBase();
     const moving = document.getElementById('movingBlock');
     moving.style.width = current.width + 'px';
+
     const roundStart = performance.now();
-    const speed = 1.1 + round*0.28;
+    const speed = 1.1 + roundIndex*0.3;
     const amplitude = Math.max(4, (containerWidth - current.width) / 2);
     const center = containerWidth/2;
-    let raf;
+
     function animate(){
+      if (answered) return;
       const t = (performance.now()-roundStart)/1000;
       const left = center - current.width/2 + amplitude*Math.sin(t*speed);
       moving.style.left = Math.max(0, Math.min(containerWidth-current.width, left)) + 'px';
@@ -3145,8 +3531,9 @@ function renderStack(){
     }
     animate();
 
-    placeBtn.onclick = ()=>{
-      cancelAnimationFrame(raf);
+    document.getElementById('placeBtn').onclick = ()=>{
+      if (answered) return;
+      if (raf) cancelAnimationFrame(raf);
       const movingLeft = parseFloat(moving.style.left);
       const movingRight = movingLeft + current.width;
       const prevLeft = current.left;
@@ -3156,69 +3543,71 @@ function renderStack(){
       const overlapWidth = overlapRight - overlapLeft;
 
       if (overlapWidth <= 6){
-        completeCurrentGame('stack', 999999);
+        towerDead = true;
+        const hintEl = document.getElementById('stackHint');
+        if (hintEl) hintEl.textContent = 'Daneben — der Turm stürzt ein!';
+        finish(false, 5000);
         return;
-      }
-      if (movingLeft < overlapLeft - 0.5){
-        const cutLeft = document.createElement('div');
-        cutLeft.style.cssText = `position:absolute;bottom:${gap*2+blockHeight}px;left:${movingLeft}px;width:${overlapLeft-movingLeft}px;height:${blockHeight}px;background:var(--rust);border-radius:4px;transition:transform .3s ease, opacity .3s ease;`;
-        tower.appendChild(cutLeft);
-        requestAnimationFrame(()=>{ cutLeft.style.transform='translateY(50px)'; cutLeft.style.opacity='0'; });
-        setTimeout(()=>cutLeft.remove(), 320);
-      }
-      if (movingRight > overlapRight + 0.5){
-        const cutRight = document.createElement('div');
-        cutRight.style.cssText = `position:absolute;bottom:${gap*2+blockHeight}px;left:${overlapRight}px;width:${movingRight-overlapRight}px;height:${blockHeight}px;background:var(--rust);border-radius:4px;transition:transform .3s ease, opacity .3s ease;`;
-        tower.appendChild(cutRight);
-        requestAnimationFrame(()=>{ cutRight.style.transform='translateY(50px)'; cutRight.style.opacity='0'; });
-        setTimeout(()=>cutRight.remove(), 320);
       }
 
+      // Je genauer platziert, desto besser die Zeitwertung dieser Runde.
+      const accuracy = overlapWidth / current.width;   // 1 = perfekt
+      const scoreMs = Math.round((1 - accuracy) * 4000);
       current = { left: overlapLeft, width: overlapWidth };
-      round++;
-      if (round >= totalRounds){
-        const timeMs = Math.round(performance.now()-start);
-        completeCurrentGame('stack', timeMs);
-        return;
-      }
-      setTimeout(playRound, 350);
+      finish(true, scoreMs);
     };
-  }
-  playRound();
+  });
 }
 
 function renderDblClick(){
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Doppelklick-Timing</h2>
-    <p class="hint">Doppelklicke genau, wenn der pulsierende Kreis die Größe des gestrichelten Rings erreicht.</p>
-    ${timerBarHtml()}
-    <div id="dblClickArea" style="position:relative;width:200px;height:200px;margin:20px auto;cursor:pointer;">
-      <div style="position:absolute;inset:0;border:3px dashed var(--periwinkle);border-radius:50%;"></div>
-      <div id="pulseCircle" style="position:absolute;inset:0;margin:auto;width:200px;height:200px;border-radius:50%;background:var(--periwinkle);opacity:.5;"></div>
-    </div>
-  `;
-  startGameTimer(15000, ()=>completeCurrentGame('dblclick', 999999));
-  const area = document.getElementById('dblClickArea');
-  const circle = document.getElementById('pulseCircle');
-  const start = performance.now();
-  let raf;
-  function currentScale(){
-    const t = (performance.now()-start)/1000;
-    return 1 + 0.6*Math.sin(t*2);
-  }
-  function animate(){
-    circle.style.transform = 'scale(' + currentScale() + ')';
-    raf = requestAnimationFrame(animate);
-  }
-  animate();
-  area.addEventListener('dblclick', ()=>{
-    cancelAnimationFrame(raf);
-    const diff = Math.abs(currentScale()-1);
-    if (diff > 0.35){
-      completeCurrentGame('dblclick', 999999);
-      return;
+  runMultiRound('dblclick', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Doppelklick-Timing (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Doppelklicke (oder Doppeltipp), wenn der Kreis den gestrichelten Ring genau ausfüllt.</p>
+      ${timerBarHtml()}
+      <div id="dblClickArea" style="position:relative;width:200px;height:200px;margin:20px auto;cursor:pointer;">
+        <div style="position:absolute;inset:0;border:3px dashed var(--periwinkle);border-radius:50%;"></div>
+        <div id="pulseCircle" style="position:absolute;inset:0;margin:auto;width:200px;height:200px;border-radius:50%;background:var(--periwinkle);opacity:.5;"></div>
+      </div>
+    `;
+    let answered = false;
+    let raf = null;
+    const finish = (correct, ms)=>{
+      if (answered) return;
+      answered = true;
+      if (raf) cancelAnimationFrame(raf);
+      clearGameTimer();
+      done(correct, ms);
+    };
+    startGameTimer(10000, ()=>finish(false, 10000));
+    const area = document.getElementById('dblClickArea');
+    const circle = document.getElementById('pulseCircle');
+    const start = performance.now();
+    // Geschwindigkeit steigt pro Runde leicht an — wird schrittweise schwerer.
+    const speed = 2 + roundIndex*0.35;
+    function currentScale(){
+      return 1 + 0.6*Math.sin(((performance.now()-start)/1000)*speed);
     }
-    completeCurrentGame('dblclick', Math.round(diff*3000));
+    function animate(){
+      if (answered) return;
+      circle.style.transform = 'scale(' + currentScale() + ')';
+      raf = requestAnimationFrame(animate);
+    }
+    animate();
+    const attempt = ()=>{
+      if (answered) return;
+      const diff = Math.abs(currentScale()-1);
+      // Zu weit daneben = Fehlrunde, sonst zählt die Genauigkeit als Zeitwert.
+      finish(diff <= 0.30, Math.round(diff*3000));
+    };
+    area.addEventListener('dblclick', attempt);
+    // Touch-Geräte lösen kein dblclick aus — zwei schnelle Tipps erkennen.
+    let lastTap = 0;
+    area.addEventListener('touchend', (e)=>{
+      const now = Date.now();
+      if (now - lastTap < 400){ e.preventDefault(); attempt(); }
+      lastTap = now;
+    });
   });
 }
 
@@ -3227,12 +3616,18 @@ const FLAG_POOL = [
   {flag:'🇪🇸', name:'Spanien'}, {flag:'🇯🇵', name:'Japan'}, {flag:'🇧🇷', name:'Brasilien'},
   {flag:'🇨🇦', name:'Kanada'}, {flag:'🇦🇺', name:'Australien'}, {flag:'🇬🇧', name:'Vereinigtes Königreich'},
   {flag:'🇳🇱', name:'Niederlande'}, {flag:'🇸🇪', name:'Schweden'}, {flag:'🇵🇹', name:'Portugal'},
-  {flag:'🇲🇽', name:'Mexiko'}, {flag:'🇰🇷', name:'Südkorea'}, {flag:'🇬🇷', name:'Griechenland'}
+  {flag:'🇲🇽', name:'Mexiko'}, {flag:'🇰🇷', name:'Südkorea'}, {flag:'🇬🇷', name:'Griechenland'},
+  {flag:'🇳🇴', name:'Norwegen'}, {flag:'🇩🇰', name:'Dänemark'}, {flag:'🇫🇮', name:'Finnland'},
+  {flag:'🇵🇱', name:'Polen'}, {flag:'🇦🇹', name:'Österreich'}, {flag:'🇨🇭', name:'Schweiz'},
+  {flag:'🇧🇪', name:'Belgien'}, {flag:'🇮🇪', name:'Irland'}, {flag:'🇹🇷', name:'Türkei'},
+  {flag:'🇮🇳', name:'Indien'}, {flag:'🇨🇳', name:'China'}, {flag:'🇦🇷', name:'Argentinien'},
+  {flag:'🇿🇦', name:'Südafrika'}, {flag:'🇪🇬', name:'Ägypten'}, {flag:'🇹🇭', name:'Thailand'}
 ];
 function renderFlags(){
-  runMultiRound('flags', 3, (roundIndex, totalRounds, done)=>{
-    const item = FLAG_POOL[Math.floor(Math.random()*FLAG_POOL.length)];
-    const distractors = FLAG_POOL.filter(f=>f.name!==item.name).sort(()=>Math.random()-0.5).slice(0,2).map(f=>f.name);
+  const items = drawUnique(FLAG_POOL, ROUNDS_PER_GAME);
+  runMultiRound('flags', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    const item = items[roundIndex];
+    const distractors = FLAG_POOL.filter(f=>f.name!==item.name).sort(()=>Math.random()-0.5).slice(0,3).map(f=>f.name);
     const options = [...distractors, item.name].sort(()=>Math.random()-0.5);
     gameBox.innerHTML = `
       <h2>${roundState.table.name} · Flaggen-Quiz (${roundIndex+1}/${totalRounds})</h2>
@@ -3241,7 +3636,9 @@ function renderFlags(){
       <div style="font-size:64px;margin:20px 0;">${item.flag}</div>
       <div class="quiz-options" id="flagOpts"></div>
     `;
-    startGameTimer(8000, ()=>done(false, 8000));
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+    startGameTimer(8000, ()=>finish(false, 8000));
     const opts = document.getElementById('flagOpts');
     const start = performance.now();
     options.forEach(name=>{
@@ -3249,12 +3646,13 @@ function renderFlags(){
       b.className = 'quiz-opt';
       b.textContent = name;
       b.addEventListener('click', ()=>{
+        if (answered) return;
         const timeMs = Math.round(performance.now()-start);
-        document.querySelectorAll('#flagOpts .quiz-opt').forEach(el=>{
+        opts.querySelectorAll('.quiz-opt').forEach(el=>{
           if (el.textContent===item.name) el.classList.add('correct');
           else if (el===b) el.classList.add('wrong');
         });
-        setTimeout(()=>done(name===item.name, timeMs), 600);
+        setTimeout(()=>finish(name===item.name, timeMs), 600);
       });
       opts.appendChild(b);
     });
@@ -3262,11 +3660,12 @@ function renderFlags(){
 }
 
 function renderMathChain(){
-  runMultiRound('mathchain', 3, (roundIndex, totalRounds, done)=>{
+  runMultiRound('mathchain', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
     const startNum = Math.floor(Math.random()*10)+1;
     const stepsList = [];
     let current = startNum;
-    for (let i=0;i<3;i++){
+    const stepCount = 2 + Math.floor(roundIndex/2); // 2,2,3,3,4 Schritte
+    for (let i=0;i<stepCount;i++){
       const ops = ['+','-','×'];
       const op = ops[Math.floor(Math.random()*ops.length)];
       let val = Math.floor(Math.random()*9)+1;
@@ -3317,128 +3716,165 @@ function renderMathChain(){
   });
 }
 
-const WORDCHAIN_POOL = ['GARTEN','FENSTER','SCHLÜSSEL','WOLKE','BRÜCKE','LATERNE','KOFFER','SPIEGEL','TEPPICH','SCHATTEN','KERZE','ANKER','FLASCHE','SCHIRM','TRUHE','MÜHLE','FEDER','KRONE','MASKE','SEGEL'];
+const WORDCHAIN_POOL = ['GARTEN','FENSTER','SCHLÜSSEL','WOLKE','BRÜCKE','LATERNE','KOFFER','SPIEGEL','TEPPICH','SCHATTEN','KERZE','ANKER','FLASCHE','SCHIRM','TRUHE','MÜHLE','FEDER','KRONE','MASKE','SEGEL','HAFEN','TURM','GLOCKE','LEITER','FACKEL','KOMPASS','SATTEL','PFEIL','SCHILD','HELM','KETTE','RING','MÜNZE','KARTE','KISTE','FASS','SEIL','NETZ','KORB','ZELT','BOGEN','SPEER','KUTSCHE','MÜHLRAD','WINDMÜHLE','LEUCHTTURM','BRUNNEN','ZAUN'];
 function renderWordChain(){
-  const target = WORDCHAIN_POOL[Math.floor(Math.random()*WORDCHAIN_POOL.length)];
-  const distractors = WORDCHAIN_POOL.filter(w=>w!==target).sort(()=>Math.random()-0.5).slice(0,5);
-  const options = [...distractors, target].sort(()=>Math.random()-0.5);
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Wortkette</h2>
-    <p class="hint">Merke dir das Wort.</p>
-    ${timerBarHtml()}
-    <div class="seq-display" style="font-size:32px;">${target}</div>
-  `;
-  startGameTimer(14000, ()=>completeCurrentGame('wordchain', 999999));
-  setTimeout(()=>{
+  const targets = drawUnique(WORDCHAIN_POOL, ROUNDS_PER_GAME);
+  runMultiRound('wordchain', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    // Die Kette wird von Runde zu Runde länger: 1 Wort, dann 2, dann 3 ...
+    const chainLength = Math.min(3, 1 + Math.floor(roundIndex/2));
+    const chain = drawUnique(WORDCHAIN_POOL, chainLength);
+    const answer = chain[chain.length-1];
+    const distractors = WORDCHAIN_POOL.filter(w=>!chain.includes(w)).sort(()=>Math.random()-0.5).slice(0,5);
+    const options = [...distractors, answer].sort(()=>Math.random()-0.5);
+
+    let answered = false;
+    const finish = (correct, ms)=>{ if (answered) return; answered = true; clearGameTimer(); done(correct, ms); };
+
     gameBox.innerHTML = `
-      <h2>${roundState.table.name} · Wortkette</h2>
-      <p class="hint">Welches Wort hast du gerade gesehen?</p>
+      <h2>${roundState.table.name} · Wortkette (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Merke dir ${chainLength > 1 ? 'das <b>letzte</b> Wort der Kette' : 'das Wort'}.</p>
       ${timerBarHtml()}
-      <div class="quiz-options" id="wcOpts"></div>
+      <div class="seq-display" style="font-size:26px;" id="wcShow">${chain[0]}</div>
     `;
-    const opts = document.getElementById('wcOpts');
-    const start = performance.now();
-    options.forEach(word=>{
-      const b = document.createElement('div');
-      b.className = 'quiz-opt';
-      b.textContent = word;
-      b.addEventListener('click', ()=>{
-        const timeMs = Math.round(performance.now()-start);
-        document.querySelectorAll('#wcOpts .quiz-opt').forEach(el=>{
-          if (el.textContent===target) el.classList.add('correct');
-          else if (el===b) el.classList.add('wrong');
+    startGameTimer(6000 + chainLength*1400 + 9000, ()=>finish(false, 15000));
+
+    let showIdx = 0;
+    const showEl = document.getElementById('wcShow');
+    const showIv = setInterval(()=>{
+      showIdx++;
+      if (showIdx < chain.length){
+        if (showEl) showEl.textContent = chain[showIdx];
+      } else {
+        clearInterval(showIv);
+        askWordChain();
+      }
+    }, 1300);
+
+    function askWordChain(){
+      gameBox.innerHTML = `
+        <h2>${roundState.table.name} · Wortkette (${roundIndex+1}/${totalRounds})</h2>
+        <p class="hint">Welches war das ${chainLength > 1 ? 'letzte' : 'gezeigte'} Wort?</p>
+        ${timerBarHtml()}
+        <div class="quiz-options" id="wcOpts"></div>
+      `;
+      const opts = document.getElementById('wcOpts');
+      const start = performance.now();
+      options.forEach(word=>{
+        const b = document.createElement('div');
+        b.className = 'quiz-opt';
+        b.textContent = word;
+        b.addEventListener('click', ()=>{
+          if (answered) return;
+          const timeMs = Math.round(performance.now()-start);
+          opts.querySelectorAll('.quiz-opt').forEach(el=>{
+            if (el.textContent===answer) el.classList.add('correct');
+            else if (el===b) el.classList.add('wrong');
+          });
+          setTimeout(()=>finish(word===answer, timeMs), 600);
         });
-        setTimeout(()=>completeCurrentGame('wordchain', word===target ? timeMs : 999999), 600);
+        opts.appendChild(b);
       });
-      opts.appendChild(b);
-    });
-  }, 1600);
+    }
+  });
 }
 
 function renderMarble(){
-  const totalTargets = 3;
-  let hits = 0;
   const baseW = 300, baseH = 200;
   const available = Math.min(baseW, Math.max(220, window.innerWidth - 96));
   const scale = available / baseW;
   const AREA_W = Math.round(baseW*scale), AREA_H = Math.round(baseH*scale), STEP = Math.round(22*scale);
-  const walls = [
-    {x:Math.round(90*scale), y:0, w:Math.round(18*scale), h:Math.round(130*scale)},
-    {x:Math.round(190*scale), y:Math.round(70*scale), w:Math.round(18*scale), h:Math.round(130*scale)}
-  ];
-  const start = performance.now();
-  gameBox.innerHTML = `
-    <h2>${roundState.table.name} · Labyrinth-Lauf</h2>
-    <p class="hint">Lenke das Strichmännchen um die Wände zum Ziel. Achtung: Die Pfeile wechseln alle 2 Sekunden ihre Funktion – schau genau hin!</p>
-    ${timerBarHtml()}
-    <div id="marbleArea" style="position:relative;width:${AREA_W}px;max-width:100%;height:${AREA_H}px;background:var(--surface-2);border-radius:12px;margin:16px auto;overflow:hidden;">
-      ${walls.map(w=>`<div style="position:absolute;left:${w.x}px;top:${w.y}px;width:${w.w}px;height:${w.h}px;background:var(--surface-hover);border-radius:4px;"></div>`).join('')}
-      <div id="marbleDot" style="position:absolute;font-size:22px;line-height:1;">🚶</div>
-      <div id="marbleTarget" style="position:absolute;width:26px;height:26px;border-radius:50%;border:3px solid var(--success);"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,60px);grid-template-rows:repeat(3,60px);gap:6px;justify-content:center;">
-      <div></div><button class="btn secondary marble-btn" data-slot="up" aria-label="Oberer Pfeil-Button">↑</button><div></div>
-      <button class="btn secondary marble-btn" data-slot="left" aria-label="Linker Pfeil-Button">←</button><div></div><button class="btn secondary marble-btn" data-slot="right" aria-label="Rechter Pfeil-Button">→</button>
-      <div></div><button class="btn secondary marble-btn" data-slot="down" aria-label="Unterer Pfeil-Button">↓</button><div></div>
-    </div>
-    <p class="hint" id="marbleProgress">Ziel 1 von ${totalTargets}</p>
-  `;
-  startGameTimer(30000, ()=>completeCurrentGame('marble', 999999));
-  const dot = document.getElementById('marbleDot');
-  const targetEl = document.getElementById('marbleTarget');
-  let x = 20, y = AREA_H/2;
 
-  function hitsWall(px, py){
-    return walls.some(w => px > w.x-10 && px < w.x+w.w+10 && py > w.y-10 && py < w.y+w.h+10);
-  }
-  function placeTarget(){
-    let tx, ty;
-    do{
-      tx = 20 + Math.random()*(AREA_W-60);
-      ty = 20 + Math.random()*(AREA_H-60);
-    } while (hitsWall(tx, ty));
-    targetEl.style.left = tx+'px'; targetEl.style.top = ty+'px';
-    targetEl._pos = {x: tx+13, y: ty+13};
-  }
-  function updateDot(){
-    dot.style.left = (x-11)+'px'; dot.style.top = (y-11)+'px';
-  }
-  updateDot(); placeTarget();
+  runMultiRound('marble', ROUNDS_PER_GAME, (roundIndex, totalRounds, done)=>{
+    // Wandanordnung wechselt pro Runde — jede Runde ein neues Labyrinth.
+    const layouts = [
+      [{x:90,y:0,w:18,h:130},{x:190,y:70,w:18,h:130}],
+      [{x:110,y:60,w:18,h:140},{x:200,y:0,w:18,h:120}],
+      [{x:80,y:70,w:150,h:16},{x:210,y:86,w:16,h:114}],
+      [{x:100,y:0,w:16,h:110},{x:170,y:90,w:16,h:110},{x:116,y:94,w:56,h:16}],
+      [{x:70,y:50,w:16,h:150},{x:150,y:0,w:16,h:140},{x:230,y:50,w:16,h:150}]
+    ];
+    const walls = layouts[roundIndex % layouts.length].map(w=>({
+      x:Math.round(w.x*scale), y:Math.round(w.y*scale),
+      w:Math.round(w.w*scale), h:Math.round(w.h*scale)
+    }));
 
-  const dirs = { up:{dx:0,dy:-STEP,glyph:'↑'}, down:{dx:0,dy:STEP,glyph:'↓'}, left:{dx:-STEP,dy:0,glyph:'←'}, right:{dx:STEP,dy:0,glyph:'→'} };
-  let mapping = {};
-  function shuffleMapping(){
-    const keys = ['up','down','left','right'];
-    const shuffled = [...keys].sort(()=>Math.random()-0.5);
-    keys.forEach((slot,i)=>{ mapping[slot] = shuffled[i]; });
+    let answered = false;
+    let remapInterval = null;
+    const finish = (correct, ms)=>{
+      if (answered) return;
+      answered = true;
+      if (remapInterval) clearInterval(remapInterval);
+      clearGameTimer();
+      done(correct, ms);
+    };
+
+    gameBox.innerHTML = `
+      <h2>${roundState.table.name} · Labyrinth-Lauf (${roundIndex+1}/${totalRounds})</h2>
+      <p class="hint">Lenke das Strichmännchen um die Wände zum Ziel. Achtung: Die Pfeile wechseln alle 2 Sekunden ihre Funktion – schau genau hin!</p>
+      ${timerBarHtml()}
+      <div id="marbleArea" style="position:relative;width:${AREA_W}px;max-width:100%;height:${AREA_H}px;background:var(--surface-2);border-radius:12px;margin:16px auto;overflow:hidden;">
+        ${walls.map(w=>`<div style="position:absolute;left:${w.x}px;top:${w.y}px;width:${w.w}px;height:${w.h}px;background:var(--surface-hover);border-radius:4px;"></div>`).join('')}
+        <div id="marbleDot" style="position:absolute;font-size:22px;line-height:1;">🚶</div>
+        <div id="marbleTarget" style="position:absolute;width:26px;height:26px;border-radius:50%;border:3px solid var(--success);"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,60px);grid-template-rows:repeat(3,60px);gap:6px;justify-content:center;">
+        <div></div><button class="btn secondary marble-btn" data-slot="up" aria-label="Oberer Pfeil-Button">↑</button><div></div>
+        <button class="btn secondary marble-btn" data-slot="left" aria-label="Linker Pfeil-Button">←</button><div></div><button class="btn secondary marble-btn" data-slot="right" aria-label="Rechter Pfeil-Button">→</button>
+        <div></div><button class="btn secondary marble-btn" data-slot="down" aria-label="Unterer Pfeil-Button">↓</button><div></div>
+      </div>
+    `;
+    startGameTimer(15000, ()=>finish(false, 15000));
+
+    const startTs = performance.now();
+    const dot = document.getElementById('marbleDot');
+    const targetEl = document.getElementById('marbleTarget');
+    let x = 20, y = AREA_H/2;
+
+    function hitsWall(px, py){
+      return walls.some(w => px > w.x-10 && px < w.x+w.w+10 && py > w.y-10 && py < w.y+w.h+10);
+    }
+    function placeTarget(){
+      let tx, ty, guard = 0;
+      do{
+        tx = 20 + Math.random()*(AREA_W-60);
+        ty = 20 + Math.random()*(AREA_H-60);
+      } while (hitsWall(tx, ty) && guard++ < 200);
+      targetEl.style.left = tx+'px'; targetEl.style.top = ty+'px';
+      targetEl._pos = {x: tx+13, y: ty+13};
+    }
+    function updateDot(){
+      dot.style.left = (x-11)+'px'; dot.style.top = (y-11)+'px';
+    }
+    updateDot(); placeTarget();
+
+    const dirs = { up:{dx:0,dy:-STEP,glyph:'↑'}, down:{dx:0,dy:STEP,glyph:'↓'}, left:{dx:-STEP,dy:0,glyph:'←'}, right:{dx:STEP,dy:0,glyph:'→'} };
+    let mapping = {};
+    function shuffleMapping(){
+      if (answered) return;
+      const keys = ['up','down','left','right'];
+      const shuffled = [...keys].sort(()=>Math.random()-0.5);
+      keys.forEach((slot,i)=>{ mapping[slot] = shuffled[i]; });
+      document.querySelectorAll('.marble-btn').forEach(btn=>{
+        btn.textContent = dirs[mapping[btn.dataset.slot]].glyph;
+      });
+    }
+    shuffleMapping();
+    remapInterval = setInterval(shuffleMapping, 2000);
+
     document.querySelectorAll('.marble-btn').forEach(btn=>{
-      btn.textContent = dirs[mapping[btn.dataset.slot]].glyph;
-    });
-  }
-  shuffleMapping();
-  const remapInterval = setInterval(shuffleMapping, 2000);
-
-  document.querySelectorAll('.marble-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const real = dirs[mapping[btn.dataset.slot]];
-      const nx = Math.max(9, Math.min(AREA_W-9, x+real.dx));
-      const ny = Math.max(9, Math.min(AREA_H-9, y+real.dy));
-      if (hitsWall(nx, ny)) return; // blocked by a wall, stay put
-      x = nx; y = ny;
-      updateDot();
-      const tp = targetEl._pos;
-      const dist = Math.hypot(x-tp.x, y-tp.y);
-      if (dist < 18){
-        hits++;
-        if (hits >= totalTargets){
-          clearInterval(remapInterval);
-          const timeMs = Math.round(performance.now()-start);
-          completeCurrentGame('marble', timeMs);
-        } else {
-          document.getElementById('marbleProgress').textContent = 'Ziel ' + (hits+1) + ' von ' + totalTargets;
-          placeTarget();
+      btn.addEventListener('click', ()=>{
+        if (answered) return;
+        const real = dirs[mapping[btn.dataset.slot]];
+        const nx = Math.max(9, Math.min(AREA_W-9, x+real.dx));
+        const ny = Math.max(9, Math.min(AREA_H-9, y+real.dy));
+        if (hitsWall(nx, ny)) return; // von einer Wand blockiert
+        x = nx; y = ny;
+        updateDot();
+        const tp = targetEl._pos;
+        if (Math.hypot(x-tp.x, y-tp.y) < 18){
+          finish(true, Math.round(performance.now()-startTs));
         }
-      }
+      });
     });
   });
 }
@@ -3450,31 +3886,39 @@ function simulateMultiRoundBotMetric(perRoundCorrectProb, timeMin, timeMax, roun
     if (Math.random() < perRoundCorrectProb) correct++;
     total += timeMin + Math.random()*(timeMax-timeMin);
   }
-  return Math.round((rounds-correct) * 10000 + total);
-}
-function generateBotMetric(cat){
-  switch(cat){
-    case 'reaction': return Math.round(200 + Math.random()*500);
-    case 'wordfind': return Math.round(3 * (1500 + Math.random()*4500));
-    case 'quiz': return simulateMultiRoundBotMetric(0.65, 1000, 5000, 3);
-    case 'memory': return Math.random() < 0.6 ? Math.round(2000 + Math.random()*4000) : 999999;
-    case 'typing': return Math.random() < 0.9 ? Math.round(3000 + Math.random()*6000) : 999999;
-    case 'sequence': return Math.round(4000 + Math.random()*8000);
-    case 'pattern': return Math.random() < 0.55 ? Math.round(3000 + Math.random()*5000) : 999999;
-    case 'math': return Math.random() < 0.75 ? Math.round(1500 + Math.random()*5000) : 999999;
-    case 'anagram': return Math.random() < 0.7 ? Math.round(2000 + Math.random()*6000) : 999999;
-    case 'target': return Math.round(2500 + Math.random()*4000);
-    case 'stack': return Math.random() < 0.55 ? Math.round(4000 + Math.random()*5000) : 999999;
-    case 'dblclick': return Math.random() < 0.85 ? Math.round(50 + Math.random()*900) : 999999;
-    case 'cardmemory': return Math.random() < 0.7 ? Math.round(6000 + Math.random()*8000) : 999999;
-    case 'flags': return simulateMultiRoundBotMetric(0.7, 1000, 4000, 3);
-    case 'mathchain': return simulateMultiRoundBotMetric(0.55, 2500, 5000, 3);
-    case 'wordchain': return Math.random() < 0.55 ? Math.round(1500 + Math.random()*4500) : 999999;
-    case 'marble': return Math.round(6000 + Math.random()*9000);
-  }
+  return Math.round((rounds-correct) * WRONG_PENALTY + total);
 }
 
-function startTieBreak(cat, userMetric, tiedCount, originalRank, originalTotal){
+/* Alle Spiele bestehen jetzt aus ROUNDS_PER_GAME Teilrunden. Die Bot-Werte müssen
+   deshalb auf derselben Skala liegen wie die Spieler-Kennzahl:
+   (Fehlrunden × WRONG_PENALTY) + Gesamtzeit. Trefferquote und Zeitspanne sind je
+   Spiel so gewählt, dass ein aufmerksamer Mensch realistisch mithalten kann. */
+const BOT_PROFILES = {
+  reaction:   {prob:0.88, min: 240, max: 620},
+  wordfind:   {prob:0.86, min:1400, max:4200},
+  quiz:       {prob:0.68, min:1200, max:4600},
+  memory:     {prob:0.62, min:2200, max:6000},
+  typing:     {prob:0.72, min:5000, max:12000},
+  sequence:   {prob:0.90, min:4000, max:9000},
+  pattern:    {prob:0.60, min:2500, max:6000},
+  math:       {prob:0.78, min:1600, max:4800},
+  anagram:    {prob:0.66, min:2600, max:7000},
+  target:     {prob:0.92, min:1800, max:4200},
+  stack:      {prob:0.70, min: 600, max:3200},
+  dblclick:   {prob:0.74, min: 200, max:1100},
+  cardmemory: {prob:0.75, min:4000, max:9500},
+  flags:      {prob:0.70, min:1200, max:4000},
+  mathchain:  {prob:0.58, min:2400, max:5600},
+  wordchain:  {prob:0.64, min:1600, max:4600},
+  marble:     {prob:0.72, min:3500, max:9000},
+};
+
+function generateBotMetric(cat){
+  const p = BOT_PROFILES[cat] || {prob:0.7, min:2000, max:6000};
+  return simulateMultiRoundBotMetric(p.prob, p.min, p.max, ROUNDS_PER_GAME);
+}
+
+function startTieBreak(cat, userMetric, tiedCount, bestRankInTie, originalTotal, accuracy){
   document.getElementById('tieBreakSub').textContent =
     'Du liegst mit ' + (tiedCount-1) + ' anderen Teilnehmenden exakt gleich auf. Ein zusätzliches Spiel entscheidet, wer vorne liegt.';
   showScreen('screen-tiebreak');
@@ -3485,7 +3929,7 @@ function startTieBreak(cat, userMetric, tiedCount, originalRank, originalTotal){
     const tieCat = pool[Math.floor(Math.random()*pool.length)] || cat;
     showScreen('screen-game');
     renderStepDots();
-    tieBreakContext = { originalCat:cat, originalRank, originalTotal, tiedCount, tieCat };
+    tieBreakContext = { originalCat:cat, bestRankInTie, originalTotal, tiedCount, tieCat, accuracy };
     dispatchGame(tieCat);
   };
 }
@@ -3498,14 +3942,21 @@ function resolveTieBreak(tieBreakUserMetric){
   const rivalsInTie = ctx.tiedCount - 1;
   const rivalMetrics = [];
   for (let i=0;i<rivalsInTie;i++) rivalMetrics.push(generateBotMetric(ctx.tieCat));
-  const combined = rivalMetrics.concat([tieBreakUserMetric]).sort((a,b)=>a-b);
-  const positionWithinTie = combined.indexOf(tieBreakUserMetric); // 0 = best of the tied group
-  const adjustedRank = ctx.originalRank + positionWithinTie;
-  finalizeGameScore(ctx.originalCat, adjustedRank, ctx.originalTotal, tieBreakUserMetric);
+  // Auch hier: bei erneutem Gleichstand die schlechtere Position, nie die bessere.
+  const positionWithinTie = rivalsInTie - rivalMetrics.filter(m => m > tieBreakUserMetric).length;
+  const adjustedRank = ctx.bestRankInTie + positionWithinTie;
+  finalizeGameScore(ctx.originalCat, adjustedRank, ctx.originalTotal, tieBreakUserMetric, ctx.accuracy);
 }
 
-function completeCurrentGame(cat, userMetric){
+/* ---------- BEWERTUNG ----------
+   Wichtig: Bei Gleichstand wird IMMER die schlechteste Position der Gleichstandsgruppe
+   vergeben, nie die beste. Vorher wurde die erste Position genommen — dadurch bekam man
+   für eine falsche Antwort dieselbe Platzierung wie der beste aller falsch Liegenden
+   und damit unverdient Punkte. Echte Gleichstände werden weiterhin per Stichspiel gelöst. */
+function completeCurrentGame(cat, userMetric, accuracy){
   clearGameTimer();
+  // accuracy = {correct, total} — wie viele Teilrunden richtig beantwortet wurden.
+  const acc = accuracy || {correct: userMetric >= FAIL_METRIC ? 0 : 1, total: 1};
   if (tieBreakContext){
     resolveTieBreak(userMetric);
     return;
@@ -3514,31 +3965,35 @@ function completeCurrentGame(cat, userMetric){
   const botCount = Math.max(0, t.capacity - 1);
   const bots = [];
   for (let i=0;i<botCount;i++) bots.push(generateBotMetric(cat));
-  const all = bots.concat([userMetric]).sort((a,b)=>a-b);
-  const rank = all.indexOf(userMetric) + 1;
-  const total = all.length;
 
-  // Tie detection: if the user's exact metric matches other entries (real possibility
-  // once times are rounded to whole milliseconds), settle it with one more skill round
-  // instead of arbitrarily picking a rank — never by chance.
-  const tiedCount = all.filter(v => v === userMetric).length;
-  if (tiedCount > 1 && userMetric < 999999){
-    startTieBreak(cat, userMetric, tiedCount, rank, total);
+  const betterCount = bots.filter(b => b < userMetric).length;
+  const tiedCount = bots.filter(b => b === userMetric).length;
+  const total = botCount + 1;
+  // Schlechteste Position innerhalb der Gleichstandsgruppe — nie geschenkt.
+  const rank = betterCount + tiedCount + 1;
+
+  // Echter Gleichstand bei fehlerfreier Leistung: per Können entscheiden, nie per Zufall.
+  if (tiedCount > 0 && acc.correct === acc.total){
+    startTieBreak(cat, userMetric, tiedCount + 1, betterCount + 1, total, acc);
     return;
   }
 
-  finalizeGameScore(cat, rank, total, userMetric);
+  finalizeGameScore(cat, rank, total, userMetric, acc);
 }
 
-function finalizeGameScore(cat, rank, total, userMetric){
+function finalizeGameScore(cat, rank, total, userMetric, accuracy){
   const t = roundState.table;
+  const acc = accuracy || {correct:1, total:1};
   const maxPoints = t.capacity * 2 * (t.pointsMultiplier || 1); // bigger tables offer more points; VIP rooms double it
   // Using rank/total (not rank-1/total-1) keeps the percentage of max points
   // identical for the same relative placement, no matter the table size:
   // e.g. rank 20/50 and rank 200/500 (both 40% through the field) score the same %.
   const percentile = Math.max(0, 1 - (rank / total));
-  const points = Math.round(percentile * maxPoints);
-  roundState.results.push({cat, rank, total, points, percentile, metric:userMetric});
+  // Trefferquote fließt direkt ein: Wer alle Teilrunden verpatzt, bekommt 0 Punkte.
+  const accuracyFactor = acc.total > 0 ? (acc.correct / acc.total) : 0;
+  const points = Math.round(percentile * maxPoints * accuracyFactor);
+  roundState.results.push({cat, rank, total, points, percentile, metric:userMetric,
+                           correct:acc.correct, totalRounds:acc.total});
 
   currentAccount.stats.gamesPlayed++;
   currentAccount.stats.byCategory[cat]++;
@@ -3586,7 +4041,9 @@ async function finishRound(){
   roundState.results.forEach(r=>{
     const div = document.createElement('div');
     div.className = 'item';
-    div.innerHTML = `<span>${CAT_LABEL[r.cat]}</span><span class="mono">Platz ${r.rank}/${r.total} · ${r.points} Pkt.</span>`;
+    const accText = (typeof r.correct === 'number' && r.totalRounds)
+      ? r.correct + '/' + r.totalRounds + ' richtig · ' : '';
+    div.innerHTML = `<span>${CAT_LABEL[r.cat]}</span><span class="mono">${accText}Platz ${r.rank}/${r.total} · ${r.points} Pkt.</span>`;
     bd.appendChild(div);
   });
 
