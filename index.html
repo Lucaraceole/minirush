@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>MiniRush</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +37,18 @@
     --radius:14px;
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+  html{overflow-x:hidden;overscroll-behavior:none;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;
+       overflow-x:hidden;width:100%;max-width:100%;overscroll-behavior:none;
+       -webkit-text-size-adjust:100%;}
+  /* Spielflächen dürfen nicht mitscrollen oder auf Doppeltipp zoomen — sonst
+     "rutscht" die Ansicht auf dem Handy beim schnellen Tippen hin und her. */
+  #screen-game, .reaction-pad, .grid-cell, .mem-card, .target-zone,
+  .stack-area, .marble-area, .quiz-opt, .word-grid, .card-grid{
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #screen-game{overflow-x:hidden;}
   h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
   .mono{font-family:'JetBrains Mono',monospace;}
   .screen{display:none;padding:32px 20px 60px;max-width:1000px;margin:0 auto;}
@@ -236,6 +247,19 @@
     border-left:3px solid var(--amber);box-shadow:0 2px 6px rgba(0,0,0,.15);
   }
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .plan-day{border:1px solid var(--surface-2);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--surface);}
+  .plan-day.planned{border-color:var(--gold);}
+  .plan-day-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .plan-day-date{font-weight:700;font-size:13px;}
+  .plan-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;}
+  .plan-row input[type="text"]{flex:1;min-width:140px;margin:0;padding:8px 10px;font-size:13px;}
+  .plan-row input.icon-input{flex:0 0 64px;min-width:64px;text-align:center;}
+  .plan-games{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0;}
+  .plan-game-chip{font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid var(--surface-2);
+                  background:var(--surface-2);color:var(--muted);cursor:pointer;user-select:none;}
+  .plan-game-chip.on{background:rgba(230,196,84,.2);border-color:var(--gold);color:var(--gold);font-weight:600;}
+  .plan-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .plan-actions .btn{padding:7px 14px;font-size:12px;width:auto;}
   table.leaderboard{width:100%;border-collapse:collapse;font-size:14px;}
   table.leaderboard th{text-align:left;color:var(--muted);font-weight:600;padding:8px;font-size:11px;text-transform:uppercase;}
   table.leaderboard td{padding:9px 8px;border-top:1px solid var(--surface-2);}
@@ -413,6 +437,10 @@
     <input type="email" id="loginEmail">
     <label>Passwort</label>
     <input type="password" id="loginPassword">
+    <label style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer;font-weight:400;">
+      <input type="checkbox" id="stayLoggedIn" checked style="width:auto;margin:0;cursor:pointer;">
+      <span>Angemeldet bleiben</span>
+    </label>
     <div class="error-msg" id="loginError"></div>
     <button class="btn full" id="loginBtn">Anmelden</button>
     <div class="switchline">
@@ -664,7 +692,7 @@
   <p class="hint">Bei kostenpflichtigen Rushtables handelt es sich um einen <b>Geschicklichkeitswettbewerb</b>, kein Glücksspiel. Das Ergebnis jeder Runde wird ausschließlich durch Geschicklichkeit, Wissen, Gedächtnis oder Reaktionsvermögen der Teilnehmenden bestimmt. Zufallselemente haben auf die Platzierung oder Gewinnermittlung keinerlei Einfluss. Innerhalb der Minispiele zufällig gewählte Elemente (z. B. welches Wort oder welche Farbe gesucht wird) betreffen nur die Aufgabenstellung, nicht die Bewertung der Leistung.</p>
 
   <h3>4. Teilnahmegebühr & Zahlungsabwicklung</h3>
-  <p class="hint">Die Teilnahme an einem regulären Rushtable ist derzeit kostenlos. An VIP-Räumen kostet die Teilnahme 5,00 €, am täglichen Mega-Rushtable (nur über den VIP-Bereich erreichbar) 10,00 €, jeweils fällig bei Beitritt zum Tisch. Nach Beginn der Runde ist eine Rückerstattung ausgeschlossen, außer der Tisch kommt aus vom Veranstalter zu vertretenden Gründen nicht zustande. Die Zahlungsabwicklung erfolgt über einen externen Zahlungsdienstleister (z. B. Stripe oder PayPal); dessen eigene Nutzungsbedingungen gelten für den Zahlungsvorgang zusätzlich.</p>
+  <p class="hint">Die Teilnahme an einem regulären Rushtable ist derzeit kostenlos. An VIP-Räumen kostet die Teilnahme 5,00 €, am täglichen Mega-Rushtable (nur über den VIP-Bereich erreichbar) 10,00 €, jeweils fällig bei Beitritt zum Tisch. Der Mega-Rushtable kommt nur zustande, wenn innerhalb der jeweils angegebenen Anmeldefrist sämtliche Plätze belegt sind; wird diese Zahl nicht erreicht, entfällt die Runde und die Teilnahmegebühr wird vollständig erstattet. Bei den übrigen Tischen ist eine Rückerstattung nach Rundenbeginn ausgeschlossen, außer der Tisch kommt aus vom Veranstalter zu vertretenden Gründen nicht zustande. Die Zahlungsabwicklung erfolgt über einen externen Zahlungsdienstleister (z. B. Stripe oder PayPal); dessen eigene Nutzungsbedingungen gelten für den Zahlungsvorgang zusätzlich.</p>
 
   <h3>5. Ablauf & Gewinnermittlung</h3>
   <p class="hint">Jede Runde besteht aus 6 Minispielen. Die Platzierung ergibt sich aus der gemessenen Leistung (Zeit, Genauigkeit, Punktzahl) aller Teilnehmenden des jeweiligen Tisches. Bei rechnerischem Gleichstand (z. B. exakt gleiche gemessene Zeit) wird zwischen den betroffenen Teilnehmenden ein zusätzliches Geschicklichkeitsspiel gespielt, bis eine eindeutige Platzierung feststeht — niemals ein Zufallsverfahren.</p>
@@ -795,6 +823,13 @@
     </ul>
   </div>
 
+  <div class="shop-card" style="max-width:100%;margin:0 0 24px;text-align:left;padding:20px;border-color:var(--gold);">
+    <div style="font-weight:700;font-size:15px;color:var(--gold);">🌟 Mega-Rushtable — Wochenplanung</div>
+    <p class="hint" style="margin:6px 0 14px;">Lege für jeden Tag fest, was es zu gewinnen gibt und welche Spiele gespielt werden. Nicht geplante Tage nutzen automatisch einen Standardpreis und eine zufällige Spielauswahl. Änderungen sind sofort für alle sichtbar.</p>
+    <div id="megaPlannerList"></div>
+    <p class="hint" id="megaPlannerStatus" style="margin-top:10px;"></p>
+  </div>
+
   <div class="stat-grid stat-grid-4">
     <div class="stat-box"><div class="big" id="adminOnlineNow">0</div><div class="lbl">Personen online</div></div>
     <div class="stat-box"><div class="big" id="adminInRound">0</div><div class="lbl">Tische aktuell im Spiel</div></div>
@@ -833,31 +868,42 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
    der ganze restliche App-Code unverändert bleibt. Zugriffsrechte werden
    serverseitig über Row Level Security (RLS) auf der Tabelle app_storage
    durchgesetzt, nicht hier im Client. */
+
+// Bei schlechtem Mobilfunkempfang kann eine Anfrage sonst endlos offen bleiben
+// und die App einfrieren. Nach Ablauf brechen wir kontrolliert mit Fehler ab.
+const STORAGE_TIMEOUT_MS = 8000;
+function withTimeout(promise, label){
+  return Promise.race([
+    promise,
+    new Promise((_, reject)=>setTimeout(()=>reject(new Error('Zeitüberschreitung bei ' + label)), STORAGE_TIMEOUT_MS))
+  ]);
+}
+
 async function storageSet(key, value, shared=false){
-  const { data, error } = await sb
+  const { data, error } = await withTimeout(sb
     .from('app_storage')
     .upsert({ key, shared, value }, { onConflict: 'key,shared' })
     .select('key, value, shared')
-    .single();
+    .single(), 'Speichern');
   if (error) throw error;
   return data;
 }
 async function storageGet(key, shared=false){
-  const { data, error } = await sb
+  const { data, error } = await withTimeout(sb
     .from('app_storage')
     .select('key, value, shared')
     .eq('key', key)
     .eq('shared', shared)
-    .single();
+    .single(), 'Laden');
   if (error || !data) throw (error || new Error('not found'));
   return data;
 }
 async function storageList(prefix, shared=false){
-  const { data, error } = await sb
+  const { data, error } = await withTimeout(sb
     .from('app_storage')
     .select('key')
     .eq('shared', shared)
-    .like('key', (prefix||'') + '%');
+    .like('key', (prefix||'') + '%'), 'Auflisten');
   if (error) throw error;
   return { keys: (data||[]).map(r=>r.key), prefix, shared };
 }
@@ -923,6 +969,11 @@ const VIP_TABLE_TIERS = [
 ];
 const MEGA_CAPACITY = 5000;
 const MEGA_OPEN_HOUR = 20; // Öffnet täglich um 20:00 Uhr (lokale Zeit)
+// Nach der Öffnung bleibt die Anmeldung für dieses Zeitfenster offen. Sind bis
+// zum Ende NICHT alle Plätze belegt, findet die Runde nicht statt und alle
+// Teilnahmegebühren werden erstattet.
+const MEGA_SIGNUP_WINDOW_MS = 60 * 60 * 1000; // 60 Minuten
+function megaClosesAt(t){ return t.opensAt + MEGA_SIGNUP_WINDOW_MS; }
 
 function getNextMegaOpenTime(fromNow){
   const base = fromNow || new Date();
@@ -1000,10 +1051,11 @@ const CAR_ICON_SVG = `<svg width="40" height="24" viewBox="0 0 64 36" xmlns="htt
   <circle cx="48" cy="30" r="2.2" fill="var(--gold)"/>
 </svg>`;
 
-// Der Mega-Rushtable lobt nicht immer denselben Preis aus, sondern wechselt
-// täglich (Auto, Motorrad, Uhr, Reise, ...). Die Auswahl hängt deterministisch
-// vom Kalendertag der jeweiligen Öffnung ab, sodass sie für alle Nutzer:innen
-// gleich ist und schon während der Ankündigung/Countdown-Phase feststeht.
+/* ---------- MEGA-WOCHENPLAN ----------
+   Der Admin kann für jeden Tag im Voraus festlegen, was es zu gewinnen gibt und
+   welche Spiele gespielt werden. Der Plan liegt in der gemeinsamen Ablage, damit
+   ihn alle Nutzer:innen sehen. Ist für einen Tag nichts hinterlegt, greift
+   automatisch der Standardkatalog unten. */
 const MEGA_PRIZE_CATALOG = [
   {id:'car', label:'ein Auto', icon:'🚗'},
   {id:'motorcycle', label:'ein Motorrad', icon:'🏍️'},
@@ -1012,10 +1064,56 @@ const MEGA_PRIZE_CATALOG = [
   {id:'laptop', label:'ein High-End-Laptop', icon:'💻'},
   {id:'jewelry', label:'ein Schmuckstück', icon:'💍'},
 ];
+
+let megaPlanCache = {}; // { 'YYYY-MM-DD': {label, icon, games:[...]} }
+
+function dateKeyFor(timestampMs){
+  const d = new Date(timestampMs);
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+
 function getMegaPrizeForDate(timestampMs){
+  const planned = megaPlanCache[dateKeyFor(timestampMs)];
+  if (planned && planned.label) return { label: planned.label, icon: planned.icon || '🎁' };
   const dayIndex = Math.floor(timestampMs / 86400000);
   const idx = ((dayIndex % MEGA_PRIZE_CATALOG.length) + MEGA_PRIZE_CATALOG.length) % MEGA_PRIZE_CATALOG.length;
   return MEGA_PRIZE_CATALOG[idx];
+}
+
+function getMegaGamesForDate(timestampMs){
+  const planned = megaPlanCache[dateKeyFor(timestampMs)];
+  if (planned && Array.isArray(planned.games) && planned.games.length) return planned.games.slice();
+  return null; // kein Plan → Zufallsauswahl wie bisher
+}
+
+// Lädt den kompletten Plan aus der Datenbank in den Cache.
+async function loadMegaPlan(){
+  try{
+    const listRes = await storageList('mega_plan:', true);
+    const keys = (listRes && listRes.keys) ? listRes.keys : [];
+    const fresh = {};
+    for (const k of keys){
+      try{
+        const r = await storageGet(k, true);
+        fresh[k.replace('mega_plan:', '')] = JSON.parse(r.value);
+      }catch(e){}
+    }
+    megaPlanCache = fresh;
+  }catch(e){
+    console.warn('Mega-Plan konnte nicht geladen werden:', e);
+  }
+}
+
+async function saveMegaPlanDay(dateKey, entry){
+  await storageSet('mega_plan:'+dateKey, JSON.stringify(entry), true);
+  megaPlanCache[dateKey] = entry;
+}
+
+async function deleteMegaPlanDay(dateKey){
+  await withTimeout(sb.from('app_storage').delete()
+    .eq('key', 'mega_plan:'+dateKey).eq('shared', true), 'Löschen');
+  delete megaPlanCache[dateKey];
 }
 
 (function initHeroPrize(){
@@ -1112,6 +1210,7 @@ document.getElementById('cookieOkBtn').addEventListener('click', ()=>{
 
 document.getElementById('logoutBtn').addEventListener('click', async ()=>{
   stopAdminLivePolling();
+  localStorage.setItem('minirush_stay_logged_in', 'false');
   currentAccount = null;
   joinedTableId = null;
   if (simTimer) clearInterval(simTimer);
@@ -1255,6 +1354,8 @@ document.getElementById('loginBtn').addEventListener('click', async ()=>{
       errEl.textContent = 'Login erfolgreich, aber kein Konto-Profil gefunden. Bitte neu registrieren.';
       return;
     }
+    const stayEl = document.getElementById('stayLoggedIn');
+    localStorage.setItem('minirush_stay_logged_in', stayEl && stayEl.checked ? 'true' : 'false');
     const account = JSON.parse(res.value);
     loginSuccess(account);
   }catch(e){
@@ -1388,6 +1489,17 @@ function loginSuccess(account){
   startSimulation();
   setNavActive('lobby');
   showScreen('screen-lobby');
+
+  // Geplante Mega-Preise/Spiele nachladen und Ansicht auffrischen.
+  loadMegaPlan().then(()=>{
+    applyPlanToLiveTable();
+    if (document.getElementById('screen-lobby').classList.contains('active')) renderLobby();
+    const prize = getMegaPrizeForDate(getNextMegaOpenTime());
+    const iconEl = document.getElementById('heroPrizeIcon');
+    const labelEl = document.getElementById('heroPrizeLabel');
+    if (iconEl) iconEl.textContent = prize.icon;
+    if (labelEl) labelEl.textContent = prize.label;
+  }).catch(()=>{});
 }
 
 /* ---------- FORGOT PASSWORD ---------- */
@@ -1878,8 +1990,110 @@ function stopAdminLivePolling(){
   if (adminPollTimer){ clearInterval(adminPollTimer); adminPollTimer = null; }
 }
 
+/* ---------- ADMIN: MEGA-WOCHENPLANER ---------- */
+const MEGA_PLAN_DAYS = 14; // zwei Wochen im Voraus planbar
+
+function renderMegaPlanner(){
+  const wrap = document.getElementById('megaPlannerList');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  for (let i=0; i<MEGA_PLAN_DAYS; i++){
+    const dayTs = getNextMegaOpenTime() + i*86400000;
+    const key = dateKeyFor(dayTs);
+    const planned = megaPlanCache[key];
+    const fallback = getMegaPrizeForDate(dayTs);
+    const games = (planned && planned.games) || [];
+
+    const dateLabel = new Date(dayTs).toLocaleDateString('de-DE',
+      {weekday:'long', day:'2-digit', month:'2-digit', year:'numeric'});
+
+    const box = document.createElement('div');
+    box.className = 'plan-day' + (planned ? ' planned' : '');
+    box.innerHTML = `
+      <div class="plan-day-head">
+        <span class="plan-day-date">${dateLabel} · ${MEGA_OPEN_HOUR}:00 Uhr</span>
+        <span class="hint">${planned ? '✅ Geplant' : 'Standard (nicht geplant)'}</span>
+      </div>
+      <div class="plan-row">
+        <input type="text" class="icon-input" data-field="icon" value="${planned ? (planned.icon||'') : fallback.icon}" maxlength="4" placeholder="🎁">
+        <input type="text" data-field="label" value="${planned ? (planned.label||'') : fallback.label}" placeholder="z. B. ein Auto">
+      </div>
+      <div class="hint" style="margin-bottom:4px;">Spiele auswählen (leer = Zufallsauswahl):</div>
+      <div class="plan-games">
+        ${CATS.map(c=>`<span class="plan-game-chip${games.includes(c)?' on':''}" data-cat="${c}">${CAT_LABEL[c]}</span>`).join('')}
+      </div>
+      <div class="plan-actions">
+        <button class="btn" data-action="save">Speichern</button>
+        ${planned ? '<button class="btn secondary" data-action="reset">Auf Standard zurücksetzen</button>' : ''}
+      </div>
+    `;
+
+    box.querySelectorAll('.plan-game-chip').forEach(chip=>{
+      chip.addEventListener('click', ()=>chip.classList.toggle('on'));
+    });
+
+    box.querySelector('[data-action="save"]').addEventListener('click', async ()=>{
+      const label = box.querySelector('[data-field="label"]').value.trim();
+      const icon = box.querySelector('[data-field="icon"]').value.trim() || '🎁';
+      const chosen = Array.from(box.querySelectorAll('.plan-game-chip.on')).map(c=>c.dataset.cat);
+      if (!label){
+        setPlannerStatus('Bitte einen Gewinn eintragen.', true);
+        return;
+      }
+      setPlannerStatus('Wird gespeichert…');
+      try{
+        await saveMegaPlanDay(key, { label, icon, games: chosen });
+        applyPlanToLiveTable();
+        renderMegaPlanner();
+        setPlannerStatus('Gespeichert: ' + dateLabel + ' → ' + icon + ' ' + label);
+      }catch(e){
+        setPlannerStatus('Speichern fehlgeschlagen: ' + (e.message || e), true);
+      }
+    });
+
+    const resetBtn = box.querySelector('[data-action="reset"]');
+    if (resetBtn){
+      resetBtn.addEventListener('click', async ()=>{
+        if (!confirm('Planung für ' + dateLabel + ' wirklich entfernen?')) return;
+        setPlannerStatus('Wird entfernt…');
+        try{
+          await deleteMegaPlanDay(key);
+          applyPlanToLiveTable();
+          renderMegaPlanner();
+          setPlannerStatus('Planung für ' + dateLabel + ' entfernt.');
+        }catch(e){
+          setPlannerStatus('Entfernen fehlgeschlagen: ' + (e.message || e), true);
+        }
+      });
+    }
+
+    wrap.appendChild(box);
+  }
+}
+
+function setPlannerStatus(msg, isError){
+  const el = document.getElementById('megaPlannerStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? 'var(--danger)' : 'var(--success)';
+}
+
+// Übernimmt eine geänderte Planung sofort in den laufenden Mega-Tisch.
+function applyPlanToLiveTable(){
+  const t = tables.find(x=>x.isMega);
+  if (!t) return;
+  const planned = getMegaGamesForDate(t.opensAt);
+  if (planned) t.sequence = planned;
+  if (document.getElementById('screen-lobby').classList.contains('active')) renderLobby();
+}
+
 async function renderAdmin(){
   renderAdminTopStats();
+
+  document.getElementById('megaPlannerList').innerHTML = '<p class="hint">Plan wird geladen…</p>';
+  await loadMegaPlan();
+  renderMegaPlanner();
 
   const tBody = document.getElementById('adminTablesBody');
   tBody.innerHTML = '';
@@ -1953,16 +2167,17 @@ function makeTables(){
       idx++;
     }
   });
+  const megaOpensAt = getNextMegaOpenTime();
   list.push({
     id: 'mega',
     name: 'Mega-Rushtable',
-    sequence: pickSequence(),
+    sequence: getMegaGamesForDate(megaOpensAt) || pickSequence(),
     capacity: MEGA_CAPACITY,
     filled: 0,
     finishing:false,
     isMega:true,
     isVip:true, // Teilnahme nur im VIP-Bereich möglich; im normalen Bereich nur Ankündigung
-    opensAt: getNextMegaOpenTime()
+    opensAt: megaOpensAt
   });
   VIP_TABLE_TIERS.forEach(tier=>{
     for (let i=0; i<tier.count; i++){
@@ -2031,7 +2246,7 @@ function renderMegaTeaserCard(now){
       <span style="font-size:22px;line-height:1;">${prize.icon}</span>
       <span style="font-size:12px;color:var(--gold);font-weight:700;">${isCounting ? 'Heutiger' : 'Aktueller'} Hauptpreis: ${prize.label}!</span>
     </div>
-    <p class="hint">Öffnet sich einmal täglich für ${t.capacity.toLocaleString('de-DE')} Plätze — die Teilnahme ist exklusiv im 👑 VIP-Bereich möglich.</p>
+    <p class="hint">Öffnet sich einmal täglich für ${t.capacity.toLocaleString('de-DE')} Plätze — die Teilnahme ist exklusiv im 👑 VIP-Bereich möglich. Die Runde findet nur bei vollständiger Belegung statt, sonst wird die Gebühr erstattet.</p>
     ${isCounting
       ? `<div class="countdown-box mono">Öffnet in ${formatCountdown(t.opensAt-now)}</div>`
       : `<div class="countdown-box mono">Läuft gerade!</div>`}
@@ -2085,7 +2300,7 @@ function renderLobby(){
           <span style="font-size:22px;line-height:1;">${prize.icon}</span>
           <span style="font-size:12px;color:var(--gold);font-weight:700;">Heutiger Hauptpreis: ${prize.label}!</span>
         </div>
-        <p class="hint">Öffnet sich einmal täglich für ${t.capacity.toLocaleString('de-DE')} Plätze.</p>
+        <p class="hint">Öffnet sich einmal täglich für ${t.capacity.toLocaleString('de-DE')} Plätze. Die Runde findet nur statt, wenn innerhalb von ${Math.round(MEGA_SIGNUP_WINDOW_MS/60000)} Minuten alle Plätze belegt sind — andernfalls entfällt sie und alle Teilnahmegebühren werden erstattet.</p>
         <div class="countdown-box mono">Öffnet in ${formatCountdown(t.opensAt-now)}</div>
         <button class="btn full" disabled>Noch geschlossen</button>
       `;
@@ -2103,6 +2318,9 @@ function renderLobby(){
         <span style="font-size:22px;line-height:1;">${megaPrize.icon}</span>
         <span style="font-size:12px;color:var(--gold);font-weight:700;">Hauptpreis: ${megaPrize.label}!</span>
       </div>` : '';
+    const megaDeadline = t.isMega ? `
+      <div class="countdown-box mono">Anmeldung endet in ${formatCountdown(megaClosesAt(t) - now)}</div>
+      <div class="hint" style="text-align:center;margin:2px 0;">Findet nur statt, wenn alle Plätze belegt sind — sonst volle Erstattung.</div>` : '';
     card.innerHTML = `
       <div class="table-top">
         <div class="table-name">${t.isMega ? '🌟 ' : ''}${t.isVip ? '👑 ' : ''}${t.name}</div>
@@ -2115,6 +2333,7 @@ function renderLobby(){
         </div>
         <div class="seat-info"><b>${t.filled}</b> / ${t.capacity}<br>Plätze belegt<br><span style="color:${t.isVip?'var(--gold)':'var(--amber)'};">bis zu ${maxPts.toLocaleString('de-DE')} Pkt./Spiel${t.isVip?' (2×)':''}</span></div>
       </div>
+      ${megaDeadline}
       <div class="hint" style="text-align:center;margin:2px 0;">Teilnahme: <b style="color:var(--text);">${entryFee > 0 ? entryFee.toFixed(2).replace('.',',') + ' €' : 'Kostenlos'}</b></div>
       <button class="btn full joinBtn" data-id="${t.id}" ${pct>=100?'disabled':''}>
         ${pct>=100?'Voll':'Beitreten'}
@@ -2138,11 +2357,26 @@ function startSimulation(){
   simTimer = setInterval(()=>{
     tables.forEach(t=>{
       if (t.finishing) return;
-      if (t.isMega && Date.now() < t.opensAt) return; // still counting down, no fill activity yet
+
+      // Mega-Rushtable: läuft ausschließlich über echte Anmeldungen. Es werden
+      // keine Plätze simuliert. Nach Ablauf der Anmeldefrist entscheidet sich,
+      // ob die Runde stattfindet oder abgesagt wird.
+      if (t.isMega){
+        if (Date.now() < t.opensAt) return;          // Countdown läuft noch
+        if (Date.now() < megaClosesAt(t)) return;    // Anmeldung noch offen
+        t.finishing = true;
+        if (t.filled >= t.capacity){
+          if (t.id === joinedTableId) beginRound(t);
+          else resetMegaTable(t);
+        } else {
+          cancelMegaRound(t);
+        }
+        return;
+      }
+
       if (t.id === joinedTableId){
         if (t.filled < t.capacity){
-          const step = t.isMega ? Math.ceil(Math.random()*40) : Math.ceil(Math.random()*4);
-          t.filled = Math.min(t.capacity, t.filled + step);
+          t.filled = Math.min(t.capacity, t.filled + Math.ceil(Math.random()*4));
         }
         if (t.filled >= t.capacity){
           t.finishing = true;
@@ -2150,19 +2384,12 @@ function startSimulation(){
         }
       } else {
         if (t.filled < t.capacity){
-          const step = t.isMega ? Math.ceil(Math.random()*50) : Math.ceil(Math.random()*5);
-          t.filled = Math.min(t.capacity, t.filled + step);
+          t.filled = Math.min(t.capacity, t.filled + Math.ceil(Math.random()*5));
         } else {
           t.finishing = true;
           setTimeout(()=>{
-            if (t.isMega){
-              t.filled = 0;
-              t.sequence = pickSequence();
-              t.opensAt = getNextMegaOpenTime(new Date(Date.now()+1000));
-            } else {
-              t.filled = Math.floor(Math.random()*t.capacity*0.3);
-              t.sequence = pickSequence();
-            }
+            t.filled = Math.floor(Math.random()*t.capacity*0.3);
+            t.sequence = pickSequence();
             t.finishing = false;
           }, 2500);
         }
@@ -2173,7 +2400,39 @@ function startSimulation(){
   }, 1100);
 }
 
-const TABLE_ENTRY_FEE = 0;   // Normale Rushtables sind aktuell kostenlos
+// Setzt den Mega-Tisch auf die nächste Öffnung am Folgetag zurück.
+function resetMegaTable(t){
+  t.filled = 0;
+  t.opensAt = getNextMegaOpenTime(new Date(Date.now()+1000));
+  t.sequence = getMegaGamesForDate(t.opensAt) || pickSequence();
+  t.finishing = false;
+}
+
+// Die Anmeldefrist ist abgelaufen, ohne dass alle Plätze belegt wurden:
+// Die Runde findet nicht statt, die Teilnahmegebühr wird erstattet.
+function cancelMegaRound(t){
+  const wasParticipant = (t.id === joinedTableId);
+  const seatsMissing = t.capacity - t.filled;
+  const signedUp = t.filled;
+
+  if (wasParticipant){
+    joinedTableId = null;
+    document.getElementById('waitingOverlay').classList.remove('active');
+    const fee = entryFeeFor(t);
+    if (fee > 0){
+      logPurchase('Erstattung: ' + t.name + ' (nicht zustande gekommen)',
+                  '+' + fee.toFixed(2).replace('.',',') + ' € (Demo)', -fee).catch(()=>{});
+    }
+    alert(
+      'Der Mega-Rushtable findet heute nicht statt.\n\n' +
+      'Es haben sich ' + signedUp.toLocaleString('de-DE') + ' von ' + t.capacity.toLocaleString('de-DE') +
+      ' Teilnehmenden angemeldet — es fehlten ' + seatsMissing.toLocaleString('de-DE') + ' Plätze.\n\n' +
+      (fee > 0 ? 'Deine Teilnahmegebühr wird vollständig erstattet.\n\n' : '') +
+      'Morgen um ' + MEGA_OPEN_HOUR + ':00 Uhr gibt es einen neuen Versuch.'
+    );
+  }
+  resetMegaTable(t);
+}
 const VIP_ENTRY_FEE = 5;     // 5,00 € Teilnahme gilt vorerst nur für VIP-Räume
 const MEGA_ENTRY_FEE = 10;   // Mega-Rushtable (nur über den VIP-Bereich erreichbar)
 function entryFeeFor(t){
@@ -2188,15 +2447,21 @@ async function joinTable(rawId){
   const t = tables.find(x=>x.id===id);
   if (!t || t.filled >= t.capacity) return; // table full — no further joining possible
   if (t.isMega && Date.now() < t.opensAt) return;
+  if (t.isMega && Date.now() >= megaClosesAt(t)) return; // Anmeldefrist abgelaufen
   if (t.isVip && !hasPremiumBadge(currentAccount)) return; // safety net; UI already gates this
 
   const fee = entryFeeFor(t);
   const feeLabel = fee > 0 ? (fee.toFixed(2).replace('.', ',') + ' €') : 'Kostenlos';
   const prizeLine = t.isMega ? ('\nHauptpreis: ' + getMegaPrizeForDate(t.opensAt).label + ' ' + getMegaPrizeForDate(t.opensAt).icon) : '';
+  const megaCondition = t.isMega
+    ? ('\n\nWICHTIG: Die Runde findet nur statt, wenn alle ' + t.capacity.toLocaleString('de-DE') +
+       ' Plätze bis ' + new Date(megaClosesAt(t)).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) +
+       ' Uhr belegt sind. Andernfalls entfällt sie und die Teilnahmegebühr wird vollständig erstattet.')
+    : '';
   const ok = confirm(
-    'Teilnahmegebühr: ' + feeLabel + ' für "' + t.name + '"' + prizeLine + '\n' +
-    (fee > 0 ? 'Dies ist eine Demo-Zahlung — es wird KEIN echtes Geld abgebucht.\n' : '') +
-    'Jetzt teilnehmen?'
+    'Teilnahmegebühr: ' + feeLabel + ' für "' + t.name + '"' + prizeLine + megaCondition + '\n' +
+    (fee > 0 ? '\nDies ist eine Demo-Zahlung — es wird KEIN echtes Geld abgebucht.\n' : '') +
+    '\nJetzt teilnehmen?'
   );
   if (!ok) return;
   if (t.filled >= t.capacity) return; // re-check: table may have filled while the dialog was open
@@ -2214,7 +2479,8 @@ function updateWaitingUI(){
   const t = tables.find(x=>x.id===joinedTableId);
   if (!t) return;
   const pct = Math.min(100, Math.round((t.filled/t.capacity)*100));
-  document.getElementById('waitCount').textContent = t.filled + ' / ' + t.capacity + ' Plätze';
+  document.getElementById('waitCount').textContent = t.filled + ' / ' + t.capacity + ' Plätze'
+    + (t.isMega ? ' · Anmeldeschluss in ' + formatCountdown(megaClosesAt(t) - Date.now()) : '');
   document.getElementById('waitProgress').style.width = pct + '%';
   const avatarsEl = document.getElementById('waitAvatars');
   const showCount = Math.min(60, t.filled);
@@ -3285,6 +3551,7 @@ function finalizeGameScore(cat, rank, total, userMetric){
   } else {
     finishRound().catch(e=>{
       console.error('Fehler beim Rundenabschluss:', e);
+      joinedTableId = null;
       showScreen('screen-results');
     });
   }
@@ -3311,16 +3578,6 @@ async function finishRound(){
   const coinsEarned = Math.max(1, Math.round(sumPoints * 0.3));
   currentAccount.wallet = (currentAccount.wallet || 0) + coinsEarned;
 
-  // Speichern darf den Rundenabschluss niemals blockieren: Wenn die Datenbank
-  // gerade nicht erreichbar ist, wird die Runde trotzdem zu Ende geführt.
-  try{
-    await storageSet('account:'+currentAccount.email, JSON.stringify(currentAccount), false);
-    await saveLeaderboardEntry(currentAccount);
-  }catch(e){
-    console.warn('Rundenergebnis konnte nicht gespeichert werden:', e);
-    showPersistenceWarning();
-  }
-
   animateCountUp(document.getElementById('roundPointsNum'), sumPoints);
   document.getElementById('rankSub').textContent = (won ? 'Runde gewonnen! Starke Leistung.' : 'Runde beendet. Nächstes Mal klappt es besser!') + ' +' + coinsEarned + ' Münzen für den Shop.' + (madeTop3 ? ' 🏆 Top 3 im Schnitt!' : '');
   const bd = document.getElementById('roundBreakdown');
@@ -3340,6 +3597,17 @@ async function finishRound(){
   joinedTableId = null;
   showScreen('screen-results');
   if (madeTop3) launchFireworks();
+
+  // Erst NACH dem Anzeigen speichern und bewusst ohne await: Eine langsame oder
+  // fehlgeschlagene Verbindung (typisch im Mobilfunknetz) darf den Spielfluss
+  // nie blockieren.
+  Promise.resolve()
+    .then(()=>storageSet('account:'+currentAccount.email, JSON.stringify(currentAccount), false))
+    .then(()=>saveLeaderboardEntry(currentAccount))
+    .catch(e=>{
+      console.warn('Rundenergebnis konnte nicht gespeichert werden:', e);
+      showPersistenceWarning();
+    });
 }
 
 function animateCountUp(el, target){
@@ -3386,6 +3654,24 @@ document.getElementById('backToLobbyBtn').addEventListener('click', ()=>{
   setNavActive('lobby');
   showScreen('screen-lobby');
 });
+
+/* ---------- AUTOMATISCHE WIEDERANMELDUNG ----------
+   Supabase merkt sich eine gültige Sitzung im Browser. Beim Öffnen der App
+   prüfen wir, ob noch eine besteht, und laden das zugehörige Profil — dann
+   muss man sich nicht bei jedem Besuch neu anmelden. */
+(async function tryAutoLogin(){
+  if (localStorage.getItem('minirush_stay_logged_in') === 'false') return;
+  try{
+    const { data } = await sb.auth.getSession();
+    const email = data && data.session && data.session.user && data.session.user.email;
+    if (!email) return;
+    const res = await storageGet('account:'+email.toLowerCase(), false);
+    const account = JSON.parse(res.value);
+    loginSuccess(account);
+  }catch(e){
+    // Keine gültige Sitzung oder kein Profil gefunden — normaler Startbildschirm.
+  }
+})();
 </script>
 </body>
 </html>
