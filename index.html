@@ -265,6 +265,12 @@
   .plan-field input{margin:0;padding:8px 10px;font-size:13px;}
   .plan-calc{font-size:12px;font-weight:600;padding:7px 10px;background:var(--surface-2);border-radius:7px;margin-bottom:10px;}
   .plan-game-chip.locked{opacity:.35;cursor:not-allowed;}
+  .streak-box{display:flex;align-items:center;gap:12px;background:var(--surface-2);
+              border-radius:10px;padding:12px 14px;margin-top:12px;text-align:left;}
+  .streak-flame{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;
+                color:var(--coral);min-width:52px;text-align:center;}
+  #ctVisibility{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--surface-2);
+                background:var(--surface-2);color:var(--text);font-family:inherit;font-size:13px;}
   .admin-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 20px;border-bottom:1px solid var(--surface-2);padding-bottom:10px;}
   .admin-tab{background:var(--surface);border:1px solid var(--surface-2);color:var(--muted);
              padding:9px 14px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
@@ -561,6 +567,56 @@
   <div class="filter-bar" id="areaBar">
     <button class="filter-btn area-btn active" data-area="normal">Rushtables</button>
     <button class="filter-btn area-btn" data-area="vip">👑 VIP-Räume (2× Punkte)</button>
+    <button class="filter-btn area-btn" data-area="custom">🛠️ Eigene Tische</button>
+  </div>
+
+  <div id="customArea" style="display:none;">
+    <div class="shop-card" style="max-width:100%;margin:0 0 20px;text-align:left;padding:18px;">
+      <div style="font-weight:700;font-size:15px;">🛠️ Eigenen Tisch erstellen</div>
+      <p class="hint" style="margin:6px 0 14px;">
+        Kosten: <b>${CUSTOM_TABLE_COST} Münzen</b>. Du bestimmst die Spiele, die Teilnehmerzahl und ob der Tisch öffentlich ist
+        oder nur mit Einladungs-Code betreten werden kann. An eigenen Tischen gibt es Punkte für die Bestenliste,
+        aber keine Münzen — so bleibt der Wettbewerb an den regulären Tischen fair.
+      </p>
+
+      <div class="plan-row">
+        <input type="text" id="ctName" placeholder="Name des Tisches" maxlength="30">
+      </div>
+      <div class="plan-grid">
+        <label class="plan-field">
+          <span class="hint">Teilnehmer</span>
+          <input type="number" id="ctCapacity" value="10" min="${CUSTOM_TABLE_MIN}" max="${CUSTOM_TABLE_MAX}" step="1">
+        </label>
+        <label class="plan-field">
+          <span class="hint">Sichtbarkeit</span>
+          <select id="ctVisibility">
+            <option value="public">Öffentlich</option>
+            <option value="private">Privat (nur mit Code)</option>
+          </select>
+        </label>
+        <label class="plan-field">
+          <span class="hint">Dein Guthaben</span>
+          <input type="text" id="ctBalance" value="—" readonly>
+        </label>
+      </div>
+
+      <div class="hint" style="margin-bottom:4px;">
+        Spiele auswählen (1 bis ${CUSTOM_TABLE_MAX_GAMES}): <b id="ctCounter">0/${CUSTOM_TABLE_MAX_GAMES}</b>
+      </div>
+      <div class="plan-games" id="ctGames"></div>
+
+      <button class="btn full" id="ctCreateBtn" style="margin-top:6px;">Tisch erstellen (${CUSTOM_TABLE_COST} Münzen)</button>
+      <p class="hint" id="ctStatus" style="margin-top:8px;"></p>
+    </div>
+
+    <div class="shop-card" style="max-width:100%;margin:0 0 20px;text-align:left;padding:18px;">
+      <div style="font-weight:700;font-size:14px;">🔑 Mit Einladungs-Code beitreten</div>
+      <div class="plan-row" style="margin-top:10px;">
+        <input type="text" id="ctJoinCode" placeholder="Code eingeben, z. B. RUSH-4K2P" maxlength="12" style="text-transform:uppercase;">
+        <button class="btn" id="ctJoinBtn" style="width:auto;padding:9px 16px;">Suchen</button>
+      </div>
+      <p class="hint" id="ctJoinStatus" style="margin-top:6px;"></p>
+    </div>
   </div>
   <div class="filter-bar" id="lobbyFilterBar">
     <button class="filter-btn active" data-filter="all">Alle</button>
@@ -649,6 +705,14 @@
     <div>
       <div id="profileBadgeLine" style="font-weight:700;font-size:15px;"></div>
       <div class="hint">Münzen: <b class="mono" id="profileWallet" style="color:var(--amber);">0</b> · <button class="linklike" data-nav="shop">Zum Shop</button></div>
+      <div class="streak-box">
+        <div class="streak-flame" id="profileStreak">—</div>
+        <div>
+          <div style="font-weight:600;font-size:13px;">Tages-Serie</div>
+          <div class="hint" id="profileStreakSub">Spiel eine Runde und starte deine Serie</div>
+          <div class="hint" style="margin-top:3px;">Münzen heute: <b class="mono" id="profileCoinsToday">0 / 150</b></div>
+        </div>
+      </div>
       <div class="hint" id="adminToggleLine" style="margin-top:4px;"></div>
     </div>
   </div>
@@ -710,6 +774,8 @@
   <p class="hint">Bei kostenpflichtigen Rushtables handelt es sich um einen <b>Geschicklichkeitswettbewerb</b>, kein Glücksspiel. Das Ergebnis jeder Runde wird ausschließlich durch Geschicklichkeit, Wissen, Gedächtnis oder Reaktionsvermögen der Teilnehmenden bestimmt. Zufallselemente haben auf die Platzierung oder Gewinnermittlung keinerlei Einfluss. Innerhalb der Minispiele zufällig gewählte Elemente (z. B. welches Wort oder welche Farbe gesucht wird) betreffen nur die Aufgabenstellung, nicht die Bewertung der Leistung.</p>
 
   <h3>4. Teilnahmegebühr & Zahlungsabwicklung</h3>
+  <p class="hint">Münzen sind ein reines App-Guthaben für kosmetische Artikel und selbst erstellte Tische. Sie stellen keinen Geldanspruch dar, sind nicht übertragbar und können weder ausgezahlt noch in Bargeld umgetauscht werden. Münzen werden ausschließlich für die ersten drei Plätze an kostenlosen Rushtables vergeben, begrenzt auf 150 Münzen pro Kalendertag. An selbst erstellten Tischen sowie an VIP- und Mega-Tischen werden keine Münzen ausgeschüttet. Bonuspunkte aus der Tages-Serie zählen ausschließlich für die Bestenliste und haben keinen Geldwert.</p>
+
   <p class="hint">Die Teilnahme an einem regulären Rushtable ist derzeit kostenlos. An VIP-Räumen kostet die Teilnahme 5,00 €, am täglichen Mega-Rushtable (nur über den VIP-Bereich erreichbar) 10,00 €, jeweils fällig bei Beitritt zum Tisch. Die Teilnahmegebühr und die Platzzahl des Mega-Rushtables werden für jeden Termin vorab in der App bekannt gegeben und können je Termin abweichen. Der Mega-Rushtable kommt nur zustande, wenn innerhalb der angegebenen Anmeldefrist sämtliche Plätze belegt sind; sobald der letzte Platz vergeben ist, startet die Runde und eine weitere Anmeldung ist nicht mehr möglich. Wird die Platzzahl bis zum Fristende nicht erreicht, entfällt die Runde und die Teilnahmegebühr wird vollständig erstattet. Bei den übrigen Tischen ist eine Rückerstattung nach Rundenbeginn ausgeschlossen, außer der Tisch kommt aus vom Veranstalter zu vertretenden Gründen nicht zustande. Die Zahlungsabwicklung erfolgt über einen externen Zahlungsdienstleister (z. B. Stripe oder PayPal); dessen eigene Nutzungsbedingungen gelten für den Zahlungsvorgang zusätzlich.</p>
 
   <h3>5. Ablauf & Gewinnermittlung</h3>
@@ -1360,6 +1426,9 @@ document.getElementById('registerBtn').addEventListener('click', async ()=>{
         totalPoints: 0
       },
       wallet: 0,
+      streak: { days: 0, lastPlayed: null },
+      coinDay: null,
+      coinsToday: 0,
       inventory: { skins: [], badges: [] },
       equippedSkin: null,
       equippedBadge: null,
@@ -1433,6 +1502,87 @@ document.getElementById('loginBtn').addEventListener('click', async ()=>{
 // derived from this same rate, so coin costs and euro prices always line up
 // with the coin packs (100 Münzen = 1 €).
 const COINS_PER_EURO = 100;
+
+/* ---------- MÜNZ-VERGABE ----------
+   Münzen gibt es ausschließlich für die ersten drei Plätze einer Runde und nur
+   an kostenlosen Tischen. Alle anderen erhalten wie gewohnt Punkte für die
+   Bestenliste. Ein Tageslimit verhindert, dass sich Kosmetik durch stundenlanges
+   Dauerspielen praktisch von selbst freischaltet. */
+const PODIUM_COIN_REWARD = {1: 50, 2: 30, 3: 10};
+const DAILY_COIN_CAP = 150;
+const CUSTOM_TABLE_COST = 150;      // Münzkosten für einen eigenen Tisch
+const CUSTOM_TABLE_MIN = 3;         // Mindest-Teilnehmerzahl
+const CUSTOM_TABLE_MAX = 200;       // Höchst-Teilnehmerzahl
+const CUSTOM_TABLE_MAX_GAMES = 6;   // Höchstzahl auswählbarer Spiele
+
+/* ---------- TAGES-SERIE ----------
+   Wer täglich mindestens eine Runde spielt, baut eine Serie auf: Tag 1 bringt
+   10 Bonuspunkte, Tag 2 zwanzig, ... ab Tag 10 dauerhaft 100 pro Tag.
+   Ein ausgelassener Tag kostet 30 % der Serie, zwei ausgelassene Tage weitere
+   30 %, ab drei ausgelassenen Tagen beginnt die Serie wieder bei null. */
+const STREAK_MAX_DAYS = 10;
+const STREAK_POINTS_PER_DAY = 10;
+
+function todayKey(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+function daysBetweenKeys(fromKey, toKey){
+  const a = new Date(fromKey + 'T00:00:00');
+  const b = new Date(toKey + 'T00:00:00');
+  return Math.round((b - a) / 86400000);
+}
+function streakBonusPoints(days){
+  return Math.min(days, STREAK_MAX_DAYS) * STREAK_POINTS_PER_DAY;
+}
+
+// Aktualisiert die Serie beim Abschluss einer Runde und liefert zurück, was passiert ist.
+function updateStreak(account){
+  const today = todayKey();
+  const s = account.streak;
+  if (s.lastPlayed === today){
+    // Heute wurde bereits gespielt — Bonus gibt es nur einmal pro Tag.
+    return {days: s.days, bonus: 0, alreadyToday: true, lost: 0};
+  }
+  const before = s.days;
+  let lost = 0;
+  if (!s.lastPlayed){
+    s.days = 1;
+  } else {
+    const gap = daysBetweenKeys(s.lastPlayed, today);
+    if (gap === 1){
+      s.days = s.days + 1;                       // lückenlos weitergespielt
+    } else if (gap === 2){
+      s.days = Math.floor(s.days * 0.7) + 1;     // ein Tag ausgelassen: −30 %
+    } else if (gap === 3){
+      s.days = Math.floor(s.days * 0.49) + 1;    // zwei Tage ausgelassen: nochmals −30 %
+    } else {
+      s.days = 1;                                // drei Tage oder mehr: zurück auf Anfang
+    }
+    lost = Math.max(0, before - (s.days - 1));
+  }
+  s.lastPlayed = today;
+  return {days: s.days, bonus: streakBonusPoints(s.days), alreadyToday: false, lost};
+}
+
+// Vergibt Podest-Münzen unter Beachtung des Tageslimits.
+function awardPodiumCoins(account, place, table){
+  if (table.isVip || table.isMega) return {coins: 0, capped: false, reason: 'paid'};
+  // Selbst erstellte Tische schütten keine Münzen aus: Sonst könnten sich zwei
+  // Bekannte gegenseitig einladen und die Podestplätze untereinander aufteilen.
+  if (table.isCustom) return {coins: 0, capped: false, reason: 'custom'};
+  const reward = PODIUM_COIN_REWARD[place];
+  if (!reward) return {coins: 0, capped: false, reason: 'no-podium'};
+
+  const today = todayKey();
+  if (account.coinDay !== today){ account.coinDay = today; account.coinsToday = 0; }
+  const remaining = Math.max(0, DAILY_COIN_CAP - account.coinsToday);
+  const granted = Math.min(reward, remaining);
+  account.coinsToday += granted;
+  account.wallet = (account.wallet || 0) + granted;
+  return {coins: granted, capped: granted < reward, reason: 'podium'};
+}
 function coinsToEuroLabel(coins){
   const euros = coins / COINS_PER_EURO;
   return euros.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
@@ -1504,6 +1654,12 @@ function ensureStatsShape(account){
   if (account.equippedSkin === undefined) account.equippedSkin = null;
   if (account.equippedBadge === undefined) account.equippedBadge = null;
   if (typeof account.isAdmin !== 'boolean') account.isAdmin = false;
+  if (!account.streak || typeof account.streak !== 'object'){
+    account.streak = { days: 0, lastPlayed: null };
+  }
+  if (typeof account.streak.days !== 'number' || isNaN(account.streak.days)) account.streak.days = 0;
+  if (account.coinDay === undefined) account.coinDay = null;
+  if (typeof account.coinsToday !== 'number' || isNaN(account.coinsToday)) account.coinsToday = 0;
   if (isOwnerAccount(account)) account.isAdmin = true; // voller Zugriff für das Owner-Konto
   return account;
 }
@@ -1553,6 +1709,7 @@ function loginSuccess(account){
   showScreen('screen-lobby');
 
   // Geplante Mega-Preise/Spiele nachladen und Ansicht auffrischen.
+  loadCustomTables().then(()=>renderLobby()).catch(()=>{});
   loadMegaPlan().then(()=>{
     applyPlanToLiveTable();
     if (document.getElementById('screen-lobby').classList.contains('active')) renderLobby();
@@ -1677,6 +1834,23 @@ function renderProfile(){
   const badge = getEquippedBadge(currentAccount);
   document.getElementById('profileBadgeLine').textContent = badge ? (badge.icon + ' ' + badge.label) : currentAccount.firstName;
   document.getElementById('profileWallet').textContent = currentAccount.wallet || 0;
+  const streakEl = document.getElementById('profileStreak');
+  if (streakEl){
+    const s = currentAccount.streak || {days:0, lastPlayed:null};
+    const active = s.lastPlayed === todayKey();
+    streakEl.textContent = s.days > 0 ? ('🔥 ' + s.days) : '—';
+    const sub = document.getElementById('profileStreakSub');
+    if (sub){
+      if (s.days === 0) sub.textContent = 'Spiel eine Runde und starte deine Serie';
+      else if (active) sub.textContent = 'Heute gesichert · +' + streakBonusPoints(s.days) + ' Bonuspunkte';
+      else sub.textContent = 'Heute noch nicht gespielt · +' + streakBonusPoints(s.days+1) + ' Punkte bei Fortsetzung';
+    }
+  }
+  const coinsTodayEl = document.getElementById('profileCoinsToday');
+  if (coinsTodayEl){
+    const used = (currentAccount.coinDay === todayKey()) ? (currentAccount.coinsToday || 0) : 0;
+    coinsTodayEl.textContent = used + ' / ' + DAILY_COIN_CAP;
+  }
   const adminLine = document.getElementById('adminToggleLine');
   adminLine.innerHTML = currentAccount.isAdmin
     ? '👑 Admin-Modus aktiv · <button class="linklike" id="toggleAdminBtn">deaktivieren</button>'
@@ -2437,13 +2611,182 @@ document.querySelectorAll('#areaBar .area-btn[data-area]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     lobbyArea = btn.dataset.area;
     document.querySelectorAll('#areaBar .area-btn[data-area]').forEach(b=>b.classList.toggle('active', b===btn));
-    document.getElementById('lobbyFilterBar').style.display = lobbyArea==='vip' ? 'none' : 'flex';
+    document.getElementById('lobbyFilterBar').style.display = lobbyArea==='normal' ? 'flex' : 'none';
     document.getElementById('vipFilterBar').style.display = lobbyArea==='vip' ? 'flex' : 'none';
+    document.getElementById('customArea').style.display = lobbyArea==='custom' ? 'block' : 'none';
+    if (lobbyArea === 'custom') initCustomTableForm();
     renderLobby();
   });
 });
 
+/* ---------- EIGENE TISCHE ----------
+   Spieler:innen können für Münzen einen eigenen Tisch erstellen: Spiele,
+   Teilnehmerzahl und Sichtbarkeit frei wählbar. Private Tische sind nur über
+   einen Einladungs-Code erreichbar, den man weitergeben kann.
+   Wichtig: Eigene Tische schütten keine Münzen aus (siehe awardPodiumCoins). */
+
+function makeInviteCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // ohne leicht verwechselbare Zeichen
+  let code = '';
+  for (let i=0;i<4;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return 'RUSH-' + code;
+}
+
+function initCustomTableForm(){
+  const balanceEl = document.getElementById('ctBalance');
+  if (balanceEl) balanceEl.value = (currentAccount.wallet || 0).toLocaleString('de-DE') + ' Münzen';
+
+  const gamesWrap = document.getElementById('ctGames');
+  if (gamesWrap && !gamesWrap.dataset.ready){
+    gamesWrap.innerHTML = CATS.map(cat=>
+      `<span class="plan-game-chip" data-cat="${cat}">${CAT_LABEL[cat]}</span>`).join('');
+    gamesWrap.dataset.ready = '1';
+
+    const counter = document.getElementById('ctCounter');
+    const refresh = ()=>{
+      const n = gamesWrap.querySelectorAll('.plan-game-chip.on').length;
+      counter.textContent = n + '/' + CUSTOM_TABLE_MAX_GAMES;
+      counter.style.color = n >= CUSTOM_TABLE_MAX_GAMES ? 'var(--gold)' : '';
+      gamesWrap.querySelectorAll('.plan-game-chip').forEach(chip=>{
+        chip.classList.toggle('locked', n >= CUSTOM_TABLE_MAX_GAMES && !chip.classList.contains('on'));
+      });
+    };
+    gamesWrap.querySelectorAll('.plan-game-chip').forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        if (chip.classList.contains('locked')) return;
+        chip.classList.toggle('on');
+        refresh();
+      });
+    });
+    refresh();
+  }
+}
+
+function setCustomStatus(msg, isError){
+  const el = document.getElementById('ctStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? 'var(--danger)' : 'var(--success)';
+}
+
+async function createCustomTable(){
+  const name = document.getElementById('ctName').value.trim();
+  const capacity = parseInt(document.getElementById('ctCapacity').value, 10);
+  const visibility = document.getElementById('ctVisibility').value;
+  const chosen = Array.from(document.querySelectorAll('#ctGames .plan-game-chip.on')).map(el=>el.dataset.cat);
+
+  if (!name){ setCustomStatus('Bitte einen Namen für den Tisch eingeben.', true); return; }
+  if (!capacity || capacity < CUSTOM_TABLE_MIN || capacity > CUSTOM_TABLE_MAX){
+    setCustomStatus('Teilnehmerzahl muss zwischen ' + CUSTOM_TABLE_MIN + ' und ' + CUSTOM_TABLE_MAX + ' liegen.', true);
+    return;
+  }
+  if (chosen.length === 0){ setCustomStatus('Bitte mindestens ein Spiel auswählen.', true); return; }
+  if ((currentAccount.wallet || 0) < CUSTOM_TABLE_COST){
+    setCustomStatus('Dafür brauchst du ' + CUSTOM_TABLE_COST + ' Münzen — du hast aktuell ' +
+                    (currentAccount.wallet || 0) + '.', true);
+    return;
+  }
+
+  const btn = document.getElementById('ctCreateBtn');
+  btn.disabled = true; btn.textContent = 'Wird erstellt…';
+
+  const code = makeInviteCode();
+  const table = {
+    id: 'custom-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+    name: name,
+    sequence: chosen,
+    capacity: capacity,
+    filled: 0,
+    finishing: false,
+    isCustom: true,
+    isPrivate: visibility === 'private',
+    inviteCode: code,
+    owner: currentAccount.email,
+    ownerName: currentAccount.firstName + ' ' + currentAccount.lastName.charAt(0) + '.',
+    createdAt: Date.now()
+  };
+
+  try{
+    // Münzen abbuchen und Tisch für alle sichtbar ablegen.
+    currentAccount.wallet -= CUSTOM_TABLE_COST;
+    await storageSet('custom_table:' + table.id, JSON.stringify(table), true);
+    await persistAccount();
+    await logPurchase('Eigener Tisch: ' + name, CUSTOM_TABLE_COST + ' Münzen', CUSTOM_TABLE_COST / COINS_PER_EURO);
+
+    tables.push(table);
+    document.getElementById('ctName').value = '';
+    document.querySelectorAll('#ctGames .plan-game-chip').forEach(ch=>ch.classList.remove('on','locked'));
+    document.getElementById('ctCounter').textContent = '0/' + CUSTOM_TABLE_MAX_GAMES;
+    initCustomTableForm();
+    renderLobby();
+
+    setCustomStatus(table.isPrivate
+      ? 'Privater Tisch erstellt! Dein Einladungs-Code: ' + code + ' — gib ihn an die weiter, die mitspielen sollen.'
+      : 'Öffentlicher Tisch erstellt und für alle sichtbar.');
+  }catch(e){
+    currentAccount.wallet += CUSTOM_TABLE_COST; // Abbuchung zurücknehmen
+    setCustomStatus('Tisch konnte nicht erstellt werden: ' + (e.message || e), true);
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Tisch erstellen (' + CUSTOM_TABLE_COST + ' Münzen)';
+  }
+}
+
+// Lädt alle von anderen erstellten Tische aus der gemeinsamen Ablage.
+async function loadCustomTables(){
+  try{
+    const listRes = await storageList('custom_table:', true);
+    const keys = (listRes && listRes.keys) ? listRes.keys : [];
+    const loaded = [];
+    for (const k of keys){
+      try{
+        const r = await storageGet(k, true);
+        const t = JSON.parse(r.value);
+        // Tische, die älter als 24 Stunden sind, werden nicht mehr angezeigt.
+        if (Date.now() - (t.createdAt || 0) > 86400000) continue;
+        t.filled = t.filled || 0;
+        t.finishing = false;
+        loaded.push(t);
+      }catch(e){}
+    }
+    // Vorhandene eigene Tische ersetzen, Rest unberührt lassen.
+    tables = tables.filter(t=>!t.isCustom).concat(loaded);
+  }catch(e){
+    console.warn('Eigene Tische konnten nicht geladen werden:', e);
+  }
+}
+
+async function joinByInviteCode(){
+  const input = document.getElementById('ctJoinCode');
+  const statusEl = document.getElementById('ctJoinStatus');
+  const code = input.value.trim().toUpperCase();
+  if (!code){ statusEl.textContent = 'Bitte einen Code eingeben.'; statusEl.style.color = 'var(--danger)'; return; }
+
+  statusEl.textContent = 'Suche Tisch…'; statusEl.style.color = 'var(--muted)';
+  await loadCustomTables();
+  const found = tables.find(t=>t.isCustom && t.inviteCode === code);
+  if (!found){
+    statusEl.textContent = 'Kein Tisch mit diesem Code gefunden. Möglicherweise ist er abgelaufen.';
+    statusEl.style.color = 'var(--danger)';
+    return;
+  }
+  statusEl.textContent = 'Tisch "' + found.name + '" gefunden — wird unten angezeigt.';
+  statusEl.style.color = 'var(--success)';
+  unlockedInviteCodes.add(code);
+  renderLobby();
+}
+
+// Private Tische werden nur angezeigt, wenn der Code eingegeben wurde
+// oder man selbst der Ersteller ist.
+const unlockedInviteCodes = new Set();
+
 const tableGrid = document.getElementById('tableGrid');
+
+document.getElementById('ctCreateBtn').addEventListener('click', createCustomTable);
+document.getElementById('ctJoinBtn').addEventListener('click', joinByInviteCode);
+document.getElementById('ctJoinCode').addEventListener('keydown', e=>{
+  if (e.key === 'Enter') joinByInviteCode();
+});
 
 // Ankündigungs-Karte für den Mega-Rushtable im normalen Bereich — reine Info,
 // kein Beitritt möglich. Die Teilnahme funktioniert ausschließlich im VIP-Bereich.
@@ -2493,14 +2836,28 @@ function renderLobby(){
   }
 
   const filtered = tables.filter(t=>{
+    if (lobbyArea === 'custom'){
+      if (!t.isCustom) return false;
+      // Private Tische nur für Ersteller und Eingeladene sichtbar.
+      if (t.isPrivate && t.owner !== currentAccount.email && !unlockedInviteCodes.has(t.inviteCode)) return false;
+      return true;
+    }
+    if (t.isCustom) return false;
     if (lobbyArea === 'vip'){
       if (!t.isVip) return false;
       return vipFilter === 'all' || String(t.capacity) === vipFilter;
-    } else {
-      if (t.isVip) return false;
-      return lobbyFilter === 'all' || String(t.capacity) === lobbyFilter;
     }
+    if (t.isVip) return false;
+    return lobbyFilter === 'all' || String(t.capacity) === lobbyFilter;
   });
+
+  if (lobbyArea === 'custom' && filtered.length === 0){
+    const empty = document.createElement('p');
+    empty.className = 'hint';
+    empty.style.cssText = 'grid-column:1/-1;text-align:center;padding:20px;';
+    empty.textContent = 'Noch keine eigenen Tische. Erstelle oben den ersten oder gib einen Einladungs-Code ein.';
+    tableGrid.appendChild(empty);
+  }
   filtered.forEach(t=>{
     const card = document.createElement('div');
     const programHtml = t.sequence.map(c=>`<span class="cat-tag ${CAT_CLASS[c]}" data-cat="${c}">${CAT_LABEL[c]}</span>`).join('');
@@ -2535,15 +2892,23 @@ function renderLobby(){
         <span style="font-size:22px;line-height:1;">${megaPrize.icon}</span>
         <span style="font-size:12px;color:var(--gold);font-weight:700;">Hauptpreis: ${megaPrize.label}!</span>
       </div>` : '';
+    const customInfo = t.isCustom ? `
+      <div style="background:var(--surface-2);border-radius:8px;padding:8px 10px;margin:4px 0;font-size:12px;">
+        <div>Erstellt von <b>${t.ownerName || 'unbekannt'}</b>${t.isPrivate ? ' · 🔒 privat' : ' · 🌐 öffentlich'}</div>
+        ${(t.isPrivate && (t.owner === currentAccount.email || unlockedInviteCodes.has(t.inviteCode)))
+          ? `<div style="margin-top:4px;">Code: <b class="mono" style="color:var(--amber);">${t.inviteCode}</b></div>` : ''}
+        <div class="hint" style="margin-top:4px;">Nur Punkte, keine Münzen</div>
+      </div>` : '';
     const megaDeadline = t.isMega ? `
       <div class="countdown-box mono">Anmeldung endet in ${formatCountdown(megaClosesAt(t) - now)}</div>
       <div class="hint" style="text-align:center;margin:2px 0;">Findet nur statt, wenn alle Plätze belegt sind — sonst volle Erstattung.</div>` : '';
     card.innerHTML = `
       <div class="table-top">
-        <div class="table-name">${t.isMega ? '🌟 ' : ''}${t.isVip ? '👑 ' : ''}${t.name}</div>
+        <div class="table-name">${t.isMega ? '🌟 ' : ''}${t.isVip ? '👑 ' : ''}${t.isCustom ? '🛠️ ' : ''}${t.name}</div>
       </div>
       <div class="program">${programHtml}</div>
       ${carBanner}
+      ${customInfo}
       <div class="table-mid">
         <div class="gauge" style="background:conic-gradient(var(--amber) ${pct}%, var(--surface-2) 0)">
           <span>${pct}%</span>
@@ -2595,6 +2960,10 @@ function startSimulation(){
         }
         return;
       }
+
+      // Private eigene Tische füllen sich nicht von selbst — dort spielen nur
+      // Menschen mit, die den Einladungs-Code haben.
+      if (t.isCustom && t.isPrivate) return;
 
       if (t.id === joinedTableId){
         if (t.filled < t.capacity){
@@ -4025,17 +4394,50 @@ async function finishRound(){
   const avgRank = roundState.results.reduce((s,r)=>s+r.rank,0) / roundState.results.length;
   const won = avgPercentile >= 0.7;
   const madeTop3 = avgRank <= 3;
+  if (!roundState.results.length) return;
+
+  const table = roundState.table;
+  // Endplatzierung der Runde = durchschnittliche Platzierung über alle Spiele.
+  const finalPlace = Math.max(1, Math.round(avgRank));
 
   currentAccount.stats.roundsPlayed++;
   if (won) currentAccount.stats.roundsWon++;
-  currentAccount.stats.totalPoints += sumPoints;
-  // Coins are earned more slowly than leaderboard points, so cosmetics (especially
-  // the expensive Premium badges) require real, sustained play to afford.
-  const coinsEarned = Math.max(1, Math.round(sumPoints * 0.3));
-  currentAccount.wallet = (currentAccount.wallet || 0) + coinsEarned;
 
-  animateCountUp(document.getElementById('roundPointsNum'), sumPoints);
-  document.getElementById('rankSub').textContent = (won ? 'Runde gewonnen! Starke Leistung.' : 'Runde beendet. Nächstes Mal klappt es besser!') + ' +' + coinsEarned + ' Münzen für den Shop.' + (madeTop3 ? ' 🏆 Top 3 im Schnitt!' : '');
+  // Tages-Serie fortschreiben (nur einmal pro Kalendertag).
+  const streak = updateStreak(currentAccount);
+  const totalPoints = sumPoints + streak.bonus;
+  currentAccount.stats.totalPoints += totalPoints;
+
+  // Münzen nur für die Podestplätze an kostenlosen Tischen.
+  const coinResult = awardPodiumCoins(currentAccount, finalPlace, table);
+
+  animateCountUp(document.getElementById('roundPointsNum'), totalPoints);
+
+  // Ergebnistext aus den tatsächlich zutreffenden Bausteinen zusammensetzen.
+  const parts = [];
+  if (finalPlace <= 3){
+    parts.push(['🥇','🥈','🥉'][finalPlace-1] + ' Platz ' + finalPlace + ' in dieser Runde!');
+  } else {
+    parts.push(won ? 'Runde gewonnen! Starke Leistung.' : 'Runde beendet. Nächstes Mal klappt es besser!');
+  }
+  if (coinResult.coins > 0){
+    parts.push('+' + coinResult.coins + ' Münzen' + (coinResult.capped ? ' (Tageslimit erreicht)' : '') + '.');
+  } else if (finalPlace <= 3 && coinResult.reason === 'podium'){
+    parts.push('Dein Tageslimit von ' + DAILY_COIN_CAP + ' Münzen ist bereits erreicht.');
+  } else if (finalPlace <= 3 && coinResult.reason === 'paid'){
+    parts.push('An VIP- und Mega-Tischen gibt es statt Münzen den ausgelobten Hauptpreis.');
+  } else if (finalPlace <= 3 && coinResult.reason === 'custom'){
+    parts.push('An selbst erstellten Tischen gibt es keine Münzen.');
+  }
+  if (streak.bonus > 0){
+    parts.push('🔥 Tag ' + streak.days + ' deiner Serie: +' + streak.bonus + ' Bonuspunkte.');
+  } else if (streak.alreadyToday){
+    parts.push('Serientag heute bereits gutgeschrieben (Tag ' + streak.days + ').');
+  }
+  if (streak.lost > 0){
+    parts.push('Durch die Spielpause sind ' + streak.lost + ' Serientage verfallen.');
+  }
+  document.getElementById('rankSub').textContent = parts.join(' ');
   const bd = document.getElementById('roundBreakdown');
   bd.innerHTML = '';
   roundState.results.forEach(r=>{
