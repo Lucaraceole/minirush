@@ -567,7 +567,12 @@
   <div class="filter-bar" id="areaBar">
     <button class="filter-btn area-btn active" data-area="normal">Rushtables</button>
     <button class="filter-btn area-btn" data-area="vip">👑 VIP-Räume (2× Punkte)</button>
+    <button class="filter-btn area-btn" data-area="teams">👥 Teams</button>
     <button class="filter-btn area-btn" data-area="custom">🛠️ Eigene Tische</button>
+  </div>
+
+  <div id="teamsArea" style="display:none;">
+    <div class="shop-card" style="max-width:100%;margin:0 0 20px;text-align:left;padding:18px;" id="teamsPanel"></div>
   </div>
 
   <div id="customArea" style="display:none;">
@@ -634,6 +639,13 @@
     <button class="filter-btn" data-vipfilter="500">500er</button>
     <button class="filter-btn" data-vipfilter="5000">🌟 Mega (5000er)</button>
   </div>
+  <div class="filter-bar" id="teamsFilterBar" style="display:none;">
+    <button class="filter-btn active" data-teamfilter="all">Alle</button>
+    <button class="filter-btn" data-teamfilter="25">25er</button>
+    <button class="filter-btn" data-teamfilter="50">50er</button>
+    <button class="filter-btn" data-teamfilter="free">Kostenlos</button>
+    <button class="filter-btn" data-teamfilter="paid">Kostenpflichtig</button>
+  </div>
   <div class="table-grid" id="tableGrid"></div>
 </div>
 
@@ -691,6 +703,7 @@
     <div id="rankSub" style="color:var(--muted);"></div>
   </div>
   <div class="round-breakdown" id="roundBreakdown"></div>
+  <div class="shop-card" id="teamResultBox" style="display:none;max-width:100%;margin-top:14px;text-align:left;padding:14px 16px;"></div>
   <div style="text-align:center;margin-top:24px;">
     <button class="btn" id="backToLobbyBtn">Zurück zur Lobby</button>
   </div>
@@ -1083,6 +1096,11 @@ const VIP_TABLE_TIERS = [
   {capacity:200, count:5},
   {capacity:500, count:5},
 ];
+const TEAM_CAPACITIES = [25, 50];
+const TEAM_ENTRY_FEE = 5;        // Demo-Teilnahmegebühr pro Person an kostenpflichtigen Team-Tischen
+const TEAM_MIN_MEMBERS = 2;
+const TEAM_MAX_MEMBERS = 4;
+const TEAM_CREATE_COST = 150;    // Münzkosten für die Team-Gründung, analog zu eigenen Tischen
 const MEGA_CAPACITY = 5000;
 const MEGA_OPEN_HOUR = 20; // Öffnet täglich um 20:00 Uhr (lokale Zeit)
 // Nach der Öffnung bleibt die Anmeldung für dieses Zeitfenster offen. Sind bis
@@ -1267,6 +1285,9 @@ function pickSequence(){
 let currentAccount = null; // {firstName,lastName,email,phone,street,zip,city,passwordHash,color,stats}
 let tables = [];
 let joinedTableId = null;
+let joinedTeamId = null;
+let joinedTeamName = null;
+let myTeam = null;
 let simTimer = null;
 let roundState = null; // {table, results:[], gameIndex}
 let forgotContext = null; // {email, code}
@@ -1710,6 +1731,7 @@ function loginSuccess(account){
 
   // Geplante Mega-Preise/Spiele nachladen und Ansicht auffrischen.
   loadCustomTables().then(()=>renderLobby()).catch(()=>{});
+  loadMyTeam().then(()=>{ if (lobbyArea === 'teams') renderTeamsArea(); }).catch(()=>{});
   loadMegaPlan().then(()=>{
     applyPlanToLiveTable();
     if (document.getElementById('screen-lobby').classList.contains('active')) renderLobby();
@@ -2586,11 +2608,29 @@ function makeTables(){
       idx++;
     }
   });
+  TEAM_CAPACITIES.forEach(cap=>{
+    [false, true].forEach(paid=>{
+      list.push({
+        id: 'team-table-' + cap + (paid ? '-paid' : '-free'),
+        name: '👥 Team-Tisch ' + cap + (paid ? ' (kostenpflichtig)' : ' (kostenlos)'),
+        sequence: pickSequence(),
+        capacity: cap,
+        filled: Math.floor(Math.random()*cap*0.35),
+        finishing:false,
+        isMega:false,
+        isVip:false,
+        isTeamTable:true,
+        teamPaid:paid
+      });
+    });
+  });
   return list;
 }
 
 let lobbyFilter = 'all';
 let vipFilter = 'all';
+let teamsCapFilter = 'all';
+let teamsPaidFilter = 'all';
 let lobbyArea = 'normal';
 
 document.querySelectorAll('#lobbyFilterBar .filter-btn[data-filter]').forEach(btn=>{
@@ -2607,14 +2647,32 @@ document.querySelectorAll('#vipFilterBar .filter-btn[data-vipfilter]').forEach(b
     renderLobby();
   });
 });
+document.querySelectorAll('#teamsFilterBar .filter-btn[data-teamfilter]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const val = btn.dataset.teamfilter;
+    if (val === 'free' || val === 'paid'){
+      teamsPaidFilter = (teamsPaidFilter === val) ? 'all' : val;
+    } else {
+      teamsCapFilter = val;
+    }
+    document.querySelectorAll('#teamsFilterBar .filter-btn[data-teamfilter]').forEach(b=>{
+      const bv = b.dataset.teamfilter;
+      b.classList.toggle('active', bv===teamsCapFilter || bv===teamsPaidFilter);
+    });
+    renderLobby();
+  });
+});
 document.querySelectorAll('#areaBar .area-btn[data-area]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     lobbyArea = btn.dataset.area;
     document.querySelectorAll('#areaBar .area-btn[data-area]').forEach(b=>b.classList.toggle('active', b===btn));
     document.getElementById('lobbyFilterBar').style.display = lobbyArea==='normal' ? 'flex' : 'none';
     document.getElementById('vipFilterBar').style.display = lobbyArea==='vip' ? 'flex' : 'none';
+    document.getElementById('teamsFilterBar').style.display = lobbyArea==='teams' ? 'flex' : 'none';
     document.getElementById('customArea').style.display = lobbyArea==='custom' ? 'block' : 'none';
+    document.getElementById('teamsArea').style.display = lobbyArea==='teams' ? 'block' : 'none';
     if (lobbyArea === 'custom') initCustomTableForm();
+    if (lobbyArea === 'teams') renderTeamsArea();
     renderLobby();
   });
 });
@@ -2756,6 +2814,239 @@ async function loadCustomTables(){
   }
 }
 
+/* ---------- TEAMS ----------
+   2–4 Spieler:innen bilden ein Team (per Einladungs-Code) und treten
+   gemeinsam an 25er- oder 50er-Team-Tischen an — kostenlos oder
+   kostenpflichtig. Das Team-Ergebnis wird mit simulierten gegnerischen
+   Teams verglichen (siehe handleTeamRoundResult). */
+
+async function loadMyTeam(){
+  try{
+    const listRes = await storageList('team:', true);
+    const keys = (listRes && listRes.keys) ? listRes.keys : [];
+    for (const k of keys){
+      try{
+        const r = await storageGet(k, true);
+        const t = JSON.parse(r.value);
+        if (t.disbanded) continue;
+        if ((t.members||[]).some(m=>m.email === currentAccount.email)){
+          myTeam = t;
+          return;
+        }
+      }catch(e){}
+    }
+    myTeam = null;
+  }catch(e){
+    console.warn('Team konnte nicht geladen werden:', e);
+  }
+}
+
+function memberDisplayName(account){
+  return account.firstName + ' ' + (account.lastName ? account.lastName.charAt(0) + '.' : '');
+}
+
+function setTeamStatus(msg, isError){
+  const el = document.getElementById('teamStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? 'var(--danger)' : 'var(--success)';
+}
+
+async function createTeam(){
+  const nameEl = document.getElementById('teamName');
+  const capEl = document.getElementById('teamCapacity');
+  const paidEl = document.getElementById('teamPaid');
+  const name = nameEl.value.trim();
+  const capacity = parseInt(capEl.value, 10);
+  const paid = paidEl.value === 'paid';
+
+  if (!name){ setTeamStatus('Bitte einen Teamnamen eingeben.', true); return; }
+  if (!TEAM_CAPACITIES.includes(capacity)){ setTeamStatus('Ungültige Tischgröße.', true); return; }
+  if ((currentAccount.wallet || 0) < TEAM_CREATE_COST){
+    setTeamStatus('Dafür braucht ihr ' + TEAM_CREATE_COST + ' Münzen — ihr habt aktuell ' + (currentAccount.wallet || 0) + '.', true);
+    return;
+  }
+
+  const btn = document.getElementById('teamCreateBtn');
+  btn.disabled = true; btn.textContent = 'Wird erstellt…';
+
+  const code = makeInviteCode();
+  const team = {
+    id: 'team-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+    name: name,
+    capacity: capacity,
+    paid: paid,
+    owner: currentAccount.email,
+    members: [{ email: currentAccount.email, name: memberDisplayName(currentAccount) }],
+    inviteCode: code,
+    createdAt: Date.now(),
+    stats: { roundsPlayed:0, totalPoints:0, wins:0, bestPlace:null }
+  };
+
+  try{
+    currentAccount.wallet -= TEAM_CREATE_COST;
+    await storageSet('team:' + team.id, JSON.stringify(team), true);
+    await persistAccount();
+    await logPurchase('Team gegründet: ' + name, TEAM_CREATE_COST + ' Münzen', TEAM_CREATE_COST / COINS_PER_EURO);
+    myTeam = team;
+    renderTeamsArea();
+    if (document.getElementById('screen-lobby').classList.contains('active')) renderLobby();
+  }catch(e){
+    currentAccount.wallet += TEAM_CREATE_COST; // Abbuchung zurücknehmen
+    setTeamStatus('Team konnte nicht erstellt werden: ' + (e.message || e), true);
+    btn.disabled = false; btn.textContent = 'Team erstellen (' + TEAM_CREATE_COST + ' Münzen)';
+  }
+}
+
+async function joinTeamByCode(rawCode){
+  const statusEl = document.getElementById('teamJoinStatus');
+  const code = (rawCode || '').trim().toUpperCase();
+  if (!statusEl) return;
+  if (!code){ statusEl.textContent = 'Bitte einen Code eingeben.'; statusEl.style.color = 'var(--danger)'; return; }
+  if (myTeam){ statusEl.textContent = 'Du bist bereits Mitglied eines Teams.'; statusEl.style.color = 'var(--danger)'; return; }
+
+  statusEl.textContent = 'Suche Team…'; statusEl.style.color = 'var(--muted)';
+  try{
+    const listRes = await storageList('team:', true);
+    const keys = (listRes && listRes.keys) ? listRes.keys : [];
+    let found = null;
+    for (const k of keys){
+      try{
+        const r = await storageGet(k, true);
+        const t = JSON.parse(r.value);
+        if (!t.disbanded && t.inviteCode === code){ found = t; break; }
+      }catch(e){}
+    }
+    if (!found){
+      statusEl.textContent = 'Kein Team mit diesem Code gefunden. Möglicherweise ist es abgelaufen.';
+      statusEl.style.color = 'var(--danger)';
+      return;
+    }
+    if (found.members.length >= TEAM_MAX_MEMBERS){
+      statusEl.textContent = 'Dieses Team ist bereits voll (' + TEAM_MAX_MEMBERS + ' Mitglieder).';
+      statusEl.style.color = 'var(--danger)';
+      return;
+    }
+    if (found.members.some(m=>m.email === currentAccount.email)){
+      statusEl.textContent = 'Du bist bereits Mitglied dieses Teams.';
+      statusEl.style.color = 'var(--danger)';
+      return;
+    }
+    found.members.push({ email: currentAccount.email, name: memberDisplayName(currentAccount) });
+    await storageSet('team:' + found.id, JSON.stringify(found), true);
+    myTeam = found;
+    statusEl.textContent = 'Team "' + found.name + '" beigetreten!';
+    statusEl.style.color = 'var(--success)';
+    renderTeamsArea();
+    if (document.getElementById('screen-lobby').classList.contains('active')) renderLobby();
+  }catch(e){
+    statusEl.textContent = 'Beitritt fehlgeschlagen: ' + (e.message || e);
+    statusEl.style.color = 'var(--danger)';
+  }
+}
+
+async function leaveTeam(){
+  if (!myTeam) return;
+  const isOwner = myTeam.owner === currentAccount.email;
+  const ok = confirm(isOwner
+    ? 'Team wirklich auflösen? Dies entfernt das Team für alle Mitglieder.'
+    : 'Team wirklich verlassen?');
+  if (!ok) return;
+
+  try{
+    if (isOwner){
+      const disbanded = Object.assign({}, myTeam, { disbanded: true, members: [] });
+      await storageSet('team:' + myTeam.id, JSON.stringify(disbanded), true);
+    } else {
+      const updated = Object.assign({}, myTeam, { members: myTeam.members.filter(m=>m.email !== currentAccount.email) });
+      await storageSet('team:' + myTeam.id, JSON.stringify(updated), true);
+    }
+  }catch(e){
+    console.warn('Team-Update fehlgeschlagen:', e);
+  }
+  myTeam = null;
+  renderTeamsArea();
+  if (document.getElementById('screen-lobby').classList.contains('active')) renderLobby();
+}
+
+function renderTeamsArea(){
+  const panel = document.getElementById('teamsPanel');
+  if (!panel) return;
+
+  if (!myTeam){
+    panel.innerHTML = `
+      <div style="font-weight:700;font-size:15px;">👥 Team erstellen</div>
+      <p class="hint" style="margin:6px 0 14px;">
+        Bildet ein Team aus ${TEAM_MIN_MEMBERS} bis ${TEAM_MAX_MEMBERS} Spieler:innen und tretet gemeinsam an
+        Team-Tischen (25er oder 50er) gegen andere Teams an. Wer als Team die meisten Punkte sammelt, gewinnt
+        für das gesamte Team. Kosten für die Team-Gründung: <b>${TEAM_CREATE_COST} Münzen</b>.
+      </p>
+      <div class="plan-row">
+        <input type="text" id="teamName" placeholder="Teamname" maxlength="24">
+      </div>
+      <div class="plan-grid">
+        <label class="plan-field">
+          <span class="hint">Tischgröße</span>
+          <select id="teamCapacity">
+            <option value="25">25er Team-Tisch</option>
+            <option value="50">50er Team-Tisch</option>
+          </select>
+        </label>
+        <label class="plan-field">
+          <span class="hint">Modus</span>
+          <select id="teamPaid">
+            <option value="free">Kostenlos</option>
+            <option value="paid">Kostenpflichtig (${TEAM_ENTRY_FEE} € p.P.)</option>
+          </select>
+        </label>
+        <label class="plan-field">
+          <span class="hint">Dein Guthaben</span>
+          <input type="text" id="teamBalance" value="${(currentAccount.wallet || 0).toLocaleString('de-DE')} Münzen" readonly>
+        </label>
+      </div>
+      <button class="btn full" id="teamCreateBtn" style="margin-top:6px;">Team erstellen (${TEAM_CREATE_COST} Münzen)</button>
+      <p class="hint" id="teamStatus" style="margin-top:8px;"></p>
+      <hr style="border-color:var(--surface-2);margin:18px 0;">
+      <div style="font-weight:700;font-size:14px;">🔑 Team per Code beitreten</div>
+      <div class="plan-row" style="margin-top:10px;">
+        <input type="text" id="teamJoinCode" placeholder="Code eingeben, z. B. RUSH-4K2P" maxlength="12" style="text-transform:uppercase;">
+        <button class="btn" id="teamJoinBtn" style="width:auto;padding:9px 16px;">Beitreten</button>
+      </div>
+      <p class="hint" id="teamJoinStatus" style="margin-top:6px;"></p>
+    `;
+    document.getElementById('teamCreateBtn').addEventListener('click', createTeam);
+    document.getElementById('teamJoinBtn').addEventListener('click', ()=>joinTeamByCode(document.getElementById('teamJoinCode').value));
+    document.getElementById('teamJoinCode').addEventListener('keydown', e=>{
+      if (e.key === 'Enter') joinTeamByCode(document.getElementById('teamJoinCode').value);
+    });
+    return;
+  }
+
+  const isOwner = myTeam.owner === currentAccount.email;
+  const ready = myTeam.members.length >= TEAM_MIN_MEMBERS;
+  const membersHtml = myTeam.members.map(m=>
+    '<div style="padding:4px 0;">👤 ' + m.name + (m.email === myTeam.owner ? ' <span class="hint">(Captain)</span>' : '') + '</div>'
+  ).join('');
+  const stats = myTeam.stats || {};
+  const statsHtml = (stats.roundsPlayed
+    ? `<p class="hint" style="margin-top:8px;">Team-Runden gespielt: <b>${stats.roundsPlayed}</b> · Team-Gesamtpunkte: <b>${(stats.totalPoints||0).toLocaleString('de-DE')}</b> · Siege: <b>${stats.wins||0}</b>${stats.bestPlace ? ' · Beste Platzierung: <b>' + stats.bestPlace + '.</b>' : ''}</p>`
+    : '');
+
+  panel.innerHTML = `
+    <div style="font-weight:700;font-size:15px;">👥 ${myTeam.name}</div>
+    <p class="hint" style="margin:6px 0 10px;">${myTeam.capacity}er Team-Tisch · ${myTeam.paid ? 'Kostenpflichtig (' + TEAM_ENTRY_FEE + ' € p.P.)' : 'Kostenlos'} · ${myTeam.members.length}/${TEAM_MAX_MEMBERS} Mitglieder</p>
+    <div style="background:var(--surface-2);border-radius:8px;padding:10px 12px;margin-bottom:10px;">${membersHtml}</div>
+    ${isOwner ? `<p class="hint">Einladungs-Code: <b class="mono" style="color:var(--amber);">${myTeam.inviteCode}</b> — teile ihn mit ${TEAM_MAX_MEMBERS - myTeam.members.length > 0 ? 'bis zu ' + (TEAM_MAX_MEMBERS - myTeam.members.length) + ' weiteren Personen' : 'niemandem mehr, das Team ist voll'}.</p>` : ''}
+    ${statsHtml}
+    ${ready
+      ? `<p class="hint" style="margin-top:8px;">Euer Team ist bereit! Wechselt oben in der Tischliste zum passenden Team-Tisch (${myTeam.capacity}er, ${myTeam.paid ? 'kostenpflichtig' : 'kostenlos'}) und klickt auf „Team anmelden“. Hinweis: In dieser Beta spielt eine Person stellvertretend für das Team, das Ergebnis zählt als Team-Ergebnis.</p>`
+      : `<p class="hint" style="margin-top:8px;color:var(--amber);">Noch mind. ${TEAM_MIN_MEMBERS - myTeam.members.length} weitere Person(en) nötig, bevor ihr antreten könnt.</p>`}
+    <button class="btn secondary full" id="teamLeaveBtn" style="margin-top:12px;">${isOwner ? 'Team auflösen' : 'Team verlassen'}</button>
+    <p class="hint" id="teamStatus" style="margin-top:8px;"></p>
+  `;
+  document.getElementById('teamLeaveBtn').addEventListener('click', leaveTeam);
+}
+
 async function joinByInviteCode(){
   const input = document.getElementById('ctJoinCode');
   const statusEl = document.getElementById('ctJoinStatus');
@@ -2843,6 +3134,13 @@ function renderLobby(){
       return true;
     }
     if (t.isCustom) return false;
+    if (lobbyArea === 'teams'){
+      if (!t.isTeamTable) return false;
+      if (teamsPaidFilter === 'free' && t.teamPaid) return false;
+      if (teamsPaidFilter === 'paid' && !t.teamPaid) return false;
+      return teamsCapFilter === 'all' || String(t.capacity) === teamsCapFilter;
+    }
+    if (t.isTeamTable) return false;
     if (lobbyArea === 'vip'){
       if (!t.isVip) return false;
       return vipFilter === 'all' || String(t.capacity) === vipFilter;
@@ -2899,6 +3197,12 @@ function renderLobby(){
           ? `<div style="margin-top:4px;">Code: <b class="mono" style="color:var(--amber);">${t.inviteCode}</b></div>` : ''}
         <div class="hint" style="margin-top:4px;">Nur Punkte, keine Münzen</div>
       </div>` : '';
+    const teamInfo = t.isTeamTable ? `
+      <div style="background:var(--surface-2);border-radius:8px;padding:8px 10px;margin:4px 0;font-size:12px;">
+        <div>👥 Team-Tisch · 2–4 Spieler:innen pro Team</div>
+        <div class="hint" style="margin-top:4px;">${t.teamPaid ? 'Kostenpflichtig – Preis fürs Sieger-Team' : 'Kostenlos – Gutschein fürs Sieger-Team'}</div>
+        ${myTeam ? `<div class="hint" style="margin-top:4px;">Euer Team: <b style="color:var(--text);">${myTeam.name}</b> (${myTeam.members.length}/${TEAM_MAX_MEMBERS})</div>` : `<div class="hint" style="margin-top:4px;color:var(--amber);">Ihr braucht zuerst ein Team (Tab „👥 Teams“).</div>`}
+      </div>` : '';
     const megaDeadline = t.isMega ? `
       <div class="countdown-box mono">Anmeldung endet in ${formatCountdown(megaClosesAt(t) - now)}</div>
       <div class="hint" style="text-align:center;margin:2px 0;">Findet nur statt, wenn alle Plätze belegt sind — sonst volle Erstattung.</div>` : '';
@@ -2909,22 +3213,26 @@ function renderLobby(){
       <div class="program">${programHtml}</div>
       ${carBanner}
       ${customInfo}
+      ${teamInfo}
       <div class="table-mid">
         <div class="gauge" style="background:conic-gradient(var(--amber) ${pct}%, var(--surface-2) 0)">
           <span>${pct}%</span>
         </div>
-        <div class="seat-info"><b>${t.filled}</b> / ${t.capacity}<br>Plätze belegt<br><span style="color:${t.isVip?'var(--gold)':'var(--amber)'};">bis zu ${maxPts.toLocaleString('de-DE')} Pkt./Spiel${t.isVip?' (2×)':''}</span></div>
+        <div class="seat-info"><b>${t.filled}</b> / ${t.capacity}<br>${t.isTeamTable ? 'Teams beigetreten' : 'Plätze belegt'}<br><span style="color:${t.isVip?'var(--gold)':'var(--amber)'};">bis zu ${maxPts.toLocaleString('de-DE')} Pkt./Spiel${t.isVip?' (2×)':''}</span></div>
       </div>
       ${megaDeadline}
-      <div class="hint" style="text-align:center;margin:2px 0;">Teilnahme: <b style="color:var(--text);">${entryFee > 0 ? entryFee.toFixed(2).replace('.',',') + ' €' : 'Kostenlos'}</b></div>
-      <button class="btn full joinBtn" data-id="${t.id}" ${pct>=100?'disabled':''}>
-        ${pct>=100?'Voll':'Beitreten'}
+      <div class="hint" style="text-align:center;margin:2px 0;">Teilnahme: <b style="color:var(--text);">${entryFee > 0 ? entryFee.toFixed(2).replace('.',',') + ' € p.P.' : 'Kostenlos'}</b></div>
+      <button class="btn full ${t.isTeamTable ? 'joinTeamBtn' : 'joinBtn'}" data-id="${t.id}" ${pct>=100?'disabled':''}>
+        ${pct>=100?'Voll':(t.isTeamTable ? 'Team anmelden' : 'Beitreten')}
       </button>
     `;
     tableGrid.appendChild(card);
   });
   document.querySelectorAll('.joinBtn').forEach(b=>{
     b.addEventListener('click', ()=>joinTable(b.dataset.id));
+  });
+  document.querySelectorAll('.joinTeamBtn').forEach(b=>{
+    b.addEventListener('click', ()=>joinTeamTable(b.dataset.id));
   });
   const teaserBtn = document.getElementById('megaTeaserToVip');
   if (teaserBtn){
@@ -3030,6 +3338,7 @@ const VIP_ENTRY_FEE = 5;     // 5,00 € Teilnahme gilt vorerst nur für VIP-Rä
 const MEGA_ENTRY_FEE = 10;   // Mega-Rushtable (nur über den VIP-Bereich erreichbar)
 function entryFeeFor(t){
   if (t.isMega) return getMegaFeeForDate(t.opensAt);
+  if (t.isTeamTable) return t.teamPaid ? TEAM_ENTRY_FEE : 0;
   if (t.isVip) return VIP_ENTRY_FEE;
   return TABLE_ENTRY_FEE;
 }
@@ -3066,6 +3375,24 @@ async function joinTable(rawId){
   document.getElementById('waitingOverlay').classList.add('active');
 
   logPurchase('Tischeintritt: ' + t.name, fee > 0 ? (feeLabel + ' (Demo)') : 'Kostenlos', fee).catch(()=>{});
+}
+
+async function joinTeamTable(rawId){
+  if (!myTeam){
+    alert('Ihr braucht zuerst ein Team. Wechselt oben zum Tab „👥 Teams“, um eins zu erstellen oder per Code beizutreten.');
+    return;
+  }
+  if (myTeam.members.length < TEAM_MIN_MEMBERS){
+    alert('Euer Team braucht mindestens ' + TEAM_MIN_MEMBERS + ' Mitglieder, bevor ihr an einem Team-Tisch antreten könnt. Aktuell: ' + myTeam.members.length + '/' + TEAM_MAX_MEMBERS + '.');
+    return;
+  }
+  const before = joinedTableId;
+  await joinTable(rawId);
+  if (joinedTableId && joinedTableId !== before){
+    joinedTeamId = myTeam.id;
+    joinedTeamName = myTeam.name;
+    document.getElementById('waitTitle').textContent = myTeam.name + ' @ ' + (tables.find(x=>x.id===joinedTableId)||{}).name;
+  }
 }
 
 function updateWaitingUI(){
@@ -4450,6 +4777,13 @@ async function finishRound(){
   });
 
   const t = tables.find(x=>x.id===joinedTableId);
+  const teamResultBox = document.getElementById('teamResultBox');
+  if (t && t.isTeamTable && joinedTeamId){
+    handleTeamRoundResult(t, totalPoints);
+  } else if (teamResultBox){
+    teamResultBox.style.display = 'none';
+    teamResultBox.innerHTML = '';
+  }
   if (t){
     t.filled = 0; t.finishing = false; t.sequence = pickSequence();
     if (t.isMega) t.opensAt = getNextMegaOpenTime(new Date(Date.now()+1000));
@@ -4468,6 +4802,52 @@ async function finishRound(){
       console.warn('Rundenergebnis konnte nicht gespeichert werden:', e);
       showPersistenceWarning();
     });
+}
+
+// Verarbeitet das Ergebnis einer Runde an einem Team-Tisch: vergleicht die
+// erspielten Team-Punkte mit simulierten gegnerischen Teams (analog zur
+// bestehenden Simulation an normalen Tischen) und aktualisiert die
+// dauerhafte Team-Statistik. Hinweis: In dieser Beta spielt eine Person
+// stellvertretend für das Team; das Ergebnis zählt als Team-Ergebnis.
+async function handleTeamRoundResult(t, points){
+  const teamId = joinedTeamId;
+  const teamName = joinedTeamName || 'Euer Team';
+  const rivalCount = Math.max(2, Math.min(11, Math.round(t.capacity / 4)) - 1);
+  const rivals = [];
+  for (let i=0;i<rivalCount;i++){
+    rivals.push({ name: 'Team ' + String.fromCharCode(65 + (i % 26)) + (i+1), points: Math.max(0, Math.round(points * (0.5 + Math.random()*0.7))), isMine:false });
+  }
+  const all = [{ name: teamName, points, isMine:true }, ...rivals];
+  all.sort((a,b)=>b.points-a.points);
+  const place = all.findIndex(e=>e.isMine) + 1;
+  const won = place === 1;
+
+  const box = document.getElementById('teamResultBox');
+  if (box){
+    box.style.display = 'block';
+    box.innerHTML = `
+      <div style="font-weight:700;font-size:15px;margin-bottom:6px;">👥 ${teamName} – Team-Ergebnis</div>
+      <div>Team-Punkte in dieser Runde: <b class="mono">${points.toLocaleString('de-DE')}</b></div>
+      <div style="margin-top:2px;">Platzierung: <b>${place}. von ${all.length} Teams</b>${won ? ' 🏆 Team-Sieg!' : ''}</div>
+      <p class="hint" style="margin-top:8px;">Hinweis: In dieser Beta spielt eine Person stellvertretend für das Team; das Ergebnis zählt als Team-Ergebnis.</p>
+    `;
+  }
+
+  try{
+    if (myTeam && myTeam.id === teamId){
+      myTeam.stats = myTeam.stats || { roundsPlayed:0, totalPoints:0, wins:0, bestPlace:null };
+      myTeam.stats.roundsPlayed++;
+      myTeam.stats.totalPoints += points;
+      if (won) myTeam.stats.wins = (myTeam.stats.wins||0) + 1;
+      if (myTeam.stats.bestPlace === null || place < myTeam.stats.bestPlace) myTeam.stats.bestPlace = place;
+      await storageSet('team:' + myTeam.id, JSON.stringify(myTeam), true);
+      if (document.getElementById('screen-lobby').classList.contains('active') && lobbyArea === 'teams') renderTeamsArea();
+    }
+  }catch(e){
+    console.warn('Team-Statistik konnte nicht gespeichert werden:', e);
+  }
+  joinedTeamId = null;
+  joinedTeamName = null;
 }
 
 function animateCountUp(el, target){
