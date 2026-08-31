@@ -758,8 +758,12 @@
 
 <!-- RANKING -->
 <div class="screen" id="screen-ranking">
-  <h1>Weltweite Rangliste</h1>
-  <p class="hint">Sichtbar für alle, die diese App-Vorschau öffnen.</p>
+  <h1 id="rankingTitle">Weltweite Rangliste</h1>
+  <p class="hint" id="rankingSub">Sichtbar für alle, die diese App-Vorschau öffnen.</p>
+  <div class="filter-bar" id="rankModeBar">
+    <button class="filter-btn active" data-rankmode="alltime">🌍 Weltweit (Alltime)</button>
+    <button class="filter-btn" data-rankmode="monthly">📅 Monatlich</button>
+  </div>
   <div class="table-scroll">
     <table class="leaderboard" id="rankingTable">
       <thead><tr><th>#</th><th>Spieler</th><th>Punkte</th><th>Runden gewonnen</th></tr></thead>
@@ -961,6 +965,27 @@
 
   <!-- WERKZEUGE -->
   <div class="admin-panel" id="adminPanel-settings">
+    <div class="shop-card" style="max-width:520px;margin:0 0 24px;text-align:left;padding:20px;border-color:var(--amber);">
+      <div style="font-weight:700;font-size:15px;">🎮 Spiel-Einstellungen</div>
+      <p class="hint" style="margin:6px 0 14px;">Gilt sofort für alle neuen Runden auf allen Geräten. Bereits laufende Runden sind nicht betroffen.</p>
+      <div class="plan-grid">
+        <label class="plan-field">
+          <span class="hint">Bereitschaftszeit vor Spielstart (Sek.)</span>
+          <input type="number" id="gsReadyTime" min="3" max="30" step="1">
+        </label>
+        <label class="plan-field">
+          <span class="hint">Countdown vor Spielstart (Sek.)</span>
+          <input type="number" id="gsCountdownTime" min="1" max="10" step="1">
+        </label>
+        <label class="plan-field">
+          <span class="hint">Minispiele pro Rushtable-Runde</span>
+          <input type="number" id="gsGamesPerRound" min="1" max="17" step="1">
+        </label>
+      </div>
+      <button class="btn full" id="gsSaveBtn" style="margin-top:10px;">Einstellungen speichern</button>
+      <p class="hint" id="gsStatus" style="margin-top:8px;"></p>
+    </div>
+
     <div class="shop-card premium" style="max-width:420px;margin:0 0 24px;text-align:left;padding:20px;">
       <div style="font-weight:700;font-size:15px;">👑 Ersteller-Modus</div>
       <p class="hint" style="margin:6px 0 12px;">Schaltet dir als Erfinder dieser App sofort alle Skins und Abzeichen frei (auch Premium) — kostenlos, ohne Münzen oder Zahlung.</p>
@@ -1270,10 +1295,18 @@ async function deleteMegaPlanDay(dateKey){
   if (labelEl) labelEl.textContent = prize.label;
 })();
 
+// Liefert den aktuellen Monat als Schlüssel (z. B. "2026-08") — dient als
+// Storage-Präfix für die monatliche Rangliste, die sich dadurch von selbst
+// "zurücksetzt": ein neuer Monat = ein neuer, leerer Schlüsselraum.
+function currentMonthKey(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+
 function pickSequence(){
   const pool = [...CATS];
   const seq = [];
-  const roundLength = Math.min(GAMES_PER_ROUND, pool.length);
+  const roundLength = Math.min(gameSettings.gamesPerRound, pool.length);
   for (let i=0;i<roundLength;i++){
     const idx = Math.floor(Math.random()*pool.length);
     seq.push(pool.splice(idx,1)[0]);
@@ -1518,6 +1551,30 @@ document.getElementById('loginBtn').addEventListener('click', async ()=>{
   }
 });
 
+// Enter-Taste in den Login-Feldern löst denselben Klick wie der Anmelden-Button aus.
+['loginEmail','loginPassword'].forEach(id=>{
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', e=>{
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      document.getElementById('loginBtn').click();
+    }
+  });
+});
+// Gleiches für die Registrierung: Enter in einem der Pflichtfelder löst den
+// Erstellen-Button aus (sofern er nicht wegen fehlender AGB-Häkchen o.ä.
+// deaktiviert ist).
+['regFirst','regLast','regEmail','regPhone','regStreet','regZip','regCity','regPassword','regPassword2'].forEach(id=>{
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', e=>{
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      const btn = document.getElementById('registerBtn');
+      if (btn && !btn.disabled) btn.click();
+    }
+  });
+});
+
 /* ---------- SHOP CATALOG ---------- */
 // Single source of truth for real-money pricing: every "Demo"-price below is
 // derived from this same rate, so coin costs and euro prices always line up
@@ -1659,6 +1716,10 @@ function ensureStatsShape(account){
   if (!account.stats) {
     account.stats = { gamesPlayed:0, byCategory:{}, roundsPlayed:0, roundsWon:0, totalPoints:0 };
   }
+  if (typeof account.stats.monthlyPoints !== 'number' || isNaN(account.stats.monthlyPoints)) account.stats.monthlyPoints = 0;
+  if (typeof account.stats.monthlyRoundsWon !== 'number' || isNaN(account.stats.monthlyRoundsWon)) account.stats.monthlyRoundsWon = 0;
+  if (typeof account.stats.monthlyRoundsPlayed !== 'number' || isNaN(account.stats.monthlyRoundsPlayed)) account.stats.monthlyRoundsPlayed = 0;
+  if (!account.stats.monthlyPeriod) account.stats.monthlyPeriod = currentMonthKey();
   if (!account.stats.byCategory) account.stats.byCategory = {};
   CATS.forEach(c=>{
     if (typeof account.stats.byCategory[c] !== 'number' || isNaN(account.stats.byCategory[c])){
@@ -1812,14 +1873,39 @@ async function saveLeaderboardEntry(account){
     badge: getEquippedBadge(account)
   };
   await storageSet('leaderboard:'+account.email, JSON.stringify(entry), true);
+
+  // Monatliche Rangliste: eigener Schlüsselraum pro Monat, dadurch von
+  // selbst zurücksetzend — alte Monate bleiben in der DB, werden aber
+  // nirgends mehr abgefragt.
+  const monthlyEntry = {
+    name: entry.name,
+    email: account.email,
+    totalPoints: account.stats.monthlyPoints || 0,
+    roundsWon: account.stats.monthlyRoundsWon || 0,
+    roundsPlayed: account.stats.monthlyRoundsPlayed || 0,
+    color: account.color,
+    skinCss: entry.skinCss,
+    badge: entry.badge
+  };
+  await storageSet('leaderboard_monthly:' + currentMonthKey() + ':' + account.email, JSON.stringify(monthlyEntry), true);
 }
+
+let rankingMode = 'alltime';
 
 async function renderRanking(){
   const body = document.getElementById('rankingBody');
+  const titleEl = document.getElementById('rankingTitle');
+  const subEl = document.getElementById('rankingSub');
+  const isMonthly = rankingMode === 'monthly';
+  if (titleEl) titleEl.textContent = isMonthly ? 'Monatliche Rangliste' : 'Weltweite Rangliste';
+  if (subEl) subEl.textContent = isMonthly
+    ? 'Setzt sich am 1. jedes Monats automatisch zurück — aktueller Zeitraum: ' + currentMonthKey() + '.'
+    : 'Sichtbar für alle, die diese App-Vorschau öffnen.';
   body.innerHTML = '<tr><td colspan="4" class="hint">Lade Rangliste…</td></tr>';
+  const prefix = isMonthly ? ('leaderboard_monthly:' + currentMonthKey() + ':') : 'leaderboard:';
   let listRes;
   try{
-    listRes = await storageList('leaderboard:', true);
+    listRes = await storageList(prefix, true);
   }catch(e){
     body.innerHTML = '<tr><td colspan="4" class="hint">Rangliste momentan nicht verfügbar.</td></tr>';
     return;
@@ -1847,6 +1933,14 @@ async function renderRanking(){
     body.appendChild(tr);
   });
 }
+
+document.querySelectorAll('#rankModeBar .filter-btn[data-rankmode]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    rankingMode = btn.dataset.rankmode;
+    document.querySelectorAll('#rankModeBar .filter-btn[data-rankmode]').forEach(b=>b.classList.toggle('active', b===btn));
+    renderRanking();
+  });
+});
 
 /* ---------- PROFILE ---------- */
 function renderProfile(){
@@ -2529,6 +2623,7 @@ async function loadPlannerTab(){
 async function renderAdmin(){
   renderAdminTopStats();
   setAdminTab(activeAdminTab);
+  initGameSettingsForm();
 
   const tBody = document.getElementById('adminTablesBody');
   tBody.innerHTML = '';
@@ -2544,6 +2639,41 @@ async function renderAdmin(){
   });
 
   startAdminLivePolling();
+}
+
+function initGameSettingsForm(){
+  const readyEl = document.getElementById('gsReadyTime');
+  const cdEl = document.getElementById('gsCountdownTime');
+  const gpEl = document.getElementById('gsGamesPerRound');
+  if (!readyEl || readyEl.dataset.ready) return; // nur einmal Listener registrieren
+  readyEl.dataset.ready = '1';
+  readyEl.value = gameSettings.readyTime;
+  cdEl.value = gameSettings.countdownTime;
+  gpEl.value = gameSettings.gamesPerRound;
+
+  document.getElementById('gsSaveBtn').addEventListener('click', async ()=>{
+    const statusEl = document.getElementById('gsStatus');
+    const readyTime = parseInt(readyEl.value, 10);
+    const countdownTime = parseInt(cdEl.value, 10);
+    const gamesPerRound = parseInt(gpEl.value, 10);
+    if (!readyTime || readyTime < 1 || !countdownTime || countdownTime < 1 || !gamesPerRound || gamesPerRound < 1){
+      statusEl.textContent = 'Bitte gültige Werte (jeweils mind. 1) eingeben.';
+      statusEl.style.color = 'var(--danger)';
+      return;
+    }
+    const btn = document.getElementById('gsSaveBtn');
+    btn.disabled = true; btn.textContent = 'Speichert…';
+    try{
+      await saveGameSettings({ readyTime, countdownTime, gamesPerRound });
+      statusEl.textContent = 'Gespeichert — gilt sofort für alle neuen Runden.';
+      statusEl.style.color = 'var(--success)';
+    }catch(e){
+      statusEl.textContent = 'Speichern fehlgeschlagen: ' + (e.message || e);
+      statusEl.style.color = 'var(--danger)';
+    }finally{
+      btn.disabled = false; btn.textContent = 'Einstellungen speichern';
+    }
+  });
 }
 
 /* ---------- TABLES / LOBBY ---------- */
@@ -3455,6 +3585,11 @@ function renderReadyScreen(cat){
   gameBox.innerHTML = `
     <h2>${CAT_LABEL[cat]}</h2>
     <p class="hint">Nächstes Minispiel dieser Rushtable-Runde.</p>
+    <div class="shop-card" style="max-width:100%;margin:12px 0;text-align:left;padding:14px 16px;">
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px;">📖 Regeln</div>
+      <p style="margin:0;color:var(--text);">${GAME_INFO[cat] || ''}</p>
+      <p class="hint" style="margin-top:8px;">${GAME_INFO_NOTE}</p>
+    </div>
     <div class="reaction-pad" id="readyPad" style="cursor:default;">Klicke, wenn du bereit bist</div>
     <button class="btn full" id="readyBtn" style="margin-top:16px;">Ich bin bereit</button>
     <p class="hint" id="autoStartHint" style="margin-top:10px;"></p>
@@ -3468,7 +3603,7 @@ function renderReadyScreen(cat){
   };
   document.getElementById('readyBtn').addEventListener('click', start);
 
-  let remaining = 5;
+  let remaining = gameSettings.readyTime;
   const hintEl = document.getElementById('autoStartHint');
   hintEl.textContent = 'Startet automatisch in ' + remaining + ' s...';
   const autoTimerIv = setInterval(()=>{
@@ -3483,9 +3618,9 @@ function renderReadyScreen(cat){
 }
 
 function runCountdown(cat){
-  gameBox.innerHTML = `<div class="seq-display" id="countdownNum">3</div>`;
+  let n = gameSettings.countdownTime;
+  gameBox.innerHTML = `<div class="seq-display" id="countdownNum">${n}</div>`;
   const el = document.getElementById('countdownNum');
-  let n = 3;
   const iv = setInterval(()=>{
     n--;
     if (n > 0){
@@ -3538,7 +3673,34 @@ function timerBarHtml(){
    (andere Wörter, Farben, Aufgaben). Die Kennzahl kombiniert Fehler und Zeit:
    Jede falsche Teilrunde zählt schwerer als jede denkbare Zeitdifferenz. */
 const ROUNDS_PER_GAME = 5;   // Teilrunden je Minispiel
-const GAMES_PER_ROUND = 3;   // Minispiele je Rushtable-Runde
+const GAMES_PER_ROUND = 3;   // Standardwert Minispiele je Rushtable-Runde (Fallback, siehe gameSettings)
+
+// Admin-einstellbare Spielparameter. Werden beim App-Start aus Supabase
+// geladen (siehe loadGameSettings) und überschreiben dann die Fallback-Werte
+// oben. Der ganze restliche Code liest ausschließlich aus diesem Objekt.
+let gameSettings = {
+  readyTime: 10,      // Sekunden Bereitschaftszeit vor Spielstart (Regeln lesen)
+  countdownTime: 3,   // Sekunden für den 3-2-1-Countdown direkt vor Spielstart
+  gamesPerRound: GAMES_PER_ROUND
+};
+
+async function loadGameSettings(){
+  try{
+    const r = await storageGet('settings:game', true);
+    const loaded = JSON.parse(r.value);
+    if (typeof loaded.readyTime === 'number' && loaded.readyTime > 0) gameSettings.readyTime = loaded.readyTime;
+    if (typeof loaded.countdownTime === 'number' && loaded.countdownTime > 0) gameSettings.countdownTime = loaded.countdownTime;
+    if (typeof loaded.gamesPerRound === 'number' && loaded.gamesPerRound > 0) gameSettings.gamesPerRound = loaded.gamesPerRound;
+  }catch(e){
+    // Noch keine Einstellungen gespeichert — Fallback-Werte bleiben aktiv.
+  }
+}
+loadGameSettings(); // sofort beim Laden des Scripts anstoßen (asynchron)
+
+async function saveGameSettings(newSettings){
+  gameSettings = Object.assign({}, gameSettings, newSettings);
+  await storageSet('settings:game', JSON.stringify(gameSettings), true);
+}
 const FAIL_METRIC = 999999;
 const WRONG_PENALTY = 100000; // muss größer sein als jede realistische Gesamtzeit
 
@@ -4734,6 +4896,18 @@ async function finishRound(){
   const streak = updateStreak(currentAccount);
   const totalPoints = sumPoints + streak.bonus;
   currentAccount.stats.totalPoints += totalPoints;
+
+  // Monatliche Rangliste: neuer Monat = automatischer Reset der Monatswerte.
+  const nowMonthKey = currentMonthKey();
+  if (currentAccount.stats.monthlyPeriod !== nowMonthKey){
+    currentAccount.stats.monthlyPeriod = nowMonthKey;
+    currentAccount.stats.monthlyPoints = 0;
+    currentAccount.stats.monthlyRoundsWon = 0;
+    currentAccount.stats.monthlyRoundsPlayed = 0;
+  }
+  currentAccount.stats.monthlyPoints += totalPoints;
+  currentAccount.stats.monthlyRoundsPlayed++;
+  if (won) currentAccount.stats.monthlyRoundsWon++;
 
   // Münzen nur für die Podestplätze an kostenlosen Tischen.
   const coinResult = awardPodiumCoins(currentAccount, finalPlace, table);
