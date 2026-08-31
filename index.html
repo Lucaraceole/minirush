@@ -702,6 +702,7 @@
     <div class="num" id="roundPointsNum"></div>
     <div id="rankSub" style="color:var(--muted);"></div>
   </div>
+  <div class="shop-card" id="roundPlaceBox" style="max-width:100%;margin:14px 0;text-align:left;padding:14px 16px;"></div>
   <div class="round-breakdown" id="roundBreakdown"></div>
   <div class="shop-card" id="teamResultBox" style="display:none;max-width:100%;margin-top:14px;text-align:left;padding:14px 16px;"></div>
   <div style="text-align:center;margin-top:24px;">
@@ -4877,6 +4878,49 @@ document.getElementById('nextGameBtn').addEventListener('click', ()=>{
   renderCurrentGame();
 });
 
+// Simuliert plausible Punktzahlen für Platz 1–3 des Tisches (konsistent zur
+// eigenen Platzierung/Punktzahl) und zeigt beides zusammen mit der eigenen
+// Platzierung an — so lässt sich jede Runde direkt einordnen.
+function renderRoundPlaceBox(table, totalPoints, finalPlace){
+  const box = document.getElementById('roundPlaceBox');
+  if (!box) return;
+  const capacity = Math.max(1, table.capacity || 1);
+  const gamesCount = (table.sequence && table.sequence.length) || 1;
+  const maxPossible = capacity * 2 * (table.pointsMultiplier || 1) * gamesCount;
+  const jitter = (base, minF, maxF) => Math.max(0, Math.round(base * (minF + Math.random()*(maxF-minF))));
+
+  let p1, p2, p3;
+  if (finalPlace === 1){
+    p1 = totalPoints;
+    p2 = jitter(p1, 0.85, 0.97);
+    p3 = jitter(p2, 0.85, 0.97);
+  } else if (finalPlace === 2){
+    p2 = totalPoints;
+    p1 = Math.max(p2 + 1, jitter(p2, 1.03, 1.2));
+    p3 = jitter(p2, 0.85, 0.97);
+  } else if (finalPlace === 3){
+    p3 = totalPoints;
+    p2 = Math.max(p3 + 1, jitter(p3, 1.03, 1.18));
+    p1 = Math.max(p2 + 1, jitter(p2, 1.03, 1.2));
+  } else {
+    p1 = Math.max(totalPoints + 1, jitter(Math.max(totalPoints, maxPossible*0.5), 1.4, 1.9));
+    p2 = Math.max(totalPoints + 1, jitter(p1, 0.85, 0.97));
+    p3 = Math.max(totalPoints, jitter(p2, 0.85, 0.97));
+  }
+
+  const ownLine = finalPlace > 3
+    ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--surface-2);">Du: <b>Platz ${finalPlace}</b> von ${capacity.toLocaleString('de-DE')} · <b class="mono">${totalPoints.toLocaleString('de-DE')} Pkt.</b></div>`
+    : `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--surface-2);">Das warst du! 🎉</div>`;
+
+  box.innerHTML = `
+    <div style="font-weight:700;font-size:14px;margin-bottom:8px;">📊 Platzierung an diesem Tisch (${capacity.toLocaleString('de-DE')} Teilnehmer)</div>
+    <div>🥇 Platz 1: <b class="mono">${p1.toLocaleString('de-DE')} Pkt.</b></div>
+    <div>🥈 Platz 2: <b class="mono">${p2.toLocaleString('de-DE')} Pkt.</b></div>
+    <div>🥉 Platz 3: <b class="mono">${p3.toLocaleString('de-DE')} Pkt.</b></div>
+    ${ownLine}
+  `;
+}
+
 async function finishRound(){
   const sumPoints = roundState.results.reduce((s,r)=>s+r.points,0);
   const avgPercentile = roundState.results.reduce((s,r)=>s+r.percentile,0) / roundState.results.length;
@@ -4939,6 +4983,11 @@ async function finishRound(){
     parts.push('Durch die Spielpause sind ' + streak.lost + ' Serientage verfallen.');
   }
   document.getElementById('rankSub').textContent = parts.join(' ');
+
+  // Eigene Platzierung + Punkte der ersten drei — damit direkt sichtbar ist,
+  // wie gut oder schlecht man im Vergleich zum Rest des Tisches war.
+  renderRoundPlaceBox(table, totalPoints, finalPlace);
+
   const bd = document.getElementById('roundBreakdown');
   bd.innerHTML = '';
   roundState.results.forEach(r=>{
