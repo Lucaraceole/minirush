@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#10151c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -43,9 +43,13 @@
     --radius:14px;
   }
   *{box-sizing:border-box;}
-  html{overflow-x:hidden;overscroll-behavior:none;}
+  /* Wichtig: overflow-x NICHT gleichzeitig auf html und body setzen — dadurch
+     verlieren im Desktop-Browser beide ihre Scroll-Eigenschaft. Seitliches
+     Verrutschen wird stattdessen gezielt über overscroll-behavior-x und die
+     Breitenbegrenzung unterbunden. */
+  html{overscroll-behavior-x:none;}
   body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;
-       overflow-x:hidden;width:100%;max-width:100%;overscroll-behavior:none;
+       width:100%;max-width:100%;overscroll-behavior-x:none;
        -webkit-text-size-adjust:100%;}
   /* Spielflächen dürfen nicht mitscrollen oder auf Doppeltipp zoomen — sonst
      "rutscht" die Ansicht auf dem Handy beim schnellen Tippen hin und her. */
@@ -57,7 +61,8 @@
   #screen-game{overflow-x:hidden;}
   h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
   .mono{font-family:'JetBrains Mono',monospace;}
-  .screen{display:none;padding:32px 20px 60px;max-width:1000px;margin:0 auto;}
+  .screen{display:none;padding:32px 20px 60px;max-width:1000px;margin:0 auto;
+          max-width:min(1000px, 100%);}
   .screen.active{display:block;}
   .hint{color:var(--muted);font-size:13px;}
   .error-msg{color:var(--danger);font-size:13px;min-height:18px;margin-top:4px;}
