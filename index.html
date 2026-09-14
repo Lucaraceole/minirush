@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#10151c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MiniRush">
+<meta name="description" content="MiniRush — Geschicklichkeitsspiele an Rushtables.">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2310151c'/%3E%3Ctext x='90' y='120' font-size='90' text-anchor='middle' fill='%23f2b84b' font-family='sans-serif' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E">
 <title>MiniRush</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -265,6 +271,57 @@
   .plan-field input{margin:0;padding:8px 10px;font-size:13px;}
   .plan-calc{font-size:12px;font-weight:600;padding:7px 10px;background:var(--surface-2);border-radius:7px;margin-bottom:10px;}
   .plan-game-chip.locked{opacity:.35;cursor:not-allowed;}
+  .daily-panel{background:linear-gradient(150deg,var(--surface),var(--surface-2));
+               border:1px solid var(--surface-2);border-radius:14px;padding:14px;margin-bottom:18px;}
+  .daily-top{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+  .daily-chip{display:flex;align-items:center;gap:8px;background:var(--surface);
+              border:1px solid var(--surface-2);border-radius:10px;padding:9px 10px;}
+  .daily-chip.urgent{border-color:var(--coral);}
+  .daily-chip-val{font-weight:700;font-size:13px;line-height:1.25;}
+  .season-row{background:var(--surface);border-radius:10px;padding:11px 12px;margin-bottom:10px;}
+  .season-bar{height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;}
+  .season-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--lime));
+               border-radius:5px;transition:width .5s ease;}
+  .toggle-row{display:flex;align-items:flex-start;gap:10px;padding:11px 0;
+              border-top:1px solid var(--surface-2);cursor:pointer;font-weight:400;}
+  .toggle-row input{width:auto;margin:2px 0 0;flex-shrink:0;cursor:pointer;transform:scale(1.3);}
+  .quickplay-row{display:flex;gap:8px;margin-bottom:10px;}
+  .quickplay-row .btn{flex:1;padding:11px 12px;font-size:13px;width:auto;}
+  @media (max-width:480px){ .quickplay-row{flex-direction:column;} }
+  .quest-block{background:var(--surface);border-radius:10px;padding:11px 12px;}
+  .quest-block summary{cursor:pointer;font-weight:700;font-size:13px;list-style:none;}
+  .quest-block summary::-webkit-details-marker{display:none;}
+  .quest-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 0;
+             border-top:1px solid var(--surface-2);}
+  .quest-row.done{opacity:.55;}
+  .quest-row.done .quest-text{text-decoration:line-through;}
+  .quest-check{width:16px;}
+  .quest-text{flex:1;}
+  .quest-prog{color:var(--muted);}
+  .quest-reward{color:var(--amber);font-weight:700;min-width:32px;text-align:right;}
+  .quest-week-title{font-weight:700;font-size:12px;margin-top:10px;padding-top:8px;
+                    border-top:1px solid var(--surface-2);}
+  @media (max-width:560px){ .daily-top{grid-template-columns:1fr;} }
+  .rank-box{display:flex;align-items:center;gap:12px;background:var(--surface-2);
+            border-radius:10px;padding:12px 14px;margin-top:12px;text-align:left;}
+  .rank-icon{font-size:26px;}
+  .xp-bar{height:7px;background:var(--surface-2);border-radius:4px;overflow:hidden;margin-top:8px;}
+  .xp-fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--indigo));
+           border-radius:4px;transition:width .5s ease;width:0;}
+  .bests-title{font-weight:700;font-size:13px;margin:16px 0 6px;text-align:left;}
+  .best-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;
+            padding:6px 10px;background:var(--surface-2);border-radius:7px;margin-bottom:4px;text-align:left;}
+  .fb-motivation{font-family:'Space Grotesk';font-weight:700;font-size:17px;margin:14px 0;color:var(--amber);}
+  .fb-box{background:var(--surface-2);border-radius:10px;padding:12px 14px;margin:12px 0;text-align:left;}
+  .fb-line{font-size:13px;color:var(--muted);padding:3px 0;}
+  .fb-line b{color:var(--text);}
+  .fb-good{color:var(--success);}
+  .fb-good b{color:var(--success);}
+  .fb-near{color:var(--coral);}
+  .fb-near b{color:var(--coral);}
+  .interim-box{background:linear-gradient(135deg,var(--surface-hover),var(--surface-2));
+               border-radius:12px;padding:16px;margin:14px 0;}
+  .interim-rank{font-family:'Space Grotesk';font-weight:700;font-size:26px;color:var(--amber);margin:4px 0;}
   .streak-box{display:flex;align-items:center;gap:12px;background:var(--surface-2);
               border-radius:10px;padding:12px 14px;margin-top:12px;text-align:left;}
   .streak-flame{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;
@@ -541,6 +598,7 @@
 
 <!-- LOBBY -->
 <div class="screen" id="screen-lobby">
+  <div id="dailyPanel"></div>
   <div class="lobby-head">
     <h1>Rushtables</h1>
     <div class="legend">
@@ -566,7 +624,7 @@
   <p class="hint">Jede Rushtable-Runde besteht aus 3 Minispielen nacheinander. Klicke auf ein Spiel-Label, um zu sehen, worauf es ankommt.</p>
   <div class="filter-bar" id="areaBar">
     <button class="filter-btn area-btn active" data-area="normal">Rushtables</button>
-    <button class="filter-btn area-btn" data-area="vip">👑 VIP-Räume (2× Punkte)</button>
+    <button class="filter-btn area-btn" data-area="vip" id="vipAreaBtn">👑 VIP-Räume (2× Punkte)</button>
     <button class="filter-btn area-btn" data-area="custom">🛠️ Eigene Tische</button>
   </div>
 
@@ -705,6 +763,22 @@
     <div>
       <div id="profileBadgeLine" style="font-weight:700;font-size:15px;"></div>
       <div class="hint">Münzen: <b class="mono" id="profileWallet" style="color:var(--amber);">0</b> · <button class="linklike" data-nav="shop">Zum Shop</button></div>
+      <div class="rank-box">
+        <div class="rank-icon" id="profileRankIcon">🥉</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:14px;" id="profileRankName">Bronze</div>
+          <div class="hint" id="profileRankSub">Spielstärke wird nach ein paar Runden genauer</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:20px;color:var(--violet);" id="profileLevel">1</div>
+          <div class="hint">Level</div>
+        </div>
+      </div>
+      <div class="xp-bar"><div class="xp-fill" id="profileXpFill"></div></div>
+      <div class="hint" id="profileXpText" style="margin-top:3px;">0 / 100 EP</div>
+
+      <div id="profileBests"></div>
+
       <div class="streak-box">
         <div class="streak-flame" id="profileStreak">—</div>
         <div>
@@ -745,11 +819,11 @@
 
 <!-- RANKING -->
 <div class="screen" id="screen-ranking">
-  <h1>Weltweite Rangliste</h1>
-  <p class="hint">Sichtbar für alle, die diese App-Vorschau öffnen.</p>
+  <h1>Rangliste</h1>
+  <p class="hint" id="seasonInfo">Saison wird geladen…</p>
   <div class="table-scroll">
     <table class="leaderboard" id="rankingTable">
-      <thead><tr><th>#</th><th>Spieler</th><th>Punkte</th><th>Runden gewonnen</th></tr></thead>
+      <thead><tr><th>#</th><th>Spieler</th><th>Saisonpunkte</th><th>Aktiv</th></tr></thead>
       <tbody id="rankingBody"></tbody>
     </table>
   </div>
@@ -948,6 +1022,32 @@
 
   <!-- WERKZEUGE -->
   <div class="admin-panel" id="adminPanel-settings">
+    <div class="shop-card" style="max-width:560px;margin:0 0 24px;text-align:left;padding:20px;border-color:var(--amber);">
+      <div style="font-weight:700;font-size:15px;color:var(--amber);">💶 Bezahlbereiche</div>
+      <p class="hint" style="margin:6px 0 14px;">Steuert, ob Bereiche mit echtem Geld sichtbar sind. Standardmäßig alles aus — die App läuft dann vollständig kostenlos. Änderungen gelten sofort für alle Nutzer:innen.</p>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="setPaidTables">
+        <span><b>VIP-Räume und Mega-Rushtable</b><br>
+        <span class="hint">Teilnahmegebühren von 5 € bzw. 10 €. Aus: Beide Bereiche sind komplett ausgeblendet.</span></span>
+      </label>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="setCoinPacks">
+        <span><b>Münzpakete kaufen</b><br>
+        <span class="hint">Echtes Geld gegen Münzen. Aus: Münzen lassen sich nur erspielen.</span></span>
+      </label>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="setPremiumBadges">
+        <span><b>Premium-Abzeichen</b><br>
+        <span class="hint">Abzeichen mit Euro-Preis im Shop. Aus: Der Bereich bleibt leer.</span></span>
+      </label>
+
+      <button class="btn full" id="saveSettingsBtn" style="margin-top:12px;">Einstellungen speichern</button>
+      <p class="hint" id="settingsStatus" style="margin-top:8px;"></p>
+    </div>
+
     <div class="shop-card premium" style="max-width:420px;margin:0 0 24px;text-align:left;padding:20px;">
       <div style="font-weight:700;font-size:15px;">👑 Ersteller-Modus</div>
       <p class="hint" style="margin:6px 0 12px;">Schaltet dir als Erfinder dieser App sofort alle Skins und Abzeichen frei (auch Premium) — kostenlos, ohne Münzen oder Zahlung.</p>
@@ -1532,6 +1632,213 @@ const CUSTOM_TABLE_MAX_GAMES = 6;   // Höchstzahl auswählbarer Spiele
    10 Bonuspunkte, Tag 2 zwanzig, ... ab Tag 10 dauerhaft 100 pro Tag.
    Ein ausgelassener Tag kostet 30 % der Serie, zwei ausgelassene Tage weitere
    30 %, ab drei ausgelassenen Tagen beginnt die Serie wieder bei null. */
+/* ---------- ELO, LEVEL UND RÄNGE ----------
+   Zwei getrennte Systeme, wie bei großen Wettbewerbsspielen üblich:
+   · Das LEVEL ist sichtbar und steigt allein durchs Spielen — es belohnt Fleiß.
+   · Die ELO-ZAHL ist verborgen und misst reines Können. Sie bestimmt, wie stark
+     die Gegner sind. Sobald genug echte Spieler:innen da sind, wird damit
+     stattdessen die Tischbesetzung zusammengestellt — die Berechnung bleibt gleich.
+   Elo wird pro Spielart geführt: Wer im Kopfrechnen stark ist, muss im
+   Reaktionstest nicht ebenso stark sein. */
+const ELO_START = 1000;
+const ELO_K = 32;          // wie stark sich die Zahl pro Runde bewegt
+const ELO_MIN = 100;
+
+const RANK_TIERS = [
+  {min:    0, name:'Bronze',   icon:'🥉', color:'#c96b4a'},
+  {min: 900, name:'Silber',   icon:'🥈', color:'#b8c0c8'},
+  {min:1100, name:'Gold',     icon:'🥇', color:'#e6c454'},
+  {min:1300, name:'Platin',   icon:'💠', color:'#49c7be'},
+  {min:1500, name:'Diamant',  icon:'💎', color:'#7ea6e0'},
+  {min:1750, name:'Meister',  icon:'👑', color:'#b394e8'},
+];
+
+function rankForElo(elo){
+  let tier = RANK_TIERS[0];
+  for (const t of RANK_TIERS){ if (elo >= t.min) tier = t; }
+  return tier;
+}
+
+// Durchschnittliche Elo über alle Spielarten — daraus ergibt sich der angezeigte Rang.
+function overallElo(account){
+  const vals = CATS.map(c=>(account.elo && account.elo[c]) || ELO_START);
+  return Math.round(vals.reduce((s,v)=>s+v, 0) / vals.length);
+}
+
+/* Elo-Aktualisierung: Verglichen wird die tatsächliche Platzierung mit der
+   erwarteten. Wer besser abschneidet als seine Zahl erwarten lässt, steigt. */
+function updateElo(account, cat, rank, total){
+  if (!account.elo) account.elo = {};
+  const current = account.elo[cat] || ELO_START;
+  // Tatsächliches Ergebnis: 1 = Sieg, 0 = Letzter.
+  const actual = total > 1 ? (total - rank) / (total - 1) : 0.5;
+  // Erwartung: Bei einem durchschnittlichen Feld wird ein mittlerer Platz erwartet.
+  // Je höher die eigene Zahl, desto mehr wird erwartet.
+  const expected = 1 / (1 + Math.pow(10, (ELO_START - current) / 400));
+  const next = Math.max(ELO_MIN, Math.round(current + ELO_K * (actual - expected)));
+  const change = next - current;
+  account.elo[cat] = next;
+  return {before: current, after: next, change};
+}
+
+/* ---------- LEVEL ----------
+   Erfahrungspunkte steigen mit jeder Runde. Die Schwelle wächst langsam an,
+   sodass die ersten Stufen schnell kommen und später mehr Einsatz verlangen. */
+const XP_PER_ROUND_BASE = 40;
+function xpNeededForLevel(level){
+  return Math.round(100 * Math.pow(level, 1.35));
+}
+function addXp(account, amount){
+  if (!account.levelData) account.levelData = {level:1, xp:0};
+  const d = account.levelData;
+  d.xp += amount;
+  let levelsGained = 0;
+  while (d.xp >= xpNeededForLevel(d.level)){
+    d.xp -= xpNeededForLevel(d.level);
+    d.level++;
+    levelsGained++;
+  }
+  return {level: d.level, xp: d.xp, needed: xpNeededForLevel(d.level), levelsGained};
+}
+
+/* ---------- GLOBALE APP-EINSTELLUNGEN ----------
+   Liegen in der gemeinsamen Ablage, damit sie für alle Nutzer:innen gelten.
+   Der Bezahl-Schalter ist standardmäßig AUS: Solange die rechtliche Einordnung
+   nicht geklärt ist, läuft die App vollständig kostenlos. */
+let appSettings = {
+  paidTablesEnabled: false,   // VIP-Räume und Mega-Rushtable mit Teilnahmegebühr
+  coinPacksEnabled:  false,   // Münzpakete gegen echtes Geld
+  premiumBadgesEnabled: false // Abzeichen mit Euro-Preis
+};
+
+async function loadAppSettings(){
+  try{
+    const r = await storageGet('app_settings', true);
+    const loaded = JSON.parse(r.value);
+    appSettings = Object.assign({}, appSettings, loaded);
+  }catch(e){
+    // Noch nie gespeichert — Standardwerte behalten (alles kostenlos).
+  }
+  return appSettings;
+}
+
+async function saveAppSettings(){
+  await storageSet('app_settings', JSON.stringify(appSettings), true);
+}
+
+/* ---------- SPIEL DES TAGES ----------
+   Eine Spielart pro Tag bringt doppelte Punkte. Die Auswahl hängt am Kalendertag
+   und ist damit für alle gleich — und schon im Voraus bekannt. */
+function gameOfTheDay(dateMs){
+  const dayIndex = Math.floor((dateMs || Date.now()) / 86400000);
+  return CATS[((dayIndex % CATS.length) + CATS.length) % CATS.length];
+}
+
+/* ---------- AUFGABEN ----------
+   Täglich drei, wöchentlich drei. Sie werden aus dem Kalendertag bzw. der
+   Kalenderwoche abgeleitet, damit alle dieselben Aufgaben haben. */
+const DAILY_QUEST_POOL = [
+  {id:'play2',     text:'Spiele 2 Rushtable-Runden',            target:2,  type:'rounds'},
+  {id:'play3',     text:'Spiele 3 Rushtable-Runden',            target:3,  type:'rounds'},
+  {id:'top10',     text:'Erreiche einmal die besten 10 Plätze', target:1,  type:'top10'},
+  {id:'podium',    text:'Erreiche einmal das Podest',           target:1,  type:'podium'},
+  {id:'perfect2',  text:'Beende 2 Minispiele fehlerfrei',       target:2,  type:'perfect'},
+  {id:'perfect4',  text:'Beende 4 Minispiele fehlerfrei',       target:4,  type:'perfect'},
+  {id:'gotd',      text:'Spiele das Spiel des Tages',           target:1,  type:'gotd'},
+  {id:'best',      text:'Stelle eine persönliche Bestleistung auf', target:1, type:'best'},
+];
+const WEEKLY_QUEST_POOL = [
+  {id:'w_variety5', text:'Spiele 5 verschiedene Spielarten',    target:5,  type:'variety'},
+  {id:'w_variety8', text:'Spiele 8 verschiedene Spielarten',    target:8,  type:'variety'},
+  {id:'w_rounds10', text:'Spiele 10 Rushtable-Runden',          target:10, type:'rounds'},
+  {id:'w_rounds15', text:'Spiele 15 Rushtable-Runden',          target:15, type:'rounds'},
+  {id:'w_podium3',  text:'Erreiche 3-mal das Podest',           target:3,  type:'podium'},
+  {id:'w_perfect10',text:'Beende 10 Minispiele fehlerfrei',     target:10, type:'perfect'},
+  {id:'w_best3',    text:'Stelle 3 persönliche Bestleistungen auf', target:3, type:'best'},
+];
+const QUEST_REWARD_DAILY = 15;   // Münzen
+const QUEST_REWARD_WEEKLY = 40;  // Münzen
+
+function weekKey(d){
+  const date = d ? new Date(d) : new Date();
+  const target = new Date(date.valueOf());
+  const dayNr = (date.getDay() + 6) % 7;
+  target.setDate(target.getDate() - dayNr + 3);
+  const firstThursday = new Date(target.getFullYear(), 0, 4);
+  const diff = target - firstThursday;
+  const week = 1 + Math.round(diff / 604800000);
+  return target.getFullYear() + '-KW' + String(week).padStart(2,'0');
+}
+
+// Wählt deterministisch n Aufgaben aus einem Pool anhand eines Schlüssels.
+function pickQuests(pool, key, n){
+  let seed = 0;
+  for (let i=0;i<key.length;i++) seed = (seed*31 + key.charCodeAt(i)) | 0;
+  const copy = [...pool];
+  const out = [];
+  for (let i=0;i<n && copy.length;i++){
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    out.push(copy.splice(seed % copy.length, 1)[0]);
+  }
+  return out.map(q=>({...q, progress:0, claimed:false}));
+}
+
+function ensureQuests(account){
+  const today = todayKey();
+  const week = weekKey();
+  if (!account.quests) account.quests = {};
+  if (account.quests.dailyKey !== today){
+    account.quests.dailyKey = today;
+    account.quests.daily = pickQuests(DAILY_QUEST_POOL, today, 3);
+  }
+  if (account.quests.weeklyKey !== week){
+    account.quests.weeklyKey = week;
+    account.quests.weekly = pickQuests(WEEKLY_QUEST_POOL, week, 3);
+  }
+  return account.quests;
+}
+
+/* ---------- MONATS-SAISON ----------
+   Die Bestenliste läuft einen Kalendermonat und wird danach zurückgesetzt.
+   Für jeden gespielten Tag füllt sich ein Fortschrittsbalken. */
+function seasonKey(d){
+  const date = d ? new Date(d) : new Date();
+  return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0');
+}
+function daysInCurrentMonth(){
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+}
+function daysLeftInSeason(){
+  const d = new Date();
+  return daysInCurrentMonth() - d.getDate() + 1;
+}
+// Verbucht Fortschritt auf alle passenden Aufgaben und meldet neu erfüllte zurück.
+function advanceQuests(account, type, amount){
+  const q = ensureQuests(account);
+  const completed = [];
+  [['daily', q.daily], ['weekly', q.weekly]].forEach(([kind, list])=>{
+    (list || []).forEach(item=>{
+      if (item.type !== type || item.progress >= item.target) return;
+      const before = item.progress;
+      item.progress = Math.min(item.target, item.progress + (amount || 1));
+      if (before < item.target && item.progress >= item.target){
+        completed.push({kind, item});
+      }
+    });
+  });
+  return completed;
+}
+
+function ensureSeason(account){
+  const key = seasonKey();
+  if (!account.season || account.season.key !== key){
+    account.season = {key, points: 0, daysPlayed: []};
+  }
+  if (!Array.isArray(account.season.daysPlayed)) account.season.daysPlayed = [];
+  return account.season;
+}
+
 const STREAK_MAX_DAYS = 10;
 const STREAK_POINTS_PER_DAY = 10;
 
@@ -1670,6 +1977,17 @@ function ensureStatsShape(account){
     account.streak = { days: 0, lastPlayed: null };
   }
   if (typeof account.streak.days !== 'number' || isNaN(account.streak.days)) account.streak.days = 0;
+  if (!account.elo || typeof account.elo !== 'object') account.elo = {};
+  CATS.forEach(cat=>{
+    if (typeof account.elo[cat] !== 'number' || isNaN(account.elo[cat])) account.elo[cat] = ELO_START;
+  });
+  if (!account.levelData || typeof account.levelData !== 'object') account.levelData = {level:1, xp:0};
+  if (typeof account.levelData.level !== 'number' || account.levelData.level < 1) account.levelData.level = 1;
+  if (typeof account.levelData.xp !== 'number' || isNaN(account.levelData.xp)) account.levelData.xp = 0;
+  if (!account.bests || typeof account.bests !== 'object') account.bests = {};
+  ensureQuests(account);
+  ensureSeason(account);
+  if (!account.lastMetric || typeof account.lastMetric !== 'object') account.lastMetric = {};
   if (account.coinDay === undefined) account.coinDay = null;
   if (typeof account.coinsToday !== 'number' || isNaN(account.coinsToday)) account.coinsToday = 0;
   if (isOwnerAccount(account)) account.isAdmin = true; // voller Zugriff für das Owner-Konto
@@ -1721,6 +2039,7 @@ function loginSuccess(account){
   showScreen('screen-lobby');
 
   // Geplante Mega-Preise/Spiele nachladen und Ansicht auffrischen.
+  loadAppSettings().then(()=>renderLobby()).catch(()=>{});
   loadCustomTables().then(()=>renderLobby()).catch(()=>{});
   loadMegaPlan().then(()=>{
     applyPlanToLiveTable();
@@ -1734,64 +2053,78 @@ function loginSuccess(account){
 }
 
 /* ---------- FORGOT PASSWORD ---------- */
+/* ---------- PASSWORT ZURÜCKSETZEN ----------
+   Läuft über den echten Supabase-Ablauf: Es wird eine E-Mail mit einem Link
+   verschickt. Der frühere Demo-Code funktionierte nicht mehr, seit die
+   Zugriffsregeln greifen — fremde Kontodaten sind (zu Recht) nicht lesbar. */
 document.getElementById('forgotSendBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('forgotSendBtn');
   const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
   const errEl = document.getElementById('forgotError');
   errEl.textContent = '';
+  if (!email){
+    errEl.textContent = 'Bitte deine E-Mail-Adresse eingeben.';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Wird gesendet…';
   try{
-    try{
-      await storageGet('account:'+email, false);
-    }catch(e){
-      errEl.textContent = 'Kein Konto mit dieser E-Mail gefunden.';
-      return;
-    }
-    const code = Math.floor(1000 + Math.random()*9000).toString();
-    forgotContext = {email, code};
-    document.getElementById('forgotCodeDisplay').textContent =
-      'Demo-Code (normalerweise per E-Mail versendet): ' + code;
-    document.getElementById('resetCode').value = '';
-    document.getElementById('newPassword1').value = '';
-    document.getElementById('newPassword2').value = '';
-    document.getElementById('forgot2Error').textContent = '';
-    document.getElementById('forgot2Success').textContent = '';
-    showScreen('screen-forgot2');
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+    if (error) throw error;
+    // Aus Datenschutzgründen wird nicht verraten, ob die Adresse existiert.
+    errEl.style.color = 'var(--success)';
+    errEl.textContent = 'Falls ein Konto mit dieser Adresse existiert, ist eine E-Mail mit einem Link zum Zurücksetzen unterwegs. Bitte auch den Spam-Ordner prüfen.';
   }catch(e){
-    console.error(e);
-    errEl.textContent = 'Unerwarteter Fehler: ' + (e && e.message ? e.message : e);
+    errEl.style.color = 'var(--danger)';
+    errEl.textContent = 'Konnte nicht gesendet werden: ' + (e.message || e);
+  }finally{
+    btn.disabled = false; btn.textContent = 'Link zum Zurücksetzen senden';
+  }
+});
+
+/* Kommt jemand über den Link aus der E-Mail zurück, meldet Supabase ein
+   Wiederherstellungs-Ereignis. Dann darf direkt ein neues Passwort gesetzt werden. */
+sb.auth.onAuthStateChange(async (event)=>{
+  if (event === 'PASSWORD_RECOVERY'){
+    showScreen('screen-forgot2');
+    const disp = document.getElementById('forgotCodeDisplay');
+    if (disp) disp.textContent = 'Du kannst jetzt ein neues Passwort festlegen.';
+    const codeField = document.getElementById('resetCode');
+    if (codeField && codeField.parentElement) codeField.parentElement.style.display = 'none';
   }
 });
 
 document.getElementById('resetPasswordBtn').addEventListener('click', async ()=>{
   const errEl = document.getElementById('forgot2Error');
   const okEl = document.getElementById('forgot2Success');
-  errEl.textContent=''; okEl.textContent='';
-  const code = document.getElementById('resetCode').value.trim();
+  errEl.textContent = ''; okEl.textContent = '';
   const pw1 = document.getElementById('newPassword1').value;
   const pw2 = document.getElementById('newPassword2').value;
-  if (!forgotContext || code !== forgotContext.code){
-    errEl.textContent = 'Der Code ist nicht korrekt.';
-    return;
-  }
   if (pw1.length < 6 || pw1 !== pw2){
-    errEl.textContent = 'Die Passwörter stimmen nicht überein oder sind zu kurz (mind. 6 Zeichen).';
+    errEl.textContent = 'Die Passwörter stimmen nicht überein oder sind zu kurz (mindestens 6 Zeichen).';
     return;
   }
   try{
-    const res = await storageGet('account:'+forgotContext.email, false);
-    const account = JSON.parse(res.value);
-    account.passwordHash = hashDemo(pw1);
-    await storageSet('account:'+forgotContext.email, JSON.stringify(account), false);
-    okEl.textContent = 'Passwort erfolgreich geändert. Du kannst dich jetzt anmelden.';
+    const { error } = await sb.auth.updateUser({ password: pw1 });
+    if (error) throw error;
+    okEl.textContent = 'Passwort geändert. Du kannst dich jetzt anmelden.';
     setTimeout(()=>showScreen('screen-login'), 1600);
   }catch(e){
-    console.error(e);
-    errEl.textContent = 'Unerwarteter Fehler beim Ändern des Passworts: ' + (e && e.message ? e.message : e);
+    errEl.textContent = 'Änderung fehlgeschlagen: ' + (e.message || e) +
+      ' — Bitte den Link aus der E-Mail erneut öffnen.';
   }
 });
 
 /* ---------- LEADERBOARD ---------- */
 async function saveLeaderboardEntry(account){
+  const season = ensureSeason(account);
   const entry = {
+    seasonKey: season.key,
+    seasonPoints: season.points,
+    daysPlayed: season.daysPlayed.length,
+    level: (account.levelData && account.levelData.level) || 1,
+    elo: overallElo(account),
     name: account.firstName + ' ' + account.lastName.charAt(0) + '.',
     email: account.email,
     totalPoints: account.stats.totalPoints,
@@ -1801,7 +2134,9 @@ async function saveLeaderboardEntry(account){
     skinCss: getSkinCss(account),
     badge: getEquippedBadge(account)
   };
-  await storageSet('leaderboard:'+account.email, JSON.stringify(entry), true);
+  // Pro Saison ein eigener Eintrag — dadurch beginnt jeden Monat eine neue Wertung,
+  // ohne dass alte Ergebnisse verloren gehen.
+  await storageSet('leaderboard:'+season.key+':'+account.email, JSON.stringify(entry), true);
 }
 
 async function renderRanking(){
@@ -1809,7 +2144,8 @@ async function renderRanking(){
   body.innerHTML = '<tr><td colspan="4" class="hint">Lade Rangliste…</td></tr>';
   let listRes;
   try{
-    listRes = await storageList('leaderboard:', true);
+    // Nur Einträge der laufenden Saison — die Wertung startet jeden Monat neu.
+    listRes = await storageList('leaderboard:' + seasonKey() + ':', true);
   }catch(e){
     body.innerHTML = '<tr><td colspan="4" class="hint">Rangliste momentan nicht verfügbar.</td></tr>';
     return;
@@ -1822,10 +2158,18 @@ async function renderRanking(){
       entries.push(JSON.parse(r.value));
     }catch(e){}
   }
-  entries.sort((a,b)=> b.totalPoints - a.totalPoints);
+  entries.sort((a,b)=> (b.seasonPoints || 0) - (a.seasonPoints || 0));
   body.innerHTML = '';
+
+  const info = document.getElementById('seasonInfo');
+  if (info){
+    const monthName = new Date().toLocaleDateString('de-DE', {month:'long', year:'numeric'});
+    info.innerHTML = `<b>Saison ${monthName}</b> · noch ${daysLeftInSeason()} Tage · ` +
+      `Am Monatsende wird die Wertung zurückgesetzt und Platz 1 erhält ein Geschenk.`;
+  }
+
   if (entries.length === 0){
-    body.innerHTML = '<tr><td colspan="4" class="hint">Noch keine Einträge. Spiel eine Runde!</td></tr>';
+    body.innerHTML = '<tr><td colspan="4" class="hint">Noch keine Einträge in dieser Saison. Spiel eine Runde!</td></tr>';
     return;
   }
   entries.forEach((e,i)=>{
@@ -1833,7 +2177,11 @@ async function renderRanking(){
     if (currentAccount && e.email === currentAccount.email) tr.className='me';
     const dot = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${e.skinCss || e.color || 'var(--muted)'};margin-right:6px;vertical-align:middle;"></span>`;
     const badgeIcon = e.badge ? `<span title="${e.badge.label}" style="margin-right:4px;">${e.badge.icon}</span>` : '';
-    tr.innerHTML = `<td>${i+1}</td><td>${dot}${badgeIcon}${e.name}</td><td class="mono">${e.totalPoints}</td><td>${e.roundsWon}/${e.roundsPlayed}</td>`;
+    const medal = i < 3 ? ['🥇','🥈','🥉'][i] + ' ' : (i+1) + '';
+    const lvl = e.level ? `<span class="hint"> · Lv ${e.level}</span>` : '';
+    tr.innerHTML = `<td>${medal}</td><td>${dot}${badgeIcon}${e.name}${lvl}</td>` +
+                   `<td class="mono">${(e.seasonPoints||0).toLocaleString('de-DE')}</td>` +
+                   `<td>${e.daysPlayed || 0} Tage</td>`;
     body.appendChild(tr);
   });
 }
@@ -1846,6 +2194,48 @@ function renderProfile(){
   const badge = getEquippedBadge(currentAccount);
   document.getElementById('profileBadgeLine').textContent = badge ? (badge.icon + ' ' + badge.label) : currentAccount.firstName;
   document.getElementById('profileWallet').textContent = currentAccount.wallet || 0;
+  // Rang, Level und Erfahrungsbalken
+  const elo = overallElo(currentAccount);
+  const tier = rankForElo(elo);
+  const ld = currentAccount.levelData;
+  const needed = xpNeededForLevel(ld.level);
+  const setIf = (id, val)=>{ const el = document.getElementById(id); if (el) el.textContent = val; };
+  setIf('profileRankIcon', tier.icon);
+  setIf('profileRankName', tier.name);
+  setIf('profileLevel', ld.level);
+  setIf('profileXpText', ld.xp + ' / ' + needed + ' EP bis Level ' + (ld.level+1));
+  const rankNameEl = document.getElementById('profileRankName');
+  if (rankNameEl) rankNameEl.style.color = tier.color;
+  const xpFill = document.getElementById('profileXpFill');
+  if (xpFill) xpFill.style.width = Math.min(100, (ld.xp / needed) * 100) + '%';
+  const rankSub = document.getElementById('profileRankSub');
+  if (rankSub){
+    const played = currentAccount.stats.roundsPlayed || 0;
+    rankSub.textContent = played < 5
+      ? 'Noch ' + (5-played) + ' Runden, bis deine Spielstärke aussagekräftig ist'
+      : 'Deine Spielstärke über alle Spielarten';
+  }
+
+  // Persönliche Bestleistungen je Spielart
+  const bestsWrap = document.getElementById('profileBests');
+  if (bestsWrap){
+    const entries = CATS.filter(cat=>currentAccount.bests[cat])
+      .map(cat=>({cat, ...currentAccount.bests[cat]}))
+      .sort((a,b)=>b.at - a.at);
+    if (entries.length === 0){
+      bestsWrap.innerHTML = '<div class="hint" style="margin-top:12px;">Spiele eine Runde fehlerfrei, um deine erste Bestleistung aufzustellen.</div>';
+    } else {
+      bestsWrap.innerHTML = '<div class="bests-title">🏅 Deine Bestleistungen</div>' +
+        entries.slice(0, 8).map(e=>{
+          const t = rankForElo(currentAccount.elo[e.cat] || ELO_START);
+          const improved = e.previous ? ('<span class="fb-good"> · ' + formatMs(timePartOf(e.previous) - timePartOf(e.metric)) + ' verbessert</span>') : '';
+          return `<div class="best-row"><span>${CAT_LABEL[e.cat]}</span>
+                  <span class="mono">${formatMs(timePartOf(e.metric))}
+                  <span class="hint" style="color:${t.color};">${t.icon}</span>${improved}</span></div>`;
+        }).join('');
+    }
+  }
+
   const streakEl = document.getElementById('profileStreak');
   if (streakEl){
     const s = currentAccount.streak || {days:0, lastPlayed:null};
@@ -1896,7 +2286,16 @@ function renderShop(){
 
   const packsEl = document.getElementById('shopCoinPacks');
   packsEl.innerHTML = '';
-  COIN_PACK_CATALOG.forEach(pack=>{
+  // Bezahlbereiche können im Admin-Bereich abgeschaltet werden.
+  const packs = appSettings.coinPacksEnabled ? COIN_PACK_CATALOG : [];
+  if (!appSettings.coinPacksEnabled){
+    const note = document.createElement('p');
+    note.className = 'hint';
+    note.style.cssText = 'grid-column:1/-1;';
+    note.textContent = 'Münzen lassen sich derzeit nur erspielen — es gibt keine Kaufoption.';
+    packsEl.appendChild(note);
+  }
+  packs.forEach(pack=>{
     const card = document.createElement('div');
     card.className = 'shop-card';
     card.innerHTML = `
@@ -1971,7 +2370,15 @@ function renderShop(){
 
   const premiumEl = document.getElementById('shopPremium');
   premiumEl.innerHTML = '';
-  PREMIUM_BADGE_CATALOG.forEach(item=>{
+  const premiumList = appSettings.premiumBadgesEnabled ? PREMIUM_BADGE_CATALOG : [];
+  if (!appSettings.premiumBadgesEnabled){
+    const note = document.createElement('p');
+    note.className = 'hint';
+    note.style.cssText = 'grid-column:1/-1;';
+    note.textContent = 'Premium-Abzeichen sind derzeit nicht verfügbar.';
+    premiumEl.appendChild(note);
+  }
+  premiumList.forEach(item=>{
     const owned = currentAccount.inventory.badges.includes(item.id);
     const equipped = currentAccount.equippedBadge === item.id;
     const card = document.createElement('div');
@@ -2516,9 +2923,40 @@ async function loadPlannerTab(){
   renderMegaPlanner();
 }
 
+async function renderAdminSettings(){
+  await loadAppSettings();
+  const map = {setPaidTables:'paidTablesEnabled', setCoinPacks:'coinPacksEnabled',
+               setPremiumBadges:'premiumBadgesEnabled'};
+  Object.entries(map).forEach(([id, key])=>{
+    const el = document.getElementById(id);
+    if (el) el.checked = !!appSettings[key];
+  });
+}
+
+document.getElementById('saveSettingsBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('saveSettingsBtn');
+  const statusEl = document.getElementById('settingsStatus');
+  btn.disabled = true; btn.textContent = 'Wird gespeichert…';
+  appSettings.paidTablesEnabled    = document.getElementById('setPaidTables').checked;
+  appSettings.coinPacksEnabled     = document.getElementById('setCoinPacks').checked;
+  appSettings.premiumBadgesEnabled = document.getElementById('setPremiumBadges').checked;
+  try{
+    await saveAppSettings();
+    statusEl.textContent = 'Gespeichert. Die Änderung gilt ab sofort für alle.';
+    statusEl.style.color = 'var(--success)';
+    renderLobby();
+  }catch(e){
+    statusEl.textContent = 'Speichern fehlgeschlagen: ' + (e.message || e);
+    statusEl.style.color = 'var(--danger)';
+  }finally{
+    btn.disabled = false; btn.textContent = 'Einstellungen speichern';
+  }
+});
+
 async function renderAdmin(){
   renderAdminTopStats();
   setAdminTab(activeAdminTab);
+  renderAdminSettings();
 
   const tBody = document.getElementById('adminTablesBody');
   tBody.innerHTML = '';
@@ -2792,7 +3230,114 @@ async function joinByInviteCode(){
 // oder man selbst der Ersteller ist.
 const unlockedInviteCodes = new Set();
 
+/* ---------- TAGESÜBERSICHT IN DER LOBBY ----------
+   Fasst zusammen, was heute ansteht: Spiel des Tages, Serie, Aufgaben und
+   der Saison-Fortschritt. Alles auf einen Blick beim Öffnen der Lobby. */
+function renderDailyPanel(){
+  const wrap = document.getElementById('dailyPanel');
+  if (!wrap || !currentAccount) return;
+
+  const q = ensureQuests(currentAccount);
+  const season = ensureSeason(currentAccount);
+  const gotd = gameOfTheDay();
+  const s = currentAccount.streak || {days:0, lastPlayed:null};
+  const playedToday = s.lastPlayed === todayKey();
+  const daysTotal = daysInCurrentMonth();
+  const daysPlayed = season.daysPlayed.length;
+  const seasonPct = Math.round((daysPlayed / daysTotal) * 100);
+  const tier = rankForElo(overallElo(currentAccount));
+
+  const questRow = (item, reward)=>{
+    const done = item.progress >= item.target;
+    return `<div class="quest-row${done?' done':''}">
+      <span class="quest-check">${done?'✅':'○'}</span>
+      <span class="quest-text">${item.text}</span>
+      <span class="quest-prog mono">${Math.min(item.progress,item.target)}/${item.target}</span>
+      <span class="quest-reward">+${reward}</span>
+    </div>`;
+  };
+
+  wrap.innerHTML = `
+    <div class="daily-panel">
+      <div class="daily-top">
+        <div class="daily-chip" style="border-color:${tier.color};">
+          <span style="font-size:18px;">${tier.icon}</span>
+          <div><div class="daily-chip-val" style="color:${tier.color};">${tier.name}</div>
+          <div class="hint">Level ${currentAccount.levelData.level}</div></div>
+        </div>
+        <div class="daily-chip${playedToday?'':' urgent'}">
+          <span style="font-size:18px;">🔥</span>
+          <div><div class="daily-chip-val">${s.days} Tage</div>
+          <div class="hint">${playedToday ? 'heute gesichert' : 'heute noch offen'}</div></div>
+        </div>
+        <div class="daily-chip" style="border-color:var(--amber);">
+          <span style="font-size:18px;">⭐</span>
+          <div><div class="daily-chip-val" style="color:var(--amber);">${CAT_LABEL[gotd]}</div>
+          <div class="hint">Spiel des Tages · 2× Punkte</div></div>
+        </div>
+      </div>
+
+      <div class="quickplay-row">
+        <button class="btn" id="quickPlayBtn">▶️ Sofort spielen</button>
+        <button class="btn secondary" id="quickShortBtn">⚡ Kurzmodus (1 Spiel)</button>
+      </div>
+
+      <div class="season-row">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;">
+          <span><b>Saison</b> · noch ${daysLeftInSeason()} Tage</span>
+          <span class="mono">${daysPlayed}/${daysTotal} Tage · ${seasonPct}%</span>
+        </div>
+        <div class="season-bar"><div class="season-fill" style="width:${seasonPct}%;"></div></div>
+        <div class="hint" style="margin-top:4px;">${season.points.toLocaleString('de-DE')} Saisonpunkte · Am Monatsende gibt es ein Geschenk für Platz 1.</div>
+      </div>
+
+      <details class="quest-block" ${(q.daily||[]).every(i=>i.progress>=i.target) ? '' : 'open'}>
+        <summary>📋 Aufgaben heute <span class="hint">(${(q.daily||[]).filter(i=>i.progress>=i.target).length}/${(q.daily||[]).length} erfüllt)</span></summary>
+        ${(q.daily||[]).map(i=>questRow(i, QUEST_REWARD_DAILY)).join('')}
+        <div class="quest-week-title">📅 Diese Woche</div>
+        ${(q.weekly||[]).map(i=>questRow(i, QUEST_REWARD_WEEKLY)).join('')}
+      </details>
+    </div>
+  `;
+}
+
+/* Sucht den Tisch, der am schnellsten startet: möglichst voll, kostenlos,
+   nicht privat — damit man ohne Suchen direkt loslegen kann. */
+function findQuickTable(){
+  const candidates = tables.filter(t=>
+    !t.isVip && !t.isMega && !t.finishing && t.filled < t.capacity &&
+    !(t.isCustom && t.isPrivate)
+  );
+  if (candidates.length === 0) return null;
+  // Der Tisch mit dem höchsten Füllstand startet am ehesten.
+  candidates.sort((a,b)=> (b.filled/b.capacity) - (a.filled/a.capacity));
+  return candidates[0];
+}
+
+function startQuickPlay(short){
+  const t = findQuickTable();
+  if (!t){
+    alert('Gerade ist kein passender Tisch frei. Bitte kurz warten.');
+    return;
+  }
+  if (short){
+    // Kurzmodus: nur ein Minispiel statt der vollen Runde.
+    quickShortMode = true;
+    joinTable(t.id);
+  } else {
+    quickShortMode = false;
+    joinTable(t.id);
+  }
+}
+
+let quickShortMode = false;
+
 const tableGrid = document.getElementById('tableGrid');
+
+document.addEventListener('click', (e)=>{
+  if (e.target && e.target.id === 'quickPlayBtn') startQuickPlay(false);
+  if (e.target && e.target.id === 'quickShortBtn') startQuickPlay(true);
+});
 
 document.getElementById('ctCreateBtn').addEventListener('click', createCustomTable);
 document.getElementById('ctJoinBtn').addEventListener('click', joinByInviteCode);
@@ -2828,6 +3373,15 @@ function renderMegaTeaserCard(now){
 }
 
 function renderLobby(){
+  renderDailyPanel();
+  // VIP-Bereich nur anzeigen, wenn die Bezahlbereiche freigeschaltet sind.
+  const vipBtn = document.getElementById('vipAreaBtn');
+  if (vipBtn) vipBtn.style.display = appSettings.paidTablesEnabled ? '' : 'none';
+  if (!appSettings.paidTablesEnabled && lobbyArea === 'vip'){
+    lobbyArea = 'normal';
+    document.querySelectorAll('#areaBar .area-btn').forEach(b=>
+      b.classList.toggle('active', b.dataset.area === 'normal'));
+  }
   tableGrid.innerHTML = '';
   const now = Date.now();
 
@@ -2842,7 +3396,7 @@ function renderLobby(){
     return;
   }
 
-  if (lobbyArea !== 'vip'){
+  if (lobbyArea === 'normal' && appSettings.paidTablesEnabled){
     const teaser = renderMegaTeaserCard(now);
     if (teaser) tableGrid.appendChild(teaser);
   }
@@ -2872,7 +3426,8 @@ function renderLobby(){
   }
   filtered.forEach(t=>{
     const card = document.createElement('div');
-    const programHtml = t.sequence.map(c=>`<span class="cat-tag ${CAT_CLASS[c]}" data-cat="${c}">${CAT_LABEL[c]}</span>`).join('');
+    const gotdCat = gameOfTheDay();
+    const programHtml = t.sequence.map(c=>`<span class="cat-tag ${CAT_CLASS[c]}" data-cat="${c}">${CAT_LABEL[c]}${c===gotdCat?' ⭐':''}</span>`).join('');
 
     if (t.isMega && now < t.opensAt){
       const prize = getMegaPrizeForDate(t.opensAt);
@@ -3053,6 +3608,7 @@ async function joinTable(rawId){
   if (!t || t.filled >= t.capacity) return; // table full — no further joining possible
   if (t.isMega && Date.now() < t.opensAt) return;
   if (t.isMega && Date.now() >= megaClosesAt(t)) return; // Anmeldefrist abgelaufen
+  if ((t.isVip || t.isMega) && !appSettings.paidTablesEnabled) return; // Bezahlbereich abgeschaltet
   if (t.isVip && !hasPremiumBadge(currentAccount)) return; // safety net; UI already gates this
 
   const fee = entryFeeFor(t);
@@ -3125,14 +3681,132 @@ function renderStepDots(){
 
 function beginRound(t){
   document.getElementById('waitingOverlay').classList.remove('active');
-  roundState = {table:t, results:[], gameIndex:0};
+  // Im Kurzmodus wird nur ein einzelnes Minispiel gespielt. Der Tisch selbst
+  // bleibt unverändert — es wird lediglich eine verkürzte Abfolge verwendet.
+  let table = t;
+  if (quickShortMode){
+    const gotd = gameOfTheDay();
+    const pick = t.sequence.includes(gotd) ? gotd : t.sequence[0];
+    table = Object.assign({}, t, {sequence: [pick]});
+    quickShortMode = false;
+  }
+  roundState = {table, results:[], gameIndex:0};
   showScreen('screen-game');
   renderCurrentGame();
+}
+
+/* ---------- RÜCKMELDUNG NACH EINEM SPIEL ----------
+   Zeigt Platzierung, wie knapp es war, den Vergleich zum letzten Mal und eine
+   Einordnung der Leistung. Alle Angaben stammen aus echten Messwerten — es wird
+   nichts gelobt, was die Zahlen nicht hergeben. */
+
+function formatMs(ms){
+  if (ms >= 1000) return (ms/1000).toFixed(1).replace('.', ',') + ' s';
+  return Math.round(ms) + ' ms';
+}
+
+// Reine Zeit ohne Fehleranteil — nur die ist zwischen Runden vergleichbar.
+function timePartOf(metric){
+  return metric % WRONG_PENALTY;
+}
+function wrongRoundsOf(metric){
+  return Math.floor(metric / WRONG_PENALTY);
+}
+
+function motivationLine(result){
+  const pct = result.percentile;
+  const perfect = result.correct === result.totalRounds;
+  if (result.isNewBest) return '🏅 Neue persönliche Bestleistung!';
+  if (pct >= 0.95) return '⚡ Blitzschnell — das war Spitzenklasse!';
+  if (pct >= 0.85) return '🔥 Stark gespielt!';
+  if (pct >= 0.65) return '👏 Solide Leistung.';
+  if (pct >= 0.4)  return 'Guter Durchgang — da geht noch mehr.';
+  if (perfect)     return 'Alles richtig — jetzt noch etwas schneller werden.';
+  if (result.correct === 0) return 'Diesmal nichts getroffen. Nächste Runde läuft es besser.';
+  return 'Nicht aufgeben — Übung macht den Unterschied.';
+}
+
+function feedbackHtml(result){
+  const lines = [];
+
+  // Knapp verpasst: Abstand zur nächstbesseren Platzierung.
+  if (result.justAhead !== null && result.justAhead !== undefined && result.rank > 1){
+    const myWrong = wrongRoundsOf(result.metric);
+    const aheadWrong = wrongRoundsOf(result.justAhead);
+    if (myWrong === aheadWrong){
+      const diff = timePartOf(result.metric) - timePartOf(result.justAhead);
+      if (diff > 0 && diff < 3000){
+        lines.push(`<div class="fb-line fb-near">😤 Nur <b>${formatMs(diff)}</b> von Platz ${result.rank-1} entfernt!</div>`);
+      }
+    } else if (aheadWrong < myWrong){
+      const missing = myWrong - aheadWrong;
+      lines.push(`<div class="fb-line">Mit ${missing} richtigen Antwort${missing>1?'en':''} mehr wärst du auf Platz ${result.rank-1} gewesen.</div>`);
+    }
+  }
+
+  // Vergleich zum letzten Mal in derselben Spielart.
+  if (result.lastTime !== null && result.lastTime !== undefined){
+    const nowWrong = wrongRoundsOf(result.metric);
+    const thenWrong = wrongRoundsOf(result.lastTime);
+    if (nowWrong === thenWrong){
+      const diff = timePartOf(result.lastTime) - timePartOf(result.metric);
+      if (Math.abs(diff) > 150){
+        lines.push(diff > 0
+          ? `<div class="fb-line fb-good">📈 ${formatMs(Math.abs(diff))} schneller als beim letzten Mal.</div>`
+          : `<div class="fb-line">📉 ${formatMs(Math.abs(diff))} langsamer als beim letzten Mal.</div>`);
+      }
+    } else if (nowWrong < thenWrong){
+      lines.push(`<div class="fb-line fb-good">📈 ${thenWrong-nowWrong} Antwort${thenWrong-nowWrong>1?'en':''} mehr richtig als beim letzten Mal.</div>`);
+    }
+  }
+
+  // Persönliche Bestleistung.
+  if (result.isNewBest && result.previousBest){
+    const gain = timePartOf(result.previousBest) - timePartOf(result.metric);
+    if (gain > 0) lines.push(`<div class="fb-line fb-good">🏅 Persönliche Bestzeit um ${formatMs(gain)} verbessert!</div>`);
+  }
+
+  // Veränderung der Spielstärke.
+  if (result.eloChange && result.eloChange.change !== 0){
+    const ch = result.eloChange.change;
+    lines.push(`<div class="fb-line">Spielstärke ${ch > 0 ? '+' : ''}${ch} (${rankForElo(result.eloChange.after).icon} ${rankForElo(result.eloChange.after).name})</div>`);
+  }
+
+  return lines.join('');
+}
+
+function renderInterimStanding(){
+  const last = roundState.results[roundState.results.length-1];
+  const cat = roundState.table.sequence[roundState.gameIndex];
+  const sumSoFar = roundState.results.reduce((s,r)=>s+r.points, 0);
+  const avgRankSoFar = roundState.results.reduce((s,r)=>s+r.rank, 0) / roundState.results.length;
+  const standing = Math.max(1, Math.round(avgRankSoFar));
+
+  gameBox.innerHTML = `
+    <h2>${CAT_LABEL[last.cat]} · Platz ${last.rank} von ${last.total}</h2>
+    <div class="fb-motivation">${motivationLine(last)}</div>
+    <div class="fb-box">
+      <div class="fb-line"><b>${last.correct}/${last.totalRounds}</b> richtig · <b>${last.points}</b> Punkte</div>
+      ${feedbackHtml(last)}
+    </div>
+    <div class="interim-box">
+      <div class="hint">Zwischenstand nach ${roundState.results.length} von ${roundState.table.sequence.length} Spielen</div>
+      <div class="interim-rank">Platz ${standing} von ${last.total}</div>
+      <div class="hint">${sumSoFar.toLocaleString('de-DE')} Punkte gesammelt</div>
+    </div>
+    <button class="btn full" id="continueBtn" style="margin-top:16px;">Weiter zu ${CAT_LABEL[cat]}</button>
+  `;
+  document.getElementById('continueBtn').addEventListener('click', ()=>renderReadyScreen(cat));
 }
 
 function renderCurrentGame(){
   renderStepDots();
   const cat = roundState.table.sequence[roundState.gameIndex];
+  // Nach dem ersten Spiel erst Rückmeldung und Zwischenstand zeigen.
+  if (roundState.results.length > 0 && roundState.results.length < roundState.table.sequence.length){
+    renderInterimStanding();
+    return;
+  }
   renderReadyScreen(cat);
 }
 
@@ -4294,9 +4968,23 @@ const BOT_PROFILES = {
   marble:     {prob:0.72, min:3500, max:9000},
 };
 
+/* Die Gegnerstärke richtet sich nach der verborgenen Elo-Zahl der Spielerin
+   oder des Spielers: Anfänger treffen auf schwächere, Geübte auf stärkere
+   Gegner. Fällt der Bot-Ersatz später weg, ersetzt echte Zusammenstellung
+   diese Funktion — die Elo-Berechnung selbst bleibt unverändert. */
+function botDifficultyFactor(cat){
+  const elo = (currentAccount && currentAccount.elo && currentAccount.elo[cat]) || ELO_START;
+  // 1000 Elo = Normalstärke. Je 200 Elo darüber/darunter etwa 10 % Unterschied.
+  return Math.max(0.6, Math.min(1.5, 1 + (elo - ELO_START) / 2000));
+}
+
 function generateBotMetric(cat){
   const p = BOT_PROFILES[cat] || {prob:0.7, min:2000, max:6000};
-  return simulateMultiRoundBotMetric(p.prob, p.min, p.max, ROUNDS_PER_GAME);
+  const f = botDifficultyFactor(cat);
+  // Stärkere Gegner treffen häufiger und brauchen weniger Zeit.
+  const prob = Math.max(0.3, Math.min(0.97, p.prob * (0.75 + 0.25 * f)));
+  const speed = 2 - f; // f=1.5 -> 0.5 (schneller), f=0.6 -> 1.4 (langsamer)
+  return simulateMultiRoundBotMetric(prob, p.min * speed, p.max * speed, ROUNDS_PER_GAME);
 }
 
 function startTieBreak(cat, userMetric, tiedCount, bestRankInTie, originalTotal, accuracy){
@@ -4350,6 +5038,9 @@ function completeCurrentGame(cat, userMetric, accuracy){
   const betterCount = bots.filter(b => b < userMetric).length;
   const tiedCount = bots.filter(b => b === userMetric).length;
   const total = botCount + 1;
+  // Für die Rückmeldung "knapp verpasst": beste Kennzahl, die noch vor mir liegt.
+  const sortedBots = [...bots].sort((a,b)=>a-b);
+  const justAhead = betterCount > 0 ? sortedBots[betterCount-1] : null;
   // Schlechteste Position innerhalb der Gleichstandsgruppe — nie geschenkt.
   const rank = betterCount + tiedCount + 1;
 
@@ -4359,10 +5050,10 @@ function completeCurrentGame(cat, userMetric, accuracy){
     return;
   }
 
-  finalizeGameScore(cat, rank, total, userMetric, acc);
+  finalizeGameScore(cat, rank, total, userMetric, acc, justAhead);
 }
 
-function finalizeGameScore(cat, rank, total, userMetric, accuracy){
+function finalizeGameScore(cat, rank, total, userMetric, accuracy, justAhead){
   const t = roundState.table;
   const acc = accuracy || {correct:1, total:1};
   const maxPoints = t.capacity * 2 * (t.pointsMultiplier || 1); // bigger tables offer more points; VIP rooms double it
@@ -4372,9 +5063,40 @@ function finalizeGameScore(cat, rank, total, userMetric, accuracy){
   const percentile = Math.max(0, 1 - (rank / total));
   // Trefferquote fließt direkt ein: Wer alle Teilrunden verpatzt, bekommt 0 Punkte.
   const accuracyFactor = acc.total > 0 ? (acc.correct / acc.total) : 0;
-  const points = Math.round(percentile * maxPoints * accuracyFactor);
+  // Spiel des Tages: doppelte Punktzahl.
+  const isGameOfDay = (cat === gameOfTheDay());
+  const points = Math.round(percentile * maxPoints * accuracyFactor * (isGameOfDay ? 2 : 1));
+  // Elo aktualisieren, Bestleistung und Vergleich zum letzten Mal festhalten.
+  const eloChange = updateElo(currentAccount, cat, rank, total);
+
+  const prevBest = currentAccount.bests[cat];
+  const isNewBest = acc.correct === acc.total && (!prevBest || userMetric < prevBest.metric);
+  if (isNewBest){
+    currentAccount.bests[cat] = {metric: userMetric, at: Date.now(),
+                                 previous: prevBest ? prevBest.metric : null};
+  }
+  const lastTime = currentAccount.lastMetric[cat] || null;
+  currentAccount.lastMetric[cat] = userMetric;
+
+  // Aufgaben-Fortschritt für alles, was sich auf ein einzelnes Minispiel bezieht.
+  if (acc.correct === acc.total) advanceQuests(currentAccount, 'perfect', 1);
+  if (isNewBest) advanceQuests(currentAccount, 'best', 1);
+  if (isGameOfDay) advanceQuests(currentAccount, 'gotd', 1);
+  if (!currentAccount.season.variety) currentAccount.season.variety = [];
+  if (!currentAccount.weekVariety || currentAccount.weekVarietyKey !== weekKey()){
+    currentAccount.weekVarietyKey = weekKey();
+    currentAccount.weekVariety = [];
+  }
+  if (!currentAccount.weekVariety.includes(cat)){
+    currentAccount.weekVariety.push(cat);
+    advanceQuests(currentAccount, 'variety', 1);
+  }
+
   roundState.results.push({cat, rank, total, points, percentile, metric:userMetric,
-                           correct:acc.correct, totalRounds:acc.total});
+                           correct:acc.correct, totalRounds:acc.total,
+                           justAhead, eloChange, isNewBest, isGameOfDay,
+                           previousBest: prevBest ? prevBest.metric : null,
+                           lastTime});
 
   currentAccount.stats.gamesPlayed++;
   currentAccount.stats.byCategory[cat]++;
@@ -4423,6 +5145,31 @@ async function finishRound(){
   // Münzen nur für die Podestplätze an kostenlosen Tischen.
   const coinResult = awardPodiumCoins(currentAccount, finalPlace, table);
 
+  // Erfahrungspunkte fürs Level — abhängig von Leistung, aber nie null.
+  const xpGain = Math.round(XP_PER_ROUND_BASE * (0.5 + avgPercentile));
+  const levelInfo = addXp(currentAccount, xpGain);
+
+  // Saison-Fortschritt: Punkte und gespielte Tage dieses Monats.
+  const season = ensureSeason(currentAccount);
+  season.points += sumPoints;
+  const tKey = todayKey();
+  if (!season.daysPlayed.includes(tKey)) season.daysPlayed.push(tKey);
+
+  // Aufgaben, die sich auf die ganze Runde beziehen.
+  const questDone = [];
+  questDone.push(...advanceQuests(currentAccount, 'rounds', 1));
+  if (finalPlace <= 10) questDone.push(...advanceQuests(currentAccount, 'top10', 1));
+  if (finalPlace <= 3)  questDone.push(...advanceQuests(currentAccount, 'podium', 1));
+
+  // Belohnung für erfüllte Aufgaben gutschreiben.
+  let questCoins = 0;
+  questDone.forEach(({kind, item})=>{
+    if (item.claimed) return;
+    item.claimed = true;
+    questCoins += (kind === 'daily' ? QUEST_REWARD_DAILY : QUEST_REWARD_WEEKLY);
+  });
+  if (questCoins > 0) currentAccount.wallet = (currentAccount.wallet || 0) + questCoins;
+
   animateCountUp(document.getElementById('roundPointsNum'), totalPoints);
 
   // Ergebnistext aus den tatsächlich zutreffenden Bausteinen zusammensetzen.
@@ -4448,6 +5195,15 @@ async function finishRound(){
   }
   if (streak.lost > 0){
     parts.push('Durch die Spielpause sind ' + streak.lost + ' Serientage verfallen.');
+  }
+  if (levelInfo.levelsGained > 0){
+    parts.push('🎉 Level ' + levelInfo.level + ' erreicht!');
+  } else {
+    parts.push('+' + xpGain + ' EP (Level ' + levelInfo.level + ').');
+  }
+  if (questDone.length > 0){
+    parts.push('✅ ' + questDone.length + ' Aufgabe' + (questDone.length>1?'n':'') +
+               ' erfüllt: +' + questCoins + ' Münzen.');
   }
   document.getElementById('rankSub').textContent = parts.join(' ');
   const bd = document.getElementById('roundBreakdown');
