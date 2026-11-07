@@ -336,8 +336,21 @@
   .friend-sub{font-size:11px;color:var(--muted);margin-top:2px;}
   .friend-actions{display:flex;gap:6px;flex-shrink:0;}
   .friend-actions .btn{padding:7px 12px;font-size:11px;width:auto;}
+  .self-rescue{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .streak-countdown{border:1.5px solid var(--coral);border-radius:12px;background:var(--surface);
+                    padding:12px 14px;margin-bottom:16px;}
+  .streak-countdown .sc-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .streak-countdown .sc-text{font-size:13px;font-weight:600;}
+  .streak-countdown .sc-clock{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;
+                              color:var(--coral);}
+  .streak-countdown .sc-track{height:6px;border-radius:3px;background:var(--surface-2);
+                              margin-top:10px;overflow:hidden;}
+  .streak-countdown .sc-fill{height:100%;background:var(--coral);transition:width 1s linear;}
   .friend-flame{font-size:12px;font-weight:700;color:var(--coral);}
   .friend-flame.cold{color:var(--muted);}
+  .guest-banner{display:flex;align-items:center;gap:12px;background:var(--surface);
+                border:1.5px solid var(--brand-copper);border-radius:12px;
+                padding:12px 14px;margin-bottom:12px;}
   .cal-grid{display:flex;flex-wrap:wrap;gap:3px;margin-top:9px;}
   .cal-day{width:11px;height:11px;border-radius:3px;background:var(--surface-2);}
   .cal-day.played{background:var(--brand-copper);}
@@ -564,8 +577,12 @@
       </div>
 
       <div class="hero-cta">
-        <button class="btn full hero-btn-primary" id="goRegisterBtn">Jetzt kostenlos registrieren</button>
-        <button class="btn full secondary" id="goLoginBtn">Anmelden</button>
+        <button class="btn full hero-btn-primary" id="playAsGuestBtn">Sofort losspielen</button>
+        <p class="hint" style="text-align:center;margin:8px 0 12px;">Keine Anmeldung nötig — in 3 Sekunden im Spiel.</p>
+        <div style="display:flex;gap:8px;">
+          <button class="btn secondary" id="goRegisterBtn" style="flex:1;">Konto erstellen</button>
+          <button class="btn secondary" id="goLoginBtn" style="flex:1;">Anmelden</button>
+        </div>
       </div>
 
       <div class="hero-game-strip">
@@ -584,6 +601,34 @@
 </div>
 
 <!-- LOGIN -->
+<!-- GASTKONTO IN EIN ECHTES KONTO UMWANDELN -->
+<div class="screen" id="screen-upgrade">
+  <div class="card" style="max-width:460px;">
+    <h1>Fortschritt sichern</h1>
+    <p class="sub" id="upgradeSub">Dein Spielstand bleibt vollständig erhalten — du legst nur E-Mail und Passwort fest.</p>
+
+    <div class="card-flat" id="upgradeStats" style="margin-bottom:18px;"></div>
+
+    <div class="row2">
+      <div><label>Vorname</label><input type="text" id="upFirst"></div>
+      <div><label>Nachname</label><input type="text" id="upLast"></div>
+    </div>
+    <label>E-Mail</label>
+    <input type="email" id="upEmail" autocomplete="email">
+    <div class="row2">
+      <div><label>Passwort</label><input type="password" id="upPassword" autocomplete="new-password"></div>
+      <div><label>Passwort bestätigen</label><input type="password" id="upPassword2" autocomplete="new-password"></div>
+    </div>
+    <p class="hint" style="margin:4px 0 0;">Passwort mindestens 6 Zeichen.</p>
+
+    <div class="checkline"><input type="checkbox" id="upDsCheck"><span>Ich akzeptiere die <button type="button" class="linklike" data-nav="privacy" style="font-weight:700;">Datenschutzerklärung</button>.</span></div>
+
+    <div class="error-msg" id="upgradeError"></div>
+    <button class="btn full" id="upgradeBtn" style="margin-top:14px;" disabled>Konto sichern</button>
+    <button class="btn full secondary" id="upgradeCancelBtn" style="margin-top:8px;">Später</button>
+  </div>
+</div>
+
 <div class="screen" id="screen-login">
   <div class="card">
     <h1>Anmelden</h1>
@@ -678,6 +723,7 @@
 
 <!-- LOBBY -->
 <div class="screen" id="screen-lobby">
+  <div id="streakCountdown" class="streak-countdown" style="display:none;"></div>
   <div id="dailyPanel"></div>
   <div class="lobby-head">
     <h1>Rushtables</h1>
@@ -712,9 +758,10 @@
     <div class="shop-card" style="max-width:100%;margin:0 0 20px;text-align:left;padding:18px;">
       <div style="font-weight:700;font-size:15px;">🛠️ Eigenen Tisch erstellen</div>
       <p class="hint" style="margin:6px 0 14px;">
-        Kosten: <b>${CUSTOM_TABLE_COST} Münzen</b>. Du bestimmst die Spiele, die Teilnehmerzahl und ob der Tisch öffentlich ist
+        Kosten: <b id="ctPriceLabel">${CUSTOM_TABLE_COST} Münzen</b>. Du bestimmst die Spiele, die Teilnehmerzahl und ob der Tisch öffentlich ist
         oder nur mit Einladungs-Code betreten werden kann. An eigenen Tischen gibt es Punkte für die Bestenliste,
         aber keine Münzen — so bleibt der Wettbewerb an den regulären Tischen fair.
+        <br><span id="ctPriceHint"></span>
       </p>
 
       <div class="plan-row">
@@ -829,6 +876,7 @@
     <div id="rankSub" style="color:var(--muted);"></div>
   </div>
   <div class="round-breakdown" id="roundBreakdown"></div>
+  <div id="guestResultPrompt"></div>
   <div id="tomorrowHint" class="card-flat" style="margin-top:16px;text-align:center;"></div>
   <div class="result-actions">
     <button class="btn accent" id="playAgainBtn">Nochmal spielen</button>
@@ -848,6 +896,7 @@
     <div>
       <div id="profileBadgeLine" style="font-weight:700;font-size:15px;"></div>
       <div class="hint">Münzen: <b class="mono" id="profileWallet" style="color:var(--amber);">0</b> · <button class="linklike" data-nav="shop">Zum Shop</button></div>
+      <div id="profileGuestBox"></div>
       <div class="rank-box">
         <div class="rank-icon" id="profileRankIcon">🥉</div>
         <div style="flex:1;">
@@ -870,8 +919,10 @@
           <div style="font-weight:600;font-size:13px;">Tages-Serie</div>
           <div class="hint" id="profileStreakSub">Spiel eine Runde und starte deine Serie</div>
           <div class="hint" style="margin-top:3px;">Münzen heute: <b class="mono" id="profileCoinsToday">0 / 150</b></div>
+          <div class="hint" style="margin-top:2px;">Serien-, Level- und Saisonmünzen zählen nicht auf dieses Limit.</div>
         </div>
       </div>
+      <div id="selfRescueBox" class="self-rescue" style="display:none;"></div>
       <div class="hint" id="adminToggleLine" style="margin-top:4px;"></div>
     </div>
   </div>
@@ -1151,6 +1202,13 @@
         <input type="checkbox" id="setPremiumBadges">
         <span><b>Premium-Abzeichen</b><br>
         <span class="hint">Abzeichen mit Euro-Preis im Shop. Aus: Der Bereich bleibt leer.</span></span>
+      </label>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="setCosmetics">
+        <span><b>Figuren und Abzeichen (Phase 2)</b><br>
+        <span class="hint">Kosmetik im Shop. Laut Konzept erst in Phase 2 — in Phase 1 bleibt der Bereich zu,
+        Münzen fließen in eigene Tische, Serien-Rettungen und Geschenke.</span></span>
       </label>
 
       <button class="btn full" id="saveSettingsBtn" style="margin-top:12px;">Einstellungen speichern</button>
@@ -1491,6 +1549,17 @@ function setNavActive(name){
 }
 
 /* ---------- NAV ---------- */
+document.getElementById('playAsGuestBtn').addEventListener('click', startAsGuest);
+document.getElementById('upgradeBtn').addEventListener('click', upgradeGuestAccount);
+document.getElementById('upgradeCancelBtn').addEventListener('click', ()=>{
+  setNavActive('lobby');
+  showScreen('screen-lobby');
+});
+['upFirst','upLast','upEmail','upPassword','upPassword2'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', validateUpgradeForm);
+});
+document.getElementById('upDsCheck').addEventListener('change', validateUpgradeForm);
+
 document.getElementById('goLoginBtn').addEventListener('click', ()=>showScreen('screen-login'));
 document.getElementById('goRegisterBtn').addEventListener('click', ()=>showScreen('screen-register'));
 document.getElementById('toRegisterBtn').addEventListener('click', ()=>showScreen('screen-register'));
@@ -1547,6 +1616,16 @@ document.getElementById('cookieOkBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+  // Gastkonten hängen an dieser Browser-Sitzung — nach dem Abmelden ist der
+  // Fortschritt nicht mehr erreichbar. Darauf muss vorher hingewiesen werden.
+  if (isGuestAccount(currentAccount)){
+    const ok = confirm(
+      'Du spielst als Gast. Beim Abmelden geht dein Fortschritt verloren — ' +
+      'Level, Serie, Münzen und Platzierung sind danach nicht mehr erreichbar.\n\n' +
+      'Trotzdem abmelden?'
+    );
+    if (!ok) return;
+  }
   stopAdminLivePolling();
   localStorage.setItem('minirush_stay_logged_in', 'false');
   currentAccount = null;
@@ -1732,7 +1811,18 @@ const COINS_PER_EURO = 100;
    Dauerspielen praktisch von selbst freischaltet. */
 const PODIUM_COIN_REWARD = {1: 50, 2: 30, 3: 10};
 const DAILY_COIN_CAP = 150;
-const CUSTOM_TABLE_COST = 150;      // Münzkosten für einen eigenen Tisch
+const CUSTOM_TABLE_COST = 150;      // Einstiegspreis für den ersten eigenen Tisch am Tag
+// Jeder weitere eigene Tisch am selben Tag kostet mehr. Keine Höchstzahl —
+// das Tageslimit von 150 verdienbaren Münzen bremst von selbst.
+const CUSTOM_TABLE_COST_LADDER = [150, 250, 400, 600, 900];
+// Belohnungen, die bewusst NICHT auf das Tageslimit angerechnet werden:
+// sie entstehen durch Durchhalten, nicht durch stundenlanges Spielen.
+const STREAK_COIN_MILESTONES = {7: 50, 30: 250, 100: 1000};
+const LEVEL_UP_COIN_REWARD   = 25;
+const SEASON_END_COINS       = [800, 500, 300, 200, 150, 100]; // Platz 1..6, danach 100
+const STREAK_RESCUE_COST     = 100;  // eigene Serie retten
+const FRIEND_GIFT_COST       = 50;   // Geschenk an einen Freund
+const STREAK_COUNTDOWN_HOUR  = 22;   // ab dieser Uhrzeit läuft der Serien-Countdown
 const CUSTOM_TABLE_MIN = 3;         // Mindest-Teilnehmerzahl
 const CUSTOM_TABLE_MAX = 200;       // Höchst-Teilnehmerzahl
 const CUSTOM_TABLE_MAX_GAMES = 6;   // Höchstzahl auswählbarer Spiele
@@ -1818,7 +1908,8 @@ function addXp(account, amount){
 let appSettings = {
   paidTablesEnabled: false,   // VIP-Räume und Mega-Rushtable mit Teilnahmegebühr
   coinPacksEnabled:  false,   // Münzpakete gegen echtes Geld
-  premiumBadgesEnabled: false // Abzeichen mit Euro-Preis
+  premiumBadgesEnabled: false,// Abzeichen mit Euro-Preis
+  cosmeticsEnabled:  false    // Figuren und Abzeichen im Shop — laut Konzept erst Phase 2
 };
 
 async function loadAppSettings(){
@@ -1943,6 +2034,10 @@ function advanceQuests(account, type, amount){
 function ensureSeason(account){
   const key = seasonKey();
   if (!account.season || account.season.key !== key){
+    // Läuft eine Saison aus, wird sie beim nächsten Start abgerechnet.
+    if (account.season && account.season.key && (account.season.points || 0) > 0){
+      account.pendingSeasonPayout = account.season.key;
+    }
     account.season = {key, points: 0, daysPlayed: []};
   }
   if (!Array.isArray(account.season.daysPlayed)) account.season.daysPlayed = [];
@@ -2044,6 +2139,142 @@ function awardPodiumCoins(account, place, table){
   account.wallet = (account.wallet || 0) + granted;
   return {coins: granted, capped: granted < reward, reason: 'podium'};
 }
+// Preis des nächsten eigenen Tisches: steigt mit jedem Tisch am selben Tag
+// und fängt um Mitternacht wieder bei 150 an.
+function customTableCost(account){
+  if (!account) return CUSTOM_TABLE_COST;
+  const today = todayKey();
+  if (account.tableDay !== today){ account.tableDay = today; account.tablesToday = 0; }
+  const made = account.tablesToday || 0;
+  if (made < CUSTOM_TABLE_COST_LADDER.length) return CUSTOM_TABLE_COST_LADDER[made];
+  let cost = CUSTOM_TABLE_COST_LADDER[CUSTOM_TABLE_COST_LADDER.length - 1];
+  for (let i = CUSTOM_TABLE_COST_LADDER.length; i <= made; i++){
+    cost = Math.round(cost * 1.5 / 10) * 10;   // danach jeweils das Anderthalbfache
+  }
+  return cost;
+}
+function noteCustomTableCreated(account){
+  const today = todayKey();
+  if (account.tableDay !== today){ account.tableDay = today; account.tablesToday = 0; }
+  account.tablesToday = (account.tablesToday || 0) + 1;
+}
+
+// Münzen außerhalb des Tageslimits: Serie, Level und Saison.
+function awardBonusCoins(account, amount){
+  if (!amount || amount <= 0) return 0;
+  account.wallet = (account.wallet || 0) + amount;
+  return amount;
+}
+function streakMilestoneCoins(days){
+  return STREAK_COIN_MILESTONES[days] || 0;
+}
+function seasonEndCoins(rank){
+  if (!rank || rank < 1) return 0;
+  if (rank <= SEASON_END_COINS.length) return SEASON_END_COINS[rank - 1];
+  if (rank <= 20) return SEASON_END_COINS[SEASON_END_COINS.length - 1];
+  return 0;   // ab Platz 21 gibt es keine Saisonmünzen
+}
+
+// Rechnet eine abgelaufene Saison ab, sobald ein neuer Monat begonnen hat.
+// Der Rang wird aus der Bestenliste des alten Monats gelesen, die bestehen bleibt.
+async function settleSeasonPayout(account){
+  const oldKey = account.pendingSeasonPayout;
+  if (!oldKey || !account.email) return null;
+  account.pendingSeasonPayout = null;
+  try{
+    const listRes = await storageList('leaderboard:' + oldKey + ':', true);
+    const keys = (listRes && listRes.keys) ? listRes.keys : [];
+    const entries = [];
+    for (const k of keys){
+      try{ entries.push(JSON.parse((await storageGet(k, true)).value)); }catch(e){}
+    }
+    entries.sort((a,b)=> (b.seasonPoints || 0) - (a.seasonPoints || 0));
+    const rank = entries.findIndex(e => e && e.email === account.email) + 1;
+    const coins = seasonEndCoins(rank);
+    if (coins > 0){
+      awardBonusCoins(account, coins);
+      await persistAccount();
+      return {rank, coins, season: oldKey};
+    }
+  }catch(e){ /* Abrechnung wird beim nächsten Start erneut versucht */ }
+  return null;
+}
+
+// Eigene Serie für Münzen retten — der Tag zählt dann als gespielt.
+function renderSelfRescue(){
+  const box = document.getElementById('selfRescueBox');
+  if (!box || !currentAccount) return;
+  const s = currentAccount.streak || {days:0, lastPlayed:null};
+  const today = todayKey();
+  const playedToday = s.lastPlayed === today;
+  const alreadyRescued = s.rescuedUntil && s.rescuedUntil >= today;
+  if (s.days < 1 || playedToday || alreadyRescued){ box.style.display = 'none'; return; }
+  const affordable = (currentAccount.wallet || 0) >= STREAK_RESCUE_COST;
+  box.style.display = '';
+  box.innerHTML =
+    '<span class="hint">Heute noch nicht gespielt. Du kannst deine Serie für ' +
+    STREAK_RESCUE_COST + ' Münzen sichern.</span>' +
+    '<button class="btn" id="selfRescueBtn" style="width:auto;padding:8px 14px;"' +
+    (affordable ? '' : ' disabled') + '>Serie retten (' + STREAK_RESCUE_COST + ')</button>';
+  const btn = document.getElementById('selfRescueBtn');
+  if (btn) btn.addEventListener('click', selfRescueStreak);
+}
+async function selfRescueStreak(){
+  if (!currentAccount || !currentAccount.streak) return;
+  if ((currentAccount.wallet || 0) < STREAK_RESCUE_COST) return;
+  currentAccount.wallet -= STREAK_RESCUE_COST;
+  currentAccount.streak.rescuedUntil = todayKey();
+  try{
+    await persistAccount();
+    await logPurchase('Serie gerettet', STREAK_RESCUE_COST + ' Münzen', STREAK_RESCUE_COST / COINS_PER_EURO);
+  }catch(e){
+    currentAccount.wallet += STREAK_RESCUE_COST;
+    currentAccount.streak.rescuedUntil = null;
+    return;
+  }
+  renderProfile();
+  renderStreakCountdown();
+}
+
+/* ---------- SERIEN-COUNTDOWN ----------
+   Ab 22 Uhr zeigt die Lobby einen Countdown mit rotem Balken, wenn an diesem Tag
+   noch nicht gespielt wurde und eine Serie auf dem Spiel steht. In der App-Fassung
+   wird daraus zusätzlich eine Benachrichtigung auf dem Sperrbildschirm. */
+function renderStreakCountdown(){
+  const box = document.getElementById('streakCountdown');
+  if (!box || !currentAccount){ if (box) box.style.display = 'none'; return; }
+  const s = currentAccount.streak || {days:0, lastPlayed:null};
+  const today = todayKey();
+  const safe = s.lastPlayed === today || (s.rescuedUntil && s.rescuedUntil >= today);
+  const now = new Date();
+  if (s.days < 1 || safe || now.getHours() < STREAK_COUNTDOWN_HOUR){
+    box.style.display = 'none';
+    return;
+  }
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+  const msLeft = Math.max(0, midnight - now);
+  const totalMs = (24 - STREAK_COUNTDOWN_HOUR) * 3600000;
+  const pct = Math.max(0, Math.min(100, (msLeft / totalMs) * 100));
+  const h = Math.floor(msLeft / 3600000);
+  const m = Math.floor((msLeft % 3600000) / 60000);
+  const sec = Math.floor((msLeft % 60000) / 1000);
+  const pad = v => String(v).padStart(2, '0');
+  box.style.display = '';
+  box.innerHTML =
+    '<div class="sc-top">' +
+      '<div class="sc-text">🔥 Deine Serie von ' + s.days + ' Tag' + (s.days === 1 ? '' : 'en') +
+      ' läuft heute aus — spiel eine Runde, sonst verfällt deine Flamme.</div>' +
+      '<div class="sc-clock">' + pad(h) + ':' + pad(m) + ':' + pad(sec) + '</div>' +
+    '</div>' +
+    '<div class="sc-track"><div class="sc-fill" style="width:' + pct.toFixed(2) + '%;"></div></div>';
+}
+let streakCountdownTimer = null;
+function startStreakCountdown(){
+  if (streakCountdownTimer) clearInterval(streakCountdownTimer);
+  renderStreakCountdown();
+  streakCountdownTimer = setInterval(renderStreakCountdown, 1000);
+}
+
 function coinsToEuroLabel(coins){
   const euros = coins / COINS_PER_EURO;
   return euros.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
@@ -2168,6 +2399,182 @@ async function logPurchase(itemLabel, paidWith, eurValue){
   }
 }
 
+/* ---------- GASTKONTO ----------
+   Beim ersten Öffnen kann ohne jede Eingabe gespielt werden: Supabase legt eine
+   anonyme Sitzung an, der Fortschritt wird ganz normal in der Datenbank
+   gespeichert. Später wird dieselbe Sitzung mit E-Mail und Passwort verknüpft —
+   die Nutzer-ID bleibt dabei bestehen, Serie, Elo und Level gehen also nicht
+   verloren. Damit der übrige Code unverändert bleibt, bekommen Gäste einen
+   technischen Platzhalter als E-Mail-Adresse. */
+
+const GUEST_DOMAIN = '@gast.minirush';
+
+function isGuestAccount(account){
+  return !!account && (account.isGuest === true || String(account.email || '').endsWith(GUEST_DOMAIN));
+}
+
+function guestEmailFor(userId){
+  return 'gast-' + String(userId).replace(/-/g, '').slice(0, 10) + GUEST_DOMAIN;
+}
+
+function makeGuestName(userId){
+  // Kurzer, wiedererkennbarer Name aus der Nutzer-ID — für alle gleich lesbar.
+  const num = parseInt(String(userId).replace(/\D/g, '').slice(0, 4) || '0', 10) % 10000;
+  return String(num).padStart(4, '0');
+}
+
+function buildFreshAccount(email, firstName, lastName, extra){
+  const account = {
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    phone: '', street: '', zip: '', city: '',
+    color: COLORS[Math.floor(Math.random()*COLORS.length)],
+    stats: {
+      gamesPlayed: 0,
+      byCategory: Object.fromEntries(CATS.map(c=>[c,0])),
+      roundsPlayed: 0,
+      roundsWon: 0,
+      totalPoints: 0
+    },
+    wallet: 0,
+    streak: { days: 0, lastPlayed: null },
+    coinDay: null,
+    coinsToday: 0,
+    inventory: { skins: [], badges: [] },
+    equippedSkin: null,
+    equippedBadge: null,
+    isAdmin: false
+  };
+  return Object.assign(account, extra || {});
+}
+
+async function startAsGuest(){
+  const btn = document.getElementById('playAsGuestBtn');
+  btn.disabled = true;
+  btn.textContent = 'Wird vorbereitet…';
+  try{
+    const { data, error } = await sb.auth.signInAnonymously();
+    if (error) throw error;
+    const uid = data.user.id;
+    const email = guestEmailFor(uid);
+
+    // Falls diese anonyme Sitzung schon einmal gespielt hat, das vorhandene
+    // Profil weiterverwenden statt ein neues anzulegen.
+    let account = null;
+    try{
+      const res = await storageGet('account:' + email, false);
+      account = JSON.parse(res.value);
+    }catch(e){ /* noch kein Profil — wird gleich angelegt */ }
+
+    if (!account){
+      account = buildFreshAccount(email, 'Gast', makeGuestName(uid), {isGuest: true});
+      await storageSet('account:' + email, JSON.stringify(account), false);
+      await saveLeaderboardEntry(account);
+    }
+
+    localStorage.setItem('minirush_stay_logged_in', 'true');
+    loginSuccess(account);
+  }catch(e){
+    console.error('Gastzugang fehlgeschlagen:', e);
+    const raw = (e.message || '').toLowerCase();
+    alert(raw.includes('anonymous')
+      ? 'Der Gastzugang ist in Supabase noch nicht freigeschaltet. Bitte unter Authentication → Sign In / Providers die Option "Anonymous sign-ins" aktivieren.'
+      : 'Der Gastzugang hat nicht funktioniert: ' + (e.message || e));
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Sofort losspielen';
+  }
+}
+
+/* Wandelt das Gastkonto in ein echtes um. Entscheidend: Es wird dieselbe
+   Nutzer-ID behalten — die Daten werden nur unter dem neuen Schlüssel
+   abgelegt, nichts geht verloren. */
+async function upgradeGuestAccount(){
+  const btn = document.getElementById('upgradeBtn');
+  const errEl = document.getElementById('upgradeError');
+  errEl.style.color = 'var(--danger)';
+  errEl.textContent = '';
+
+  const first = document.getElementById('upFirst').value.trim();
+  const last  = document.getElementById('upLast').value.trim();
+  const email = document.getElementById('upEmail').value.trim().toLowerCase();
+  const pw    = document.getElementById('upPassword').value;
+
+  btn.disabled = true;
+  btn.textContent = 'Wird gesichert…';
+  const oldEmail = currentAccount.email;
+
+  try{
+    // 1. Anonyme Sitzung mit E-Mail und Passwort verknüpfen.
+    const { error } = await sb.auth.updateUser({ email: email, password: pw });
+    if (error){
+      const raw = (error.message || '').toLowerCase();
+      errEl.textContent = raw.includes('already') || raw.includes('registered')
+        ? 'Für diese E-Mail existiert bereits ein Konto. Bitte melde dich damit an oder nimm eine andere Adresse.'
+        : 'Konnte nicht gesichert werden: ' + error.message;
+      return;
+    }
+
+    // 2. Profil unter dem neuen Schlüssel ablegen — Fortschritt bleibt erhalten.
+    currentAccount.email = email;
+    currentAccount.firstName = first;
+    currentAccount.lastName = last;
+    currentAccount.isGuest = false;
+
+    await storageSet('account:' + email, JSON.stringify(currentAccount), false);
+    await saveLeaderboardEntry(currentAccount);
+
+    // 3. Alte Gast-Einträge aufräumen (Fehlschlag ist unkritisch).
+    try{
+      await withTimeout(sb.from('app_storage').delete()
+        .eq('key', 'account:' + oldEmail).eq('shared', false), 'Löschen');
+      await withTimeout(sb.from('app_storage').delete()
+        .eq('key', 'leaderboard:' + seasonKey() + ':' + oldEmail).eq('shared', true), 'Löschen');
+    }catch(e){}
+
+    errEl.style.color = 'var(--success)';
+    errEl.textContent = 'Konto gesichert. Dein kompletter Fortschritt ist erhalten geblieben.';
+    renderProfile();
+    renderLobby();
+    setTimeout(()=>{ setNavActive('lobby'); showScreen('screen-lobby'); }, 1400);
+  }catch(e){
+    errEl.textContent = 'Unerwarteter Fehler: ' + (e.message || e);
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Konto sichern';
+  }
+}
+
+// Zeigt im Sicherungs-Bildschirm, was konkret auf dem Spiel steht.
+function openUpgradeScreen(reason){
+  const s = currentAccount.streak || {days:0};
+  const season = ensureSeason(currentAccount);
+  const tier = rankForElo(overallElo(currentAccount));
+  document.getElementById('upgradeStats').innerHTML = `
+    <div class="fb-line">Level <b>${currentAccount.levelData.level}</b> · ${tier.icon} <b>${tier.name}</b></div>
+    <div class="fb-line"><b>${season.points.toLocaleString('de-DE')}</b> Saisonpunkte · <b>${currentAccount.wallet || 0}</b> Münzen</div>
+    ${s.days > 0 ? `<div class="fb-line">🔥 <b>${s.days}</b> Tage Serie</div>` : ''}
+  `;
+  const subEl = document.getElementById('upgradeSub');
+  if (reason) subEl.textContent = reason;
+  document.getElementById('upFirst').value =
+    (currentAccount.firstName === 'Gast' ? '' : currentAccount.firstName) || '';
+  document.getElementById('upLast').value =
+    (isGuestAccount(currentAccount) ? '' : currentAccount.lastName) || '';
+  showScreen('screen-upgrade');
+}
+
+function validateUpgradeForm(){
+  const ok = document.getElementById('upFirst').value.trim() &&
+    document.getElementById('upLast').value.trim() &&
+    document.getElementById('upEmail').value.trim() &&
+    document.getElementById('upPassword').value.length >= 6 &&
+    document.getElementById('upPassword').value === document.getElementById('upPassword2').value &&
+    document.getElementById('upDsCheck').checked;
+  document.getElementById('upgradeBtn').disabled = !ok;
+}
+
 function loginSuccess(account){
   const wasAdmin = account.isAdmin;
   ensureStatsShape(account);
@@ -2273,7 +2680,10 @@ async function saveLeaderboardEntry(account){
     elo: overallElo(account),
     streakDays: (account.streak && account.streak.days) || 0,
     lastPlayed: (account.streak && account.streak.lastPlayed) || null,
-    name: account.firstName + ' ' + account.lastName.charAt(0) + '.',
+    // Gäste behalten ihre volle Nummer, bei echten Konten wird der Nachname gekürzt.
+    name: isGuestAccount(account)
+      ? (account.firstName + ' ' + account.lastName)
+      : (account.firstName + ' ' + account.lastName.charAt(0) + '.'),
     email: account.email,
     totalPoints: account.stats.totalPoints,
     roundsWon: account.stats.roundsWon,
@@ -2342,6 +2752,24 @@ function renderProfile(){
   const badge = getEquippedBadge(currentAccount);
   document.getElementById('profileBadgeLine').textContent = badge ? (badge.icon + ' ' + badge.label) : currentAccount.firstName;
   document.getElementById('profileWallet').textContent = currentAccount.wallet || 0;
+  const guestBox = document.getElementById('profileGuestBox');
+  if (guestBox){
+    if (isGuestAccount(currentAccount)){
+      guestBox.innerHTML = `
+        <div class="guest-banner" style="margin-bottom:12px;">
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:13px;">Gastkonto</div>
+            <div class="hint" style="margin-top:2px;">Dein Fortschritt liegt nur in diesem Browser. Wird er gelöscht oder wechselst du das Gerät, ist er weg.</div>
+          </div>
+          <button class="btn accent" id="profileUpgradeBtn" style="width:auto;padding:9px 14px;font-size:12px;">Sichern</button>
+        </div>`;
+      const b = document.getElementById('profileUpgradeBtn');
+      if (b) b.addEventListener('click', ()=>openUpgradeScreen());
+    } else {
+      guestBox.innerHTML = '';
+    }
+  }
+
   // Rang, Level und Erfahrungsbalken
   const elo = overallElo(currentAccount);
   const tier = rankForElo(elo);
@@ -2401,6 +2829,7 @@ function renderProfile(){
     const used = (currentAccount.coinDay === todayKey()) ? (currentAccount.coinsToday || 0) : 0;
     coinsTodayEl.textContent = used + ' / ' + DAILY_COIN_CAP;
   }
+  renderSelfRescue();
   const adminLine = document.getElementById('adminToggleLine');
   adminLine.innerHTML = currentAccount.isAdmin
     ? '👑 Admin-Modus aktiv · <button class="linklike" id="toggleAdminBtn">deaktivieren</button>'
@@ -2460,7 +2889,16 @@ function renderShop(){
 
   const skinsEl = document.getElementById('shopSkins');
   skinsEl.innerHTML = '';
-  SKIN_CATALOG.forEach(item=>{
+  // Kosmetik ist laut Konzept erst Phase 2 und im Admin-Bereich abschaltbar.
+  if (!appSettings.cosmeticsEnabled){
+    const note = document.createElement('p');
+    note.className = 'hint';
+    note.style.cssText = 'grid-column:1/-1;';
+    note.textContent = 'Figuren und Abzeichen kommen in Phase 2. Bis dahin fließen Münzen in eigene Tische, '
+      + 'Serien-Rettungen und Geschenke an Freunde.';
+    skinsEl.appendChild(note);
+  }
+  (appSettings.cosmeticsEnabled ? SKIN_CATALOG : []).forEach(item=>{
     const owned = currentAccount.inventory.skins.includes(item.id);
     const equipped = currentAccount.equippedSkin === item.id;
     const card = document.createElement('div');
@@ -2487,7 +2925,7 @@ function renderShop(){
 
   const badgesEl = document.getElementById('shopBadges');
   badgesEl.innerHTML = '';
-  BADGE_CATALOG.forEach(item=>{
+  (appSettings.cosmeticsEnabled ? BADGE_CATALOG : []).forEach(item=>{
     const owned = currentAccount.inventory.badges.includes(item.id);
     const equipped = currentAccount.equippedBadge === item.id;
     const card = document.createElement('div');
@@ -3074,7 +3512,7 @@ async function loadPlannerTab(){
 async function renderAdminSettings(){
   await loadAppSettings();
   const map = {setPaidTables:'paidTablesEnabled', setCoinPacks:'coinPacksEnabled',
-               setPremiumBadges:'premiumBadgesEnabled'};
+               setPremiumBadges:'premiumBadgesEnabled', setCosmetics:'cosmeticsEnabled'};
   Object.entries(map).forEach(([id, key])=>{
     const el = document.getElementById(id);
     if (el) el.checked = !!appSettings[key];
@@ -3088,6 +3526,7 @@ document.getElementById('saveSettingsBtn').addEventListener('click', async ()=>{
   appSettings.paidTablesEnabled    = document.getElementById('setPaidTables').checked;
   appSettings.coinPacksEnabled     = document.getElementById('setCoinPacks').checked;
   appSettings.premiumBadgesEnabled = document.getElementById('setPremiumBadges').checked;
+  appSettings.cosmeticsEnabled     = document.getElementById('setCosmetics').checked;
   try{
     await saveAppSettings();
     statusEl.textContent = 'Gespeichert. Die Änderung gilt ab sofort für alle.';
@@ -3233,6 +3672,7 @@ function makeInviteCode(){
 function initCustomTableForm(){
   const balanceEl = document.getElementById('ctBalance');
   if (balanceEl) balanceEl.value = (currentAccount.wallet || 0).toLocaleString('de-DE') + ' Münzen';
+  renderCustomTablePrice();
 
   const gamesWrap = document.getElementById('ctGames');
   if (gamesWrap && !gamesWrap.dataset.ready){
@@ -3279,8 +3719,9 @@ async function createCustomTable(){
     return;
   }
   if (chosen.length === 0){ setCustomStatus('Bitte mindestens ein Spiel auswählen.', true); return; }
-  if ((currentAccount.wallet || 0) < CUSTOM_TABLE_COST){
-    setCustomStatus('Dafür brauchst du ' + CUSTOM_TABLE_COST + ' Münzen — du hast aktuell ' +
+  const price = customTableCost(currentAccount);
+  if ((currentAccount.wallet || 0) < price){
+    setCustomStatus('Dafür brauchst du ' + price + ' Münzen — du hast aktuell ' +
                     (currentAccount.wallet || 0) + '.', true);
     return;
   }
@@ -3306,10 +3747,11 @@ async function createCustomTable(){
 
   try{
     // Münzen abbuchen und Tisch für alle sichtbar ablegen.
-    currentAccount.wallet -= CUSTOM_TABLE_COST;
+    currentAccount.wallet -= price;
+    noteCustomTableCreated(currentAccount);
     await storageSet('custom_table:' + table.id, JSON.stringify(table), true);
     await persistAccount();
-    await logPurchase('Eigener Tisch: ' + name, CUSTOM_TABLE_COST + ' Münzen', CUSTOM_TABLE_COST / COINS_PER_EURO);
+    await logPurchase('Eigener Tisch: ' + name, price + ' Münzen', price / COINS_PER_EURO);
 
     tables.push(table);
     document.getElementById('ctName').value = '';
@@ -3322,12 +3764,29 @@ async function createCustomTable(){
       ? 'Privater Tisch erstellt! Dein Einladungs-Code: ' + code + ' — gib ihn an die weiter, die mitspielen sollen.'
       : 'Öffentlicher Tisch erstellt und für alle sichtbar.');
   }catch(e){
-    currentAccount.wallet += CUSTOM_TABLE_COST; // Abbuchung zurücknehmen
+    currentAccount.wallet += price; // Abbuchung zurücknehmen
     setCustomStatus('Tisch konnte nicht erstellt werden: ' + (e.message || e), true);
   }finally{
     btn.disabled = false;
-    btn.textContent = 'Tisch erstellen (' + CUSTOM_TABLE_COST + ' Münzen)';
+    renderCustomTablePrice();
   }
+}
+
+// Zeigt den aktuellen Preis an: er steigt mit jedem eigenen Tisch am selben Tag.
+function renderCustomTablePrice(){
+  if (!currentAccount) return;
+  const price = customTableCost(currentAccount);
+  const made  = (currentAccount.tableDay === todayKey()) ? (currentAccount.tablesToday || 0) : 0;
+  const label = document.getElementById('ctPriceLabel');
+  if (label) label.textContent = price + ' Münzen';
+  const hint = document.getElementById('ctPriceHint');
+  if (hint){
+    hint.textContent = made === 0
+      ? 'Jeder weitere Tisch am selben Tag kostet mehr (250, 400, 600, 900 …). Um Mitternacht beginnt es wieder bei ' + CUSTOM_TABLE_COST + '.'
+      : 'Heute bereits erstellt: ' + made + '. Der nächste kostet ' + customTableCost(currentAccount) + ' Münzen, danach wird es weiter teurer.';
+  }
+  const btn = document.getElementById('ctCreateBtn');
+  if (btn && !btn.disabled) btn.textContent = 'Tisch erstellen (' + price + ' Münzen)';
 }
 
 // Lädt alle von anderen erstellten Tische aus der gemeinsamen Ablage.
@@ -3548,6 +4007,15 @@ async function showFriendMessages(){
     currentAccount.streak.rescuedUntil = todayKey();
   });
 
+  // Münzgeschenke gutschreiben — außerhalb des Tageslimits, da sie
+  // aus dem Guthaben eines anderen Kontos stammen und nichts neu erzeugen.
+  const gifts = fresh.filter(m=>m.type === 'gift');
+  if (gifts.length > 0){
+    awardBonusCoins(currentAccount, gifts.length * FRIEND_GIFT_COST);
+    try{ await persistAccount(); }catch(e){}
+    renderProfile();
+  }
+
   const box = document.getElementById('friendMessages');
   if (box){
     box.innerHTML = '<div class="card-flat" style="border-color:var(--brand-copper);">' +
@@ -3577,6 +4045,41 @@ async function rescueFriend(email, name){
   }catch(e){
     statusEl.style.color = 'var(--danger)';
     statusEl.textContent = 'Rettung fehlgeschlagen.';
+  }
+}
+
+// Münzgeschenk an einen Freund: kostet den Sender FRIEND_GIFT_COST Münzen,
+// der Empfänger bekommt denselben Betrag beim nächsten Öffnen gutgeschrieben.
+// Einmal pro Person und Tag, damit sich zwei Konten nichts hin- und herschieben.
+async function giftFriend(email, name, btn){
+  const statusEl = document.getElementById('friendActionStatus');
+  const key = 'gift:' + currentAccount.email + ':' + email + ':' + todayKey();
+  if (localStorage.getItem(key)){
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'Du hast ' + name + ' heute bereits etwas geschenkt.';
+    return;
+  }
+  if ((currentAccount.wallet || 0) < FRIEND_GIFT_COST){
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'Dafür brauchst du ' + FRIEND_GIFT_COST + ' Münzen.';
+    return;
+  }
+  if (btn) btn.disabled = true;
+  currentAccount.wallet -= FRIEND_GIFT_COST;
+  try{
+    await sendFriendMessage(email, 'gift',
+      currentAccount.firstName + ' schenkt dir ' + FRIEND_GIFT_COST + ' Münzen!');
+    await persistAccount();
+    localStorage.setItem(key, '1');
+    statusEl.style.color = 'var(--success)';
+    statusEl.textContent = FRIEND_GIFT_COST + ' Münzen an ' + name + ' verschenkt.';
+    renderProfile();
+  }catch(e){
+    currentAccount.wallet += FRIEND_GIFT_COST;
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = 'Geschenk konnte nicht gesendet werden.';
+  }finally{
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -3611,6 +4114,23 @@ async function renderFriends(){
   const listEl = document.getElementById('friendList');
   const reqEl = document.getElementById('friendRequests');
   if (!listEl) return;
+
+  // Freundschaften brauchen eine dauerhafte Identität — mit einem Gastkonto
+  // könnte dich niemand wiederfinden.
+  if (isGuestAccount(currentAccount)){
+    reqEl.innerHTML = '';
+    listEl.innerHTML = `
+      <div class="guest-banner">
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:13px;">Dafür brauchst du ein Konto</div>
+          <div class="hint" style="margin-top:2px;">Freunde finden dich über deine E-Mail-Adresse. Dein bisheriger Fortschritt bleibt dabei erhalten.</div>
+        </div>
+        <button class="btn accent" id="friendsUpgradeBtn" style="width:auto;padding:9px 14px;font-size:12px;">Konto sichern</button>
+      </div>`;
+    const b = document.getElementById('friendsUpgradeBtn');
+    if (b) b.addEventListener('click', ()=>openUpgradeScreen('Freunde finden dich über deine E-Mail-Adresse.'));
+    return;
+  }
   listEl.innerHTML = '<p class="hint">Lade Freunde…</p>';
   reqEl.innerHTML = '';
 
@@ -3660,6 +4180,7 @@ async function renderFriends(){
       <div class="friend-actions">
         ${playedToday ? '' : `<button class="btn secondary nudge-friend" data-email="${f.email}" data-name="${(prof && prof.name) || f.email}">Erinnern</button>`}
         ${(!playedToday && prof && prof.streakDays > 2) ? `<button class="btn rescue-friend" data-email="${f.email}" data-name="${prof.name}">Serie retten</button>` : ''}
+        <button class="btn secondary gift-friend" data-email="${f.email}" data-name="${(prof && prof.name) || f.email}">🎁 ${FRIEND_GIFT_COST}</button>
         <button class="btn secondary remove-friend" data-email="${f.email}">✕</button>
       </div>`;
     listEl.appendChild(row);
@@ -3680,6 +4201,8 @@ async function renderFriends(){
 
   listEl.querySelectorAll('.rescue-friend').forEach(b=>
     b.addEventListener('click', ()=>rescueFriend(b.dataset.email, b.dataset.name)));
+  listEl.querySelectorAll('.gift-friend').forEach(b=>
+    b.addEventListener('click', ()=>giftFriend(b.dataset.email, b.dataset.name, b)));
   listEl.querySelectorAll('.nudge-friend').forEach(b=>
     b.addEventListener('click', ()=>nudgeFriend(b.dataset.email, b.dataset.name)));
   listEl.querySelectorAll('.remove-friend').forEach(b=>
@@ -3699,6 +4222,21 @@ function renderDailyPanel(){
 
   const q = ensureQuests(currentAccount);
   const season = ensureSeason(currentAccount);
+  startStreakCountdown();
+  // Eine abgelaufene Saison wird einmalig im Hintergrund abgerechnet.
+  if (currentAccount.pendingSeasonPayout){
+    settleSeasonPayout(currentAccount).then(res=>{
+      if (!res) return;
+      const box = document.getElementById('friendMessages');
+      if (box){
+        box.innerHTML = '<div class="card-flat" style="border-color:var(--brand-copper);">' +
+          '<div style="font-weight:700;font-size:14px;margin-bottom:6px;">Saison abgerechnet</div>' +
+          '<div class="fb-line">Platz ' + res.rank + ' in der Saison ' + res.season +
+          ': <b>+' + res.coins + ' Münzen</b> — außerhalb des Tageslimits.</div></div>';
+      }
+      renderProfile();
+    });
+  }
   const gotd = gameOfTheDay();
   const s = currentAccount.streak || {days:0, lastPlayed:null};
   const playedToday = s.lastPlayed === todayKey();
@@ -3730,7 +4268,18 @@ function renderDailyPanel(){
     </div>`;
   };
 
+  // Gästen zeigen, was sie zu verlieren haben — aber erst, wenn sie etwas haben.
+  const guestBanner = (isGuestAccount(currentAccount) && (s.days > 0 || currentAccount.levelData.level > 1)) ? `
+    <div class="guest-banner">
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:13px;">Du spielst als Gast</div>
+        <div class="hint" style="margin-top:2px;">Level ${currentAccount.levelData.level}${s.days > 0 ? ' und ' + s.days + ' Tage Serie' : ''} — nur auf diesem Gerät gespeichert.</div>
+      </div>
+      <button class="btn accent" id="guestUpgradeBtn" style="width:auto;padding:9px 14px;font-size:12px;">Sichern</button>
+    </div>` : '';
+
   wrap.innerHTML = `
+    ${guestBanner}
     <div class="daily-panel">
       <div class="daily-top">
         <div class="daily-chip" style="border-color:${lg.color};">
@@ -4037,6 +4586,9 @@ function renderLobby(){
   document.querySelectorAll('.joinBtn').forEach(b=>{
     b.addEventListener('click', ()=>joinTable(b.dataset.id));
   });
+  const guestBtn = document.getElementById('guestUpgradeBtn');
+  if (guestBtn) guestBtn.addEventListener('click', ()=>openUpgradeScreen());
+
   const teaserBtn = document.getElementById('megaTeaserToVip');
   if (teaserBtn){
     teaserBtn.addEventListener('click', ()=>{
@@ -5741,11 +6293,22 @@ async function finishRound(){
   } else if (streak.alreadyToday){
     parts.push('Serientag heute bereits gutgeschrieben (Tag ' + streak.days + ').');
   }
+  // Serien-Meilensteine zahlen außerhalb des Tageslimits aus.
+  if (!streak.alreadyToday){
+    const milestone = streakMilestoneCoins(streak.days);
+    if (milestone > 0){
+      awardBonusCoins(currentAccount, milestone);
+      parts.push('🏅 ' + streak.days + ' Tage Serie: +' + milestone +
+                 ' Münzen — zählt nicht auf das Tageslimit.');
+    }
+  }
   if (streak.lost > 0){
     parts.push('Durch die Spielpause sind ' + streak.lost + ' Serientage verfallen.');
   }
   if (levelInfo.levelsGained > 0){
-    parts.push('🎉 Level ' + levelInfo.level + ' erreicht!');
+    // Auch Level-Münzen liegen außerhalb des Tageslimits.
+    const levelCoins = awardBonusCoins(currentAccount, levelInfo.levelsGained * LEVEL_UP_COIN_REWARD);
+    parts.push('🎉 Level ' + levelInfo.level + ' erreicht: +' + levelCoins + ' Münzen.');
   } else {
     parts.push('+' + xpGain + ' EP (Level ' + levelInfo.level + ').');
   }
@@ -5771,6 +6334,30 @@ async function finishRound(){
     if (t.isMega) t.opensAt = getNextMegaOpenTime(new Date(Date.now()+1000));
   }
   joinedTableId = null;
+  // Gäste genau dann ansprechen, wenn gerade etwas entstanden ist, das sich
+  // zu sichern lohnt — nicht bei jeder Runde.
+  const guestPromptEl = document.getElementById('guestResultPrompt');
+  if (guestPromptEl){
+    const worthSaving = isGuestAccount(currentAccount) &&
+      (finalPlace <= 3 || streak.days >= 2 || levelInfo.levelsGained > 0);
+    if (worthSaving){
+      let why;
+      if (finalPlace <= 3) why = 'Du bist auf Platz ' + finalPlace + ' — mit einem Konto erscheinst du dauerhaft in der Rangliste.';
+      else if (levelInfo.levelsGained > 0) why = 'Level ' + levelInfo.level + ' erreicht — sichere deinen Fortschritt, damit er nicht am Gerät hängt.';
+      else why = 'Deine Serie läuft seit ' + streak.days + ' Tagen — sichere sie, bevor sie verloren geht.';
+      guestPromptEl.innerHTML = `
+        <div class="guest-banner" style="margin-top:16px;">
+          <div style="flex:1;"><div style="font-weight:700;font-size:13px;">Fortschritt sichern</div>
+          <div class="hint" style="margin-top:2px;">${why}</div></div>
+          <button class="btn accent" id="resultUpgradeBtn" style="width:auto;padding:9px 14px;font-size:12px;">Jetzt sichern</button>
+        </div>`;
+      const b = document.getElementById('resultUpgradeBtn');
+      if (b) b.addEventListener('click', ()=>openUpgradeScreen(why));
+    } else {
+      guestPromptEl.innerHTML = '';
+    }
+  }
+
   const tomorrowEl = document.getElementById('tomorrowHint');
   if (tomorrowEl){
     const tomorrowGame = gameOfTheDay(Date.now() + 86400000);
@@ -5847,9 +6434,12 @@ document.getElementById('backToLobbyBtn').addEventListener('click', ()=>{
   if (localStorage.getItem('minirush_stay_logged_in') === 'false') return;
   try{
     const { data } = await sb.auth.getSession();
-    const email = data && data.session && data.session.user && data.session.user.email;
-    if (!email) return;
-    const res = await storageGet('account:'+email.toLowerCase(), false);
+    const user = data && data.session && data.session.user;
+    if (!user) return;
+    // Anonyme Gast-Sitzungen haben keine E-Mail — ihr Schlüssel wird aus der
+    // Nutzer-ID abgeleitet, damit sie ihr Profil wiederfinden.
+    const email = user.email ? user.email.toLowerCase() : guestEmailFor(user.id);
+    const res = await storageGet('account:'+email, false);
     const account = JSON.parse(res.value);
     loginSuccess(account);
   }catch(e){
